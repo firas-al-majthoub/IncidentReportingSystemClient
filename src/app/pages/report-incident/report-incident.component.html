@@ -1,0 +1,168 @@
+<div>
+  <div class="grid grid-cols-1">
+    <app-component-card title="Report Incident">
+      <div class="space-y-6">
+        <div>
+          <app-label>Description</app-label>
+          <!-- <app-input-field
+            type="text"
+            (valueChange)="description = `${$event}`"
+          /> -->
+          <app-text-area
+            [placeholder]="''"
+            (valueChange)="description = $event"
+            [rows]="6"
+          ></app-text-area>
+        </div>
+        <div>
+          <app-label>Department</app-label>
+          <app-select
+            [options]="departments"
+            placeholder="Department"
+            [value]="selectedDepartment"
+            (valueChange)="departmentChanged($event)"
+            className="dark:bg-dark-900"
+          ></app-select>
+        </div>
+        <div>
+          <app-label>Loss Type</app-label>
+          <app-select
+            [options]="lossTypes"
+            placeholder="Loss Type"
+            [value]="selectedLossType"
+            (valueChange)="lossTypeChanged($event)"
+            className="dark:bg-dark-900"
+          ></app-select>
+        </div>
+        <div>
+          <app-label>Cause</app-label>
+          <app-select
+            [options]="causes"
+            placeholder="Cause"
+            [value]="selectedCause"
+            (valueChange)="causeChanged($event)"
+            className="dark:bg-dark-900"
+          ></app-select>
+        </div>
+        <div>
+          <app-label>Severity</app-label>
+          <app-select
+            [options]="severities"
+            placeholder="Severity"
+            [value]="selectedSeverity"
+            (valueChange)="severityChanged($event)"
+            className="dark:bg-dark-900"
+          ></app-select>
+        </div>
+        <div>
+          <app-date-picker
+            id="discoverDate"
+            label="Discover Date"
+            placeholder="Select a date"
+            (dateChange)="discoverDateChanged($event)"
+          />
+        </div>
+        <div>
+          <app-date-picker
+            id="incidentDate"
+            label="Incident Date"
+            placeholder="Select a date"
+            (dateChange)="incidentDateChanged($event)"
+          />
+        </div>
+        <div>
+          <app-date-picker
+            id="expectedResolvingDate"
+            label="Expected Resolving Date"
+            placeholder="Select a date"
+            (dateChange)="expectedResolvingDateChanged($event)"
+          />
+        </div>
+        <div>
+          <app-label>Is there a Financial Impact?</app-label>
+          <div class="flex flex-wrap items-center gap-8">
+            <app-radio
+              [id]="'optionYes'"
+              [name]="'hasFinancialImpact'"
+              [value]="'true'"
+              [checked]="hasFinancialImpact"
+              [label]="'Yes'"
+              [disabled]="false"
+              (valueChange)="hasFinancialImpactChanged($event)"
+            />
+            <app-radio
+              [id]="'optionNo'"
+              [name]="'hasFinancialImpact'"
+              [value]="'false'"
+              [checked]="!hasFinancialImpact"
+              [label]="'No'"
+              [disabled]="false"
+              (valueChange)="hasFinancialImpactChanged($event)"
+            />
+          </div>
+        </div>
+        <div>
+          <app-label>Financial Impact Amount</app-label>
+          <app-input-field
+            type="number"
+            (valueChange)="financialImpactAmount = `${$event}`"
+            [disabled]="!hasFinancialImpact"
+          />
+        </div>
+        <div>
+          <app-label>Involved Employees</app-label>
+          <app-input-field
+            type="text"
+            (valueChange)="involvedEmployees = `${$event}`"
+          />
+        </div>
+        <div>
+          <app-label>Related Procedure</app-label>
+          <app-input-field
+            type="text"
+            (valueChange)="relatedProcedure = `${$event}`"
+          />
+        </div>
+        <div>
+          <app-label>Latest Updates</app-label>
+          <app-input-field
+            type="text"
+            (valueChange)="latestUpdates = `${$event}`"
+          />
+        </div>
+        <div>
+          <app-label>Corrective Action</app-label>
+          <app-input-field
+            type="text"
+            (valueChange)="correctiveAction = `${$event}`"
+          />
+        </div>
+        <div>
+          <app-label>Recovery</app-label>
+          <app-input-field type="text" (valueChange)="recovery = `${$event}`" />
+        </div>
+        <div>
+          <app-date-picker
+            id="recoveryDate"
+            label="Recovery Date"
+            placeholder="Select a date"
+            (dateChange)="recoveryDateChanged($event)"
+          />
+        </div>
+        <div>
+          <app-label>Phone</app-label>
+          <app-input-field type="tel" (valueChange)="phone = `${$event}`" />
+        </div>
+        <div>
+          <app-label>Email</app-label>
+          <app-input-field type="email" (valueChange)="email = `${$event}`" />
+        </div>
+        <div>
+          <app-button size="md" variant="primary" (btnClick)="submitIncident()">
+            Report Incident
+          </app-button>
+        </div>
+      </div>
+    </app-component-card>
+  </div>
+</div>
