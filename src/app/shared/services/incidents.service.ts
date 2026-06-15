@@ -6,7 +6,7 @@ import { catchError, map, Observable, of, throwError } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class IncidentService {
+export class IncidentsService {
   private apiBaseUrl = 'https://localhost:7090';
 
   constructor(private http: HttpClient) {}
@@ -14,7 +14,7 @@ export class IncidentService {
   public reportIncident(
     incident: ReportIncidentDto,
   ): Observable<void> {
-    const url = `${this.apiBaseUrl}/incident`;
+    const url = `${this.apiBaseUrl}/incidents`;
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     return this.http.post<string>(url, incident, { headers }).pipe(
@@ -23,7 +23,7 @@ export class IncidentService {
         console.log(response);
       }),
       catchError((err: HttpErrorResponse) => {
-        // TODO: handle errors by status code
+        
         console.log(`err inside service:`);
         console.log(err);
         return throwError(() => {
@@ -31,15 +31,5 @@ export class IncidentService {
         });
       }),
     );
-    //   .subscribe({
-    //     next: (response) => {
-    //       console.log(response);
-    //       return {};
-    //     },
-    //     error: (err) => {
-    //       console.log(err);
-    //       return {};
-    //     },
-    //   })
   }
 }

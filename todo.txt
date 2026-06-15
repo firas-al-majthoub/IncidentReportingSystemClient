@@ -1,0 +1,14 @@
+add a success/failure alert when submitting a new incident
+
+move REQUIRED_FILED_TXT and INVALID_EMAIL_TXT inside report-incident component to a global class/service
+
+handle errors by status code inside incidents service
+
+add a global spinner that works with an http-request-service that counts the number of the requests being processed,
+as long as the number of the requests is not 0 the spinner stays on the screen, once it reaches 0 it should be dismissed.
+a spinner-service should be created to handle communication between http-request-service and app-layout
+
+move apiBaseUrl inside incidents service to a json file
+
+research how to conditionally add directives (or just the opening html tag) to refactor form fields with validations (form group
+and form controls passed to their components)

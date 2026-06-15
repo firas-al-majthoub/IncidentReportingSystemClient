@@ -8,8 +8,14 @@ import { SelectComponent } from '../../shared/components/form/select/select.comp
 import { DatePickerComponent } from '../../shared/components/form/date-picker/date-picker.component';
 import { RadioComponent } from '../../shared/components/form/input/radio.component';
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
-import { IncidentService } from '../../shared/services/incident.service';
+import { IncidentsService } from '../../shared/services/incidents.service';
 import { TextAreaComponent } from '../../shared/components/form/input/text-area.component';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-report-incident',
@@ -24,10 +30,14 @@ import { TextAreaComponent } from '../../shared/components/form/input/text-area.
     RadioComponent,
     ButtonComponent,
     TextAreaComponent,
+    ReactiveFormsModule,
   ],
   templateUrl: './report-incident.component.html',
 })
 export class ReportIncidentComponent {
+  REQUIRED_FILED_TXT = 'This field is required';
+  INVALID_EMAIL_TXT = 'Please enter a valid email address';
+
   departments = [
     { value: '1', label: 'IT' },
     { value: '2', label: 'Risk' },
@@ -54,6 +64,25 @@ export class ReportIncidentComponent {
     { value: '3', label: 'Low' },
   ];
 
+  isLoading = false;
+
+  incidentForm = new FormGroup({
+    description: new FormControl('', Validators.required),
+    department: new FormControl('', Validators.required),
+    lossType: new FormControl('', Validators.required),
+    cause: new FormControl('', Validators.required),
+    severity: new FormControl('', Validators.required),
+    discoverDate: new FormControl('', Validators.required),
+    incidentDate: new FormControl('', Validators.required),
+    expectedResolvingDate: new FormControl('', Validators.required),
+    financialImpactAmount: new FormControl('', Validators.required),
+    involvedEmployees: new FormControl('', Validators.required),
+    relatedProcedure: new FormControl('', Validators.required),
+    latestUpdates: new FormControl('', Validators.required),
+    correctiveAction: new FormControl('', Validators.required),
+    email: new FormControl('', [Validators.email]),
+  });
+
   description = '';
   selectedDepartment = '';
   selectedLossType = '';
@@ -73,7 +102,7 @@ export class ReportIncidentComponent {
   phone = '';
   email = '';
 
-  constructor(private incidentService: IncidentService) {}
+  constructor(private incidentsService: IncidentsService) {}
 
   departmentChanged(val: string) {
     this.selectedDepartment = val;
@@ -92,7 +121,6 @@ export class ReportIncidentComponent {
   }
 
   discoverDateChanged(val: any) {
-    console.log(val);
     this.discoverDate = val;
   }
 
@@ -110,9 +138,32 @@ export class ReportIncidentComponent {
 
   hasFinancialImpactChanged(val: string) {
     this.hasFinancialImpact = val === 'true';
+    this.updateAmountDisableState();
+  }
+
+  updateAmountDisableState() {
+    if (this.hasFinancialImpact) {
+      this.incidentForm.controls.financialImpactAmount.enable();
+      this.incidentForm.controls.financialImpactAmount.setValidators(
+        Validators.required,
+      );
+      this.incidentForm.controls.financialImpactAmount.updateValueAndValidity();
+    } else {
+      this.incidentForm.controls.financialImpactAmount.removeValidators(
+        Validators.required,
+      );
+      this.incidentForm.controls.financialImpactAmount.disable();
+      this.incidentForm.controls.financialImpactAmount.setValue('');
+      this.incidentForm.controls.financialImpactAmount.updateValueAndValidity();
+    }
   }
 
   submitIncident() {
+    if (!this.incidentForm.valid) {
+      this.incidentForm.markAllAsTouched();
+      return;
+    }
+
     const incident = {
       description: this.description,
       departmentId: Number.parseInt(this.selectedDepartment),
@@ -123,7 +174,9 @@ export class ReportIncidentComponent {
       incidentDate: this.incidentDate.dateStr,
       expectedResolvingDate: this.expectedResolvingDate.dateStr,
       hasFinancialImpact: this.hasFinancialImpact,
-      financialImpactAmount: this.hasFinancialImpact ? Number.parseFloat(this.financialImpactAmount) : null,
+      financialImpactAmount: this.hasFinancialImpact
+        ? Number.parseFloat(this.financialImpactAmount)
+        : null,
       involvedEmployees: this.involvedEmployees,
       relatedProcedure: this.relatedProcedure,
       latestUpdates: this.latestUpdates,
@@ -134,13 +187,14 @@ export class ReportIncidentComponent {
       email: this.email,
     };
 
-    console.log(incident);
-
-    this.incidentService.reportIncident(incident).subscribe({
+    this.isLoading = true;
+    this.incidentsService.reportIncident(incident).subscribe({
       next: () => {
+        this.isLoading = false;
         console.log(`next inside component`);
       },
       error: (err: string) => {
+        this.isLoading = false;
         console.log(`err inside component:`);
         console.log(err);
       },

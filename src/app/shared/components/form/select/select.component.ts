@@ -1,5 +1,5 @@
-
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 export interface Option {
   value: string;
@@ -8,7 +8,7 @@ export interface Option {
 
 @Component({
   selector: 'app-select',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './select.component.html',
 })
 export class SelectComponent implements OnInit {
@@ -17,6 +17,8 @@ export class SelectComponent implements OnInit {
   @Input() className: string = '';
   @Input() defaultValue: string = '';
   @Input() value: string = '';
+  @Input() reactiveFormGroup?: FormGroup;
+  @Input() reactiveFormControl?: FormControl;
 
   @Output() valueChange = new EventEmitter<string>();
 
