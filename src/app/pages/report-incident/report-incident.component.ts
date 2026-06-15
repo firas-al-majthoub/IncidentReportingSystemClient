@@ -8,7 +8,6 @@ import { SelectComponent } from '../../shared/components/form/select/select.comp
 import { DatePickerComponent } from '../../shared/components/form/date-picker/date-picker.component';
 import { RadioComponent } from '../../shared/components/form/input/radio.component';
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
-import { ButtonsComponent } from '../ui-elements/buttons/buttons.component';
 import { IncidentService } from '../../shared/services/incident.service';
 import { TextAreaComponent } from '../../shared/components/form/input/text-area.component';
 
@@ -24,7 +23,6 @@ import { TextAreaComponent } from '../../shared/components/form/input/text-area.
     DatePickerComponent,
     RadioComponent,
     ButtonComponent,
-    ButtonsComponent,
     TextAreaComponent,
   ],
   templateUrl: './report-incident.component.html',
