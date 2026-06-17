@@ -5,6 +5,7 @@ import { BackdropComponent } from '../backdrop/backdrop.component';
 import { RouterModule } from '@angular/router';
 import { AppHeaderComponent } from '../app-header/app-header.component';
 import { ToastsLayoutComponent } from '../app-toasts/app-toasts.component';
+import { LoadingSpinnerComponent } from '../app-loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-layout',
@@ -14,6 +15,7 @@ import { ToastsLayoutComponent } from '../app-toasts/app-toasts.component';
     AppHeaderComponent,
     BackdropComponent,
     ToastsLayoutComponent,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './app-layout.component.html',
 })

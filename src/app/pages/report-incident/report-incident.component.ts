@@ -65,25 +65,6 @@ export class ReportIncidentComponent {
     { value: '3', label: 'Low' },
   ];
 
-  isLoading = false;
-
-  incidentForm = new FormGroup({
-    description: new FormControl('', Validators.required),
-    department: new FormControl('', Validators.required),
-    lossType: new FormControl('', Validators.required),
-    cause: new FormControl('', Validators.required),
-    severity: new FormControl('', Validators.required),
-    discoverDate: new FormControl('', Validators.required),
-    incidentDate: new FormControl('', Validators.required),
-    expectedResolvingDate: new FormControl('', Validators.required),
-    financialImpactAmount: new FormControl('', Validators.required),
-    involvedEmployees: new FormControl('', Validators.required),
-    relatedProcedure: new FormControl('', Validators.required),
-    latestUpdates: new FormControl('', Validators.required),
-    correctiveAction: new FormControl('', Validators.required),
-    email: new FormControl('', [Validators.email]),
-  });
-
   description = '';
   selectedDepartment = '';
   selectedLossType = '';
@@ -102,6 +83,23 @@ export class ReportIncidentComponent {
   recoveryDate: any;
   phone = '';
   email = '';
+
+  incidentForm = new FormGroup({
+    description: new FormControl(this.description, Validators.required),
+    department: new FormControl(this.selectedDepartment, Validators.required),
+    lossType: new FormControl(this.selectedLossType, Validators.required),
+    cause: new FormControl(this.selectedCause, Validators.required),
+    severity: new FormControl(this.selectedSeverity, Validators.required),
+    discoverDate: new FormControl('', Validators.required),
+    incidentDate: new FormControl('', Validators.required),
+    expectedResolvingDate: new FormControl('', Validators.required),
+    financialImpactAmount: new FormControl(this.financialImpactAmount, Validators.required),
+    involvedEmployees: new FormControl(this.involvedEmployees, Validators.required),
+    relatedProcedure: new FormControl(this.relatedProcedure, Validators.required),
+    latestUpdates: new FormControl(this.latestUpdates, Validators.required),
+    correctiveAction: new FormControl(this.correctiveAction, Validators.required),
+    email: new FormControl(this.email, [Validators.email]),
+  });
 
   constructor(
     private incidentsService: IncidentsService,
@@ -165,6 +163,7 @@ export class ReportIncidentComponent {
   submitIncident() {
     if (!this.incidentForm.valid) {
       this.incidentForm.markAllAsTouched();
+      this.toastsService.showError('Please fill all required fields');
       return;
     }
 
@@ -178,9 +177,7 @@ export class ReportIncidentComponent {
       incidentDate: this.incidentDate.dateStr,
       expectedResolvingDate: this.expectedResolvingDate.dateStr,
       hasFinancialImpact: this.hasFinancialImpact,
-      financialImpactAmount: this.hasFinancialImpact
-        ? Number.parseFloat(this.financialImpactAmount)
-        : null,
+      financialImpactAmount: this.hasFinancialImpact ? Number.parseFloat(this.financialImpactAmount) : null,
       involvedEmployees: this.involvedEmployees,
       relatedProcedure: this.relatedProcedure,
       latestUpdates: this.latestUpdates,
@@ -191,15 +188,12 @@ export class ReportIncidentComponent {
       email: this.email,
     };
 
-    this.isLoading = true;
     this.incidentsService.reportIncident(incident).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.toastsService.showSuccess('Incident Submitted Successfully');
+        this.toastsService.showSuccess('Incident submitted successfully');
       },
       error: (err: string) => {
-        this.isLoading = false;
-        this.toastsService.showError('Error Occurred');
+        this.toastsService.showError('Error occurred');
       },
     });
   }

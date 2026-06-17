@@ -16,3 +16,18 @@ and form controls passed to their components)
 add animation for dismissing toasts
 
 remove console.log from all classes
+
+modify sendRequest method in http-requests.service.ts to use http.request instead of calling http.post and http.get separately
+code below implements the method correctly but for some reason the subscribers are getting called immediately:
+const req = new HttpRequest(method, url, body, headers ? { headers } : {});
+
+return this.http.request<any>(req).pipe(
+    map((event: HttpEvent<any>) => {
+    this.decrementOpenReqs();
+    return '';
+    }),
+    catchError((err: HttpErrorResponse) => {
+    this.decrementOpenReqs();
+    return throwError(() => err);
+    }),
+);
