@@ -16,6 +16,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { ToastsService } from '../../shared/services/toasts.service';
 
 @Component({
   selector: 'app-report-incident',
@@ -102,7 +103,10 @@ export class ReportIncidentComponent {
   phone = '';
   email = '';
 
-  constructor(private incidentsService: IncidentsService) {}
+  constructor(
+    private incidentsService: IncidentsService,
+    private toastsService: ToastsService,
+  ) {}
 
   departmentChanged(val: string) {
     this.selectedDepartment = val;
@@ -191,12 +195,11 @@ export class ReportIncidentComponent {
     this.incidentsService.reportIncident(incident).subscribe({
       next: () => {
         this.isLoading = false;
-        console.log(`next inside component`);
+        this.toastsService.showSuccess('Incident Submitted Successfully');
       },
       error: (err: string) => {
         this.isLoading = false;
-        console.log(`err inside component:`);
-        console.log(err);
+        this.toastsService.showError('Error Occurred');
       },
     });
   }

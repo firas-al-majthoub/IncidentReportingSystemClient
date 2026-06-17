@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ReportIncidentDto } from '../dto/incident/report-incident.dto';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

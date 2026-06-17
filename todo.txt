@@ -12,3 +12,7 @@ move apiBaseUrl inside incidents service to a json file
 
 research how to conditionally add directives (or just the opening html tag) to refactor form fields with validations (form group
 and form controls passed to their components)
+
+add animation for dismissing toasts
+
+remove console.log from all classes
