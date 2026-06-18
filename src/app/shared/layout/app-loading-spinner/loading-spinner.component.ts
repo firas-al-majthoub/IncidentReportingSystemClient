@@ -7,7 +7,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   imports: [],
   template: `@if (isVisible()) {
     <div
-      class="fixed inset-0 z-9999 flex items-center justify-center bg-white/70 dark:bg-boxdark/70"
+      class="fixed inset-0 z-999999 flex items-center justify-center bg-white/70 dark:bg-boxdark/70"
     >
       <div
         class="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"
