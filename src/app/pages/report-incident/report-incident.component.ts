@@ -4,7 +4,10 @@ import { RouterModule } from '@angular/router';
 import { InputFieldComponent } from '../../shared/components/form/input/input-field.component';
 import { ComponentCardComponent } from '../../shared/components/common/component-card/component-card.component';
 import { LabelComponent } from '../../shared/components/form/label/label.component';
-import { SelectComponent } from '../../shared/components/form/select/select.component';
+import {
+  SelectComponent,
+  Option,
+} from '../../shared/components/form/select/select.component';
 import { DatePickerComponent } from '../../shared/components/form/date-picker/date-picker.component';
 import { RadioComponent } from '../../shared/components/form/input/radio.component';
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
@@ -17,6 +20,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { ToastsService } from '../../shared/services/toasts.service';
+import {
+  DdlDataService,
+  DdlItem,
+} from '../../shared/services/ddl-data.service';
 
 @Component({
   selector: 'app-report-incident',
@@ -39,31 +46,10 @@ export class ReportIncidentComponent {
   REQUIRED_FILED_TXT = 'This field is required';
   INVALID_EMAIL_TXT = 'Please enter a valid email address';
 
-  departments = [
-    { value: '1', label: 'IT' },
-    { value: '2', label: 'Risk' },
-    { value: '3', label: 'HR' },
-  ];
-
-  lossTypes = [
-    { value: '1', label: 'Actual Loss' },
-    { value: '2', label: 'Near Miss' },
-    { value: '3', label: 'Potential' },
-    { value: '4', label: 'No Loss' },
-  ];
-
-  causes = [
-    { value: '1', label: 'External Event' },
-    { value: '2', label: 'Internal Process' },
-    { value: '3', label: 'Systems' },
-    { value: '4', label: 'Individuals or Employees' },
-  ];
-
-  severities = [
-    { value: '1', label: 'High' },
-    { value: '2', label: 'Medium' },
-    { value: '3', label: 'Low' },
-  ];
+  departments: Option[] = [];
+  lossTypes: Option[] = [];
+  causes: Option[] = [];
+  severities: Option[] = [];
 
   description = '';
   selectedDepartment = '';
@@ -102,9 +88,42 @@ export class ReportIncidentComponent {
   });
 
   constructor(
+    public ddlDataService: DdlDataService,
     private incidentsService: IncidentsService,
     private toastsService: ToastsService,
-  ) {}
+  ) {
+    this.ddlDataService.getDepartments().subscribe({
+      next: (deps: DdlItem[]) => {
+        this.departments = deps.map((d) => {
+          return { value: `${d.id}`, label: d.nameEn };
+        });
+      },
+    });
+
+    this.ddlDataService.getIncidentLossTypes().subscribe({
+      next: (deps: DdlItem[]) => {
+        this.lossTypes = deps.map((d) => {
+          return { value: `${d.id}`, label: d.nameEn };
+        });
+      },
+    });
+
+    this.ddlDataService.getIncidentCauses().subscribe({
+      next: (deps: DdlItem[]) => {
+        this.causes = deps.map((d) => {
+          return { value: `${d.id}`, label: d.nameEn };
+        });
+      },
+    });
+
+    this.ddlDataService.getIncidentSeverities().subscribe({
+      next: (deps: DdlItem[]) => {
+        this.severities = deps.map((d) => {
+          return { value: `${d.id}`, label: d.nameEn };
+        });
+      },
+    });
+  }
 
   departmentChanged(val: string) {
     this.selectedDepartment = val;
@@ -192,7 +211,7 @@ export class ReportIncidentComponent {
       next: () => {
         this.toastsService.showSuccess('Incident submitted successfully');
       },
-      error: (err: string) => {
+      error: () => {
         this.toastsService.showError('Error occurred');
       },
     });

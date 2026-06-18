@@ -4,7 +4,7 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -30,36 +30,39 @@ export class HttpRequestsService {
     });
   }
 
-  post(path: string, body: any): Observable<string> {
+  post<T>(path: string, body: any): Observable<T> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.sendRequest('POST', path, headers, body);
+    return this.sendRequest<T>('POST', path, headers, body);
   }
 
-  private sendRequest(
+  get<T>(path: string): Observable<T> {
+    return this.sendRequest<T>('GET', path);
+  }
+
+  private sendRequest<T>(
     method: 'GET' | 'POST',
     path: string,
     headers?: HttpHeaders,
     body?: any,
-  ): Observable<string> {
+  ): Observable<T> {
     this.incrementOpenReqs();
 
     const url = `${this.apiBaseUrl + path}`;
 
     if (method == 'POST')
-      return this.http.post<string>(url, body, { headers }).pipe(
-        map((response: string) => this.reqSuccess(response)),
+      return this.http.post<T>(url, body, { headers }).pipe(
+        tap(() => this.reqSuccess()),
         catchError((err: HttpErrorResponse) => this.reqFailure(err)),
       );
 
-    return this.http.get(url).pipe(
-      map(() => this.reqSuccess()),
+    return this.http.get<T>(url).pipe(
+      tap(() => this.reqSuccess()),
       catchError((err: HttpErrorResponse) => this.reqFailure(err)),
     );
   }
 
-  private reqSuccess(response?: string) {
+  private reqSuccess() {
     this.decrementOpenReqs();
-    return '';
   }
 
   private reqFailure(err: HttpErrorResponse) {
