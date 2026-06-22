@@ -1,0 +1,76 @@
+<app-component-card title="Incident Details">
+  <div class="space-y-8">
+    <div>
+      <app-label>Description</app-label>
+      {{ incident?.description }}
+    </div>
+    <div>
+      <app-label>Department</app-label>
+      {{ incident?.department!.nameEn }}
+    </div>
+    <div>
+      <app-label>Loss Type</app-label>
+      {{ incident?.lossType!.nameEn }}
+    </div>
+    <div>
+      <app-label>Cause</app-label>
+      {{ incident?.cause!.nameEn }}
+    </div>
+    <div>
+      <app-label>Severity</app-label>
+      {{ incident?.severity!.nameEn }}
+    </div>
+    <div>
+      <app-label>Discover Date</app-label>
+      {{ incident?.discoverDate }}
+    </div>
+    <div>
+      <app-label>Incident Date</app-label>
+      {{ incident?.incidentDate }}
+    </div>
+    <div>
+      <app-label>Expected Resolving Date</app-label>
+      {{ incident?.expectedResolvingDate }}
+    </div>
+    <div>
+      <app-label>Is there a Financial Impact?</app-label>
+      {{ incident ? (incident.hasFinancialImpact ? 'Yes' : 'No') : '' }}
+    </div>
+    <div>
+      <app-label>Financial Impact Amount</app-label>
+      {{ incident?.financialImpactAmount }}
+    </div>
+    <div>
+      <app-label>Involved Employees</app-label>
+      {{ incident?.involvedEmployees }}
+    </div>
+    <div>
+      <app-label>Related Procedure</app-label>
+      {{ incident?.relatedProcedure }}
+    </div>
+    <div>
+      <app-label>Latest Updates</app-label>
+      {{ incident?.latestUpdates }}
+    </div>
+    <div>
+      <app-label>Corrective Action</app-label>
+      {{ incident?.correctiveAction }}
+    </div>
+    <div>
+      <app-label>Recovery</app-label>
+      {{ incident?.recovery }}
+    </div>
+    <div>
+      <app-label>Recovery Date</app-label>
+      {{ incident?.recoveryDate }}
+    </div>
+    <div>
+      <app-label>Phone</app-label>
+      {{ incident?.phone }}
+    </div>
+    <div>
+      <app-label>Email</app-label>
+      {{ incident?.email }}
+    </div>
+  </div>
+</app-component-card>

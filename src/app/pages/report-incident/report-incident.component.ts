@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { InputFieldComponent } from '../../shared/components/form/input/input-field.component';
 import { ComponentCardComponent } from '../../shared/components/common/component-card/component-card.component';
 import { LabelComponent } from '../../shared/components/form/label/label.component';
@@ -28,8 +26,6 @@ import {
 @Component({
   selector: 'app-report-incident',
   imports: [
-    CommonModule,
-    RouterModule,
     InputFieldComponent,
     ComponentCardComponent,
     LabelComponent,

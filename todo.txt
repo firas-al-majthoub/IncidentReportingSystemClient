@@ -1,12 +1,6 @@
-add a success/failure alert when submitting a new incident
-
 move REQUIRED_FILED_TXT and INVALID_EMAIL_TXT inside report-incident component to a global class/service
 
 handle errors by status code inside incidents service
-
-add a global spinner that works with an http-request-service that counts the number of the requests being processed,
-as long as the number of the requests is not 0 the spinner stays on the screen, once it reaches 0 it should be dismissed.
-a spinner-service should be created to handle communication between http-request-service and app-layout
 
 move apiBaseUrl inside incidents service to a json file
 
@@ -20,7 +14,6 @@ remove console.log from all classes
 modify sendRequest method in http-requests.service.ts to use http.request instead of calling http.post and http.get separately
 code below implements the method correctly but for some reason the subscribers are getting called immediately:
 const req = new HttpRequest(method, url, body, headers ? { headers } : {});
-
 return this.http.request<any>(req).pipe(
     map((event: HttpEvent<any>) => {
     this.decrementOpenReqs();

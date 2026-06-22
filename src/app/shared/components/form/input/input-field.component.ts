@@ -71,7 +71,7 @@ export class InputFieldComponent {
   @Input() id?: string = '';
   @Input() name?: string = '';
   @Input() placeholder?: string = '';
-  @Input() value: string | number = '';
+  @Input() value?: string | number = '';
   @Input() min?: string;
   @Input() max?: string;
   @Input() step?: number;

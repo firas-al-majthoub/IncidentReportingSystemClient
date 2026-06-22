@@ -6,34 +6,57 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   selector: 'app-text-area',
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div class="relative" [formGroup]="reactiveFormGroup!">
-      <textarea
-        [formControl]="reactiveFormControl!"
-        [placeholder]="placeholder"
-        [rows]="rows"
-        [value]="value"
-        (input)="onInput($event)"
-        [disabled]="disabled"
-        [ngClass]="textareaClasses"
-      ></textarea>
-      @if (hint) {
-        <p
-          class="mt-2 text-sm"
-          [ngClass]="
-            error ? 'text-error-500' : 'text-gray-500 dark:text-gray-400'
-          "
-        >
-          {{ hint }}
-        </p>
-      }
-    </div>
+    @if (reactiveFormGroup) {
+      <div class="relative" [formGroup]="reactiveFormGroup!">
+        <textarea
+          [formControl]="reactiveFormControl!"
+          [placeholder]="placeholder"
+          [rows]="rows"
+          [value]="value"
+          (input)="onInput($event)"
+          [disabled]="disabled"
+          [ngClass]="textareaClasses"
+        ></textarea>
+        @if (hint) {
+          <p
+            class="mt-2 text-sm"
+            [ngClass]="
+              error ? 'text-error-500' : 'text-gray-500 dark:text-gray-400'
+            "
+          >
+            {{ hint }}
+          </p>
+        }
+      </div>
+    } @else {
+      <div class="relative">
+        <textarea
+          [placeholder]="placeholder"
+          [rows]="rows"
+          [value]="value"
+          (input)="onInput($event)"
+          [disabled]="disabled"
+          [ngClass]="textareaClasses"
+        ></textarea>
+        @if (hint) {
+          <p
+            class="mt-2 text-sm"
+            [ngClass]="
+              error ? 'text-error-500' : 'text-gray-500 dark:text-gray-400'
+            "
+          >
+            {{ hint }}
+          </p>
+        }
+      </div>
+    }
   `,
   styles: ``,
 })
 export class TextAreaComponent {
   @Input() placeholder = 'Enter your message';
   @Input() rows = 3;
-  @Input() value = '';
+  @Input() value? = '';
   @Input() className = '';
   @Input() disabled = false;
   @Input() error = false;
