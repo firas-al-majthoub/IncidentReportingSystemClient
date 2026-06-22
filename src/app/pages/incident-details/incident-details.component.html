@@ -2,75 +2,111 @@
   <div class="space-y-8">
     <div>
       <app-label>Description</app-label>
-      {{ incident?.description }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.description }}
+      </div>
     </div>
     <div>
       <app-label>Department</app-label>
-      {{ incident?.department!.nameEn }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.department!.nameEn }}
+      </div>
     </div>
     <div>
       <app-label>Loss Type</app-label>
-      {{ incident?.lossType!.nameEn }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.lossType!.nameEn }}
+      </div>
     </div>
     <div>
       <app-label>Cause</app-label>
-      {{ incident?.cause!.nameEn }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.cause!.nameEn }}
+      </div>
     </div>
     <div>
       <app-label>Severity</app-label>
-      {{ incident?.severity!.nameEn }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.severity!.nameEn }}
+      </div>
     </div>
     <div>
       <app-label>Discover Date</app-label>
-      {{ incident?.discoverDate }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.discoverDate }}
+      </div>
     </div>
     <div>
       <app-label>Incident Date</app-label>
-      {{ incident?.incidentDate }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.incidentDate }}
+      </div>
     </div>
     <div>
       <app-label>Expected Resolving Date</app-label>
-      {{ incident?.expectedResolvingDate }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.expectedResolvingDate }}
+      </div>
     </div>
     <div>
       <app-label>Is there a Financial Impact?</app-label>
-      {{ incident ? (incident.hasFinancialImpact ? 'Yes' : 'No') : '' }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident ? (incident.hasFinancialImpact ? 'Yes' : 'No') : '' }}
+      </div>
     </div>
     <div>
       <app-label>Financial Impact Amount</app-label>
-      {{ incident?.financialImpactAmount }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.financialImpactAmount }}
+      </div>
     </div>
     <div>
       <app-label>Involved Employees</app-label>
-      {{ incident?.involvedEmployees }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.involvedEmployees }}
+      </div>
     </div>
     <div>
       <app-label>Related Procedure</app-label>
-      {{ incident?.relatedProcedure }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.relatedProcedure }}
+      </div>
     </div>
     <div>
       <app-label>Latest Updates</app-label>
-      {{ incident?.latestUpdates }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.latestUpdates }}
+      </div>
     </div>
     <div>
       <app-label>Corrective Action</app-label>
-      {{ incident?.correctiveAction }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.correctiveAction }}
+      </div>
     </div>
     <div>
       <app-label>Recovery</app-label>
-      {{ incident?.recovery }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.recovery }}
+      </div>
     </div>
     <div>
       <app-label>Recovery Date</app-label>
-      {{ incident?.recoveryDate }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.recoveryDate }}
+      </div>
     </div>
     <div>
       <app-label>Phone</app-label>
-      {{ incident?.phone }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.phone }}
+      </div>
     </div>
     <div>
       <app-label>Email</app-label>
-      {{ incident?.email }}
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.email }}
+      </div>
     </div>
   </div>
 </app-component-card>
