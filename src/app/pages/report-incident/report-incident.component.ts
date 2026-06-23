@@ -22,6 +22,8 @@ import {
   DdlDataService,
   DdlItem,
 } from '../../shared/services/ddl-data.service';
+import { Router } from '@angular/router';
+import { ReportIncidentDto } from '../../shared/data/dto/report-incident.dto';
 
 @Component({
   selector: 'app-report-incident',
@@ -39,8 +41,8 @@ import {
   templateUrl: './report-incident.component.html',
 })
 export class ReportIncidentComponent {
-  REQUIRED_FILED_TXT = 'This field is required';
-  INVALID_EMAIL_TXT = 'Please enter a valid email address';
+  protected readonly REQUIRED_FILED_TXT = 'This field is required';
+  protected readonly INVALID_EMAIL_TXT = 'Please enter a valid email address';
 
   departments: Option[] = [];
   lossTypes: Option[] = [];
@@ -75,11 +77,23 @@ export class ReportIncidentComponent {
     discoverDate: new FormControl('', Validators.required),
     incidentDate: new FormControl('', Validators.required),
     expectedResolvingDate: new FormControl('', Validators.required),
-    financialImpactAmount: new FormControl(this.financialImpactAmount, Validators.required),
-    involvedEmployees: new FormControl(this.involvedEmployees, Validators.required),
-    relatedProcedure: new FormControl(this.relatedProcedure, Validators.required),
+    financialImpactAmount: new FormControl(
+      this.financialImpactAmount,
+      Validators.required,
+    ),
+    involvedEmployees: new FormControl(
+      this.involvedEmployees,
+      Validators.required,
+    ),
+    relatedProcedure: new FormControl(
+      this.relatedProcedure,
+      Validators.required,
+    ),
     latestUpdates: new FormControl(this.latestUpdates, Validators.required),
-    correctiveAction: new FormControl(this.correctiveAction, Validators.required),
+    correctiveAction: new FormControl(
+      this.correctiveAction,
+      Validators.required,
+    ),
     email: new FormControl(this.email, [Validators.email]),
   });
 
@@ -87,12 +101,16 @@ export class ReportIncidentComponent {
     public ddlDataService: DdlDataService,
     private incidentsService: IncidentsService,
     private toastsService: ToastsService,
+    private router: Router,
   ) {
     this.ddlDataService.getDepartments().subscribe({
       next: (deps: DdlItem[]) => {
         this.departments = deps.map((d) => {
           return { value: `${d.id}`, label: d.nameEn };
         });
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
       },
     });
 
@@ -102,6 +120,9 @@ export class ReportIncidentComponent {
           return { value: `${d.id}`, label: d.nameEn };
         });
       },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
     });
 
     this.ddlDataService.getIncidentCauses().subscribe({
@@ -110,6 +131,9 @@ export class ReportIncidentComponent {
           return { value: `${d.id}`, label: d.nameEn };
         });
       },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
     });
 
     this.ddlDataService.getIncidentSeverities().subscribe({
@@ -117,6 +141,9 @@ export class ReportIncidentComponent {
         this.severities = deps.map((d) => {
           return { value: `${d.id}`, label: d.nameEn };
         });
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
       },
     });
   }
@@ -182,7 +209,7 @@ export class ReportIncidentComponent {
       return;
     }
 
-    const incident = {
+    const dto: ReportIncidentDto = {
       description: this.description,
       departmentId: Number.parseInt(this.selectedDepartment),
       lossTypeId: Number.parseInt(this.selectedLossType),
@@ -192,7 +219,9 @@ export class ReportIncidentComponent {
       incidentDate: this.incidentDate.dateStr,
       expectedResolvingDate: this.expectedResolvingDate.dateStr,
       hasFinancialImpact: this.hasFinancialImpact,
-      financialImpactAmount: this.hasFinancialImpact ? Number.parseFloat(this.financialImpactAmount) : null,
+      financialImpactAmount: this.hasFinancialImpact
+        ? Number.parseFloat(this.financialImpactAmount)
+        : null,
       involvedEmployees: this.involvedEmployees,
       relatedProcedure: this.relatedProcedure,
       latestUpdates: this.latestUpdates,
@@ -203,9 +232,10 @@ export class ReportIncidentComponent {
       email: this.email,
     };
 
-    this.incidentsService.reportIncident(incident).subscribe({
+    this.incidentsService.reportIncident(dto).subscribe({
       next: () => {
         this.toastsService.showSuccess('Incident submitted successfully');
+        this.router.navigate(['']);
       },
       error: () => {
         this.toastsService.showError('Error occurred');

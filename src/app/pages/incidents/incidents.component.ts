@@ -15,6 +15,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './incidents.component.html',
 })
 export class IncidentsComponent {
+  protected readonly IncidentStatusEnum = IncidentStatusEnum;
   protected readonly SearchIncidentsOrderByEnum = SearchIncidentsOrderByEnum;
   protected readonly Number = Number;
 

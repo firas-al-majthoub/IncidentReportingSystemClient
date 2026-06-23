@@ -5,108 +5,140 @@
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.description }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Department</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.department!.nameEn }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Loss Type</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.lossType!.nameEn }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Cause</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.cause!.nameEn }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Severity</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.severity!.nameEn }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Discover Date</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.discoverDate }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Incident Date</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.incidentDate }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Expected Resolving Date</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.expectedResolvingDate }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Is there a Financial Impact?</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident ? (incident.hasFinancialImpact ? 'Yes' : 'No') : '' }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Financial Impact Amount</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.financialImpactAmount }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Involved Employees</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.involvedEmployees }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Related Procedure</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.relatedProcedure }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Latest Updates</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.latestUpdates }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Corrective Action</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.correctiveAction }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Recovery</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.recovery }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Recovery Date</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.recoveryDate }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Phone</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.phone }}
       </div>
+      <app-divider />
     </div>
     <div>
       <app-label>Email</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.email }}
       </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Resolution Notes</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.resolutionNotes }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Closure Date</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.closureDate }}
+      </div>
+      <app-divider />
     </div>
   </div>
 </app-component-card>

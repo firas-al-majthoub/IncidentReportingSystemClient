@@ -1,3 +1,9 @@
+add guards for incidents list, edit, and view pages
+
+hide the edit button inside incidents list if the user is not a Manager
+
+add navigation buttons on the header
+
 move REQUIRED_FILED_TXT and INVALID_EMAIL_TXT inside report-incident component to a global class/service
 
 handle errors by status code inside incidents service

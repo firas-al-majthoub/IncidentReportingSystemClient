@@ -2,10 +2,10 @@ import { Routes } from '@angular/router';
 import { NotFoundComponent } from './pages/other-page/not-found/not-found.component';
 import { AppLayoutComponent } from './shared/layout/app-layout/app-layout.component';
 import { SignInComponent } from './pages/auth-pages/sign-in/sign-in.component';
-import { SignUpComponent } from './pages/auth-pages/sign-up/sign-up.component';
 import { ReportIncidentComponent } from './pages/report-incident/report-incident.component';
 import { IncidentsComponent } from './pages/incidents/incidents.component';
 import { IncidentDetailsComponent } from './pages/incident-details/incident-details.component';
+import { EditIncidentComponent } from './pages/edit-incident/edit-incident.component';
 
 export const routes: Routes = [
   {
@@ -29,6 +29,12 @@ export const routes: Routes = [
         component: IncidentDetailsComponent,
         pathMatch: 'full',
         title: 'Incident Details - IRMS',
+      },
+      {
+        path: 'incidents/:id/edit',
+        component: EditIncidentComponent,
+        pathMatch: 'full',
+        title: 'Edit Incident - IRMS',
       },
     ],
   },

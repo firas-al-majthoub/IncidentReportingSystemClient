@@ -5,7 +5,7 @@ import { Toast, ToastsService } from '../../services/toasts.service';
 @Component({
   selector: 'app-toasts',
   imports: [AlertComponent],
-  template: `<div class="fixed top-24 right-4 z-50 space-y-2 justify-items-end">
+  template: `<div class="fixed top-24 right-4 z-999999 space-y-2 justify-items-end">
     @for (toast of toasts; track toast.id) {
       <div>
         <app-alert

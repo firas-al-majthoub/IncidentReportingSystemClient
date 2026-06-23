@@ -28,4 +28,6 @@ export interface Incident {
   reportingDate: string;
   status: IncidentStatus;
   reportedBy: User;
+  resolutionNotes: string | null;
+  closureDate: string | null;
 }

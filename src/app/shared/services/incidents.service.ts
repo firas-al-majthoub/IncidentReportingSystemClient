@@ -5,6 +5,8 @@ import { HttpRequestsService } from './http-requests.service';
 import { AllIncidentsDto } from '../data/dto/all-incidents.dto';
 import { SearchIncidentsOrderByEnum } from '../data/enum/search-incidents-order-by.enum';
 import { Incident } from '../data/model/incident';
+import { CloseIncidentDto } from '../data/dto/close-incident.dto';
+import { ReturnIncidentDto } from '../data/dto/return-incident.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +14,9 @@ import { Incident } from '../data/model/incident';
 export class IncidentsService {
   constructor(private httpRequestsService: HttpRequestsService) {}
 
-  reportIncident(incident: ReportIncidentDto): Observable<void> {
+  reportIncident(dto: ReportIncidentDto): Observable<void> {
     const apiPath = `/incidents`;
-    return this.httpRequestsService.post(apiPath, incident).pipe(map(() => {}));
+    return this.httpRequestsService.post(apiPath, dto).pipe(map(() => {}));
   }
 
   getIncidents(
@@ -37,5 +39,15 @@ export class IncidentsService {
   getIncidentDetails(id: number): Observable<Incident> {
     const apiPath = `/incidents/${id}`;
     return this.httpRequestsService.get(apiPath);
+  }
+
+  closeIncident(dto: CloseIncidentDto): Observable<void> {
+    const apiPath = `/incidents/close`;
+    return this.httpRequestsService.post(apiPath, dto).pipe(map(() => {}));
+  }
+
+  returnIncident(dto: ReturnIncidentDto): Observable<void> {
+    const apiPath = `/incidents/return`;
+    return this.httpRequestsService.post(apiPath, dto).pipe(map(() => {}));
   }
 }
