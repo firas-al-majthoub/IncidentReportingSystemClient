@@ -1,21 +1,23 @@
-add guards for incidents list, edit, and view pages
+add the ability for users to add attachments when reporting an incident
 
-hide the edit button inside incidents list if the user is not a Manager
+add navigation buttons on the header with conditional view/hide logic
 
-add navigation buttons on the header
+add search fields inside incidents list page
+
+add the ability for managers and viewers to print a report of the incidents list page
 
 move REQUIRED_FILED_TXT and INVALID_EMAIL_TXT inside report-incident component to a global class/service
 
 handle errors by status code inside incidents service
 
-move apiBaseUrl inside incidents service to a json file
+move apiBaseUrl inside http and auth services to a json file
 
 research how to conditionally add directives (or just the opening html tag) to refactor form fields with validations (form group
 and form controls passed to their components)
 
-add animation for dismissing toasts
-
 remove console.log from all classes
+
+add animation for dismissing toasts
 
 modify sendRequest method in http-requests.service.ts to use http.request instead of calling http.post and http.get separately
 code below implements the method correctly but for some reason the subscribers are getting called immediately:

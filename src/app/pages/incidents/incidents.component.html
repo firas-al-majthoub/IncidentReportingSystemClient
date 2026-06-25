@@ -478,7 +478,10 @@
                     />
                   </svg>
                 </button>
-                @if (incident.status.id != IncidentStatusEnum.Closed) {
+                @if (
+                  incident.status.id != IncidentStatusEnum.Closed &&
+                  isManagerUser()
+                ) {
                   <button
                     class="text-theme-xs text-gray-700 dark:text-gray-400"
                     [routerLink]="[`/incidents/${incident.id}/edit`]"

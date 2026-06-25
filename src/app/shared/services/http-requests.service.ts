@@ -5,6 +5,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,10 @@ export class HttpRequestsService {
   private openReqsCount$: Observable<number> =
     this.openReqsCountSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+  ) {
     this.openReqsCount$.subscribe({
       next: (count: number) => {
         this.isProcessingSubject.next(count != 0);
@@ -48,6 +52,11 @@ export class HttpRequestsService {
     this.incrementOpenReqs();
 
     const url = `${this.apiBaseUrl + path}`;
+    const token = this.authService.authToken;
+    headers = (headers ?? new HttpHeaders()).append(
+      'Authorization',
+      `Bearer ${token}`,
+    );
 
     if (method == 'POST')
       return this.http.post<T>(url, body, { headers }).pipe(
@@ -55,7 +64,7 @@ export class HttpRequestsService {
         catchError((err: HttpErrorResponse) => this.reqFailure(err)),
       );
 
-    return this.http.get<T>(url).pipe(
+    return this.http.get<T>(url, { headers }).pipe(
       tap(() => this.reqSuccess()),
       catchError((err: HttpErrorResponse) => this.reqFailure(err)),
     );

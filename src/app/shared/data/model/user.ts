@@ -5,4 +5,5 @@ export interface User {
   firstNameAr: string | null;
   lastNameAr: string | null;
   email: string;
+  roleId: number;
 }

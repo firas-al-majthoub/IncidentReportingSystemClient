@@ -1,39 +1,47 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastsService {
-  private newToastSubject = new ReplaySubject<Toast>(1);
-  newToast$: Observable<Toast> = this.newToastSubject.asObservable();
+  private readonly TOAST_DISPLAY_TIME = 3000;
+
+  private toasts: Toast[] = [];
+  private toastsSubject = new BehaviorSubject<Toast[]>([]);
+  toasts$: Observable<Toast[]> = this.toastsSubject.asObservable();
 
   showSuccess(title: string, message = '') {
-    const toastId = 'placeholder';
-    const toast = new Toast(toastId, 'success', title, message);
-    this.newToastSubject.next(toast);
+    const toast = new Toast('success', title, message);
+    this.showToast(toast);
   }
 
   showError(title: string, message = '') {
-    const toastId = 'placeholder';
-    const toast = new Toast(toastId, 'error', title, message);
-    this.newToastSubject.next(toast);
+    const toast = new Toast('error', title, message);
+    this.showToast(toast);
+  }
+
+  private showToast(toast: Toast) {
+    this.toasts.push(toast);
+    this.toastsSubject.next(this.toasts);
+
+    setTimeout(() => {
+      this.toasts = this.toasts.filter((t) => t != toast);
+      this.toastsSubject.next(this.toasts);
+    }, this.TOAST_DISPLAY_TIME);
   }
 }
 
 export class Toast {
-  id: string;
-  variant: 'success' | 'error' | 'warning' | 'info' = 'info';
+  variant: 'success' | 'error' | 'warning' | 'info';
   title: string;
   message = '';
 
   constructor(
-    id: string,
-    variant: 'success' | 'error' | 'warning' | 'info' = 'info',
+    variant: 'success' | 'error' | 'warning' | 'info',
     title: string,
     message = '',
   ) {
-    this.id = id;
     this.variant = variant;
     this.title = title;
     this.message = message;

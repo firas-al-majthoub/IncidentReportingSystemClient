@@ -8,6 +8,7 @@ import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum'
 import { AllIncidentsDto } from '../../shared/data/dto/all-incidents.dto';
 import { SearchIncidentsOrderByEnum } from '../../shared/data/enum/search-incidents-order-by.enum';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-incidents',
@@ -28,7 +29,10 @@ export class IncidentsComponent {
   orderingAsc = true;
   navigationPages: number[] = [];
 
-  constructor(private incidentsService: IncidentsService) {
+  constructor(
+    private incidentsService: IncidentsService,
+    private authService: AuthService,
+  ) {
     this.getIncidents();
   }
 
@@ -97,6 +101,10 @@ export class IncidentsComponent {
     this.itemsPerPage = (event.target as HTMLSelectElement).value;
     this.currentPage = 1;
     this.getIncidents();
+  }
+
+  isManagerUser() {
+    return this.authService.isManagerUser();
   }
 
   getBadgeColor(status: IncidentStatus): 'success' | 'warning' | 'error' {

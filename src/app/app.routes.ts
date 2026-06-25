@@ -1,20 +1,26 @@
 import { Routes } from '@angular/router';
-import { NotFoundComponent } from './pages/other-page/not-found/not-found.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AppLayoutComponent } from './shared/layout/app-layout/app-layout.component';
 import { SignInComponent } from './pages/auth-pages/sign-in/sign-in.component';
 import { ReportIncidentComponent } from './pages/report-incident/report-incident.component';
 import { IncidentsComponent } from './pages/incidents/incidents.component';
 import { IncidentDetailsComponent } from './pages/incident-details/incident-details.component';
 import { EditIncidentComponent } from './pages/edit-incident/edit-incident.component';
+import { AuthGuard } from './shared/guards/auth.guard';
+import { ViewerOrManagerGuard } from './shared/guards/viewer-or-manager.guard';
+import { ManagerGuard } from './shared/guards/manager.guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: AppLayoutComponent,
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
       {
         path: 'incidents',
         component: IncidentsComponent,
+        canActivate: [ViewerOrManagerGuard],
         pathMatch: 'full',
         title: 'Incidents - IRMS',
       },
@@ -27,12 +33,14 @@ export const routes: Routes = [
       {
         path: 'incidents/:id',
         component: IncidentDetailsComponent,
+        canActivate: [ViewerOrManagerGuard],
         pathMatch: 'full',
         title: 'Incident Details - IRMS',
       },
       {
         path: 'incidents/:id/edit',
         component: EditIncidentComponent,
+        canActivate: [ManagerGuard],
         pathMatch: 'full',
         title: 'Edit Incident - IRMS',
       },
@@ -42,7 +50,7 @@ export const routes: Routes = [
   {
     path: 'signin',
     component: SignInComponent,
-    title: 'Angular Sign In Dashboard - IRMS',
+    title: 'Sign In - IRMS',
   },
   // error pages
   {
