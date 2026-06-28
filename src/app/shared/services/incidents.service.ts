@@ -7,6 +7,7 @@ import { SearchIncidentsOrderByEnum } from '../data/enum/search-incidents-order-
 import { Incident } from '../data/model/incident';
 import { CloseIncidentDto } from '../data/dto/close-incident.dto';
 import { ReturnIncidentDto } from '../data/dto/return-incident.dto';
+import { UpdateIncidentDto } from '../data/dto/update-incident.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -49,5 +50,10 @@ export class IncidentsService {
   returnIncident(dto: ReturnIncidentDto): Observable<void> {
     const apiPath = `/incidents/return`;
     return this.httpRequestsService.post(apiPath, dto).pipe(map(() => {}));
+  }
+
+  updateIncident(dto: UpdateIncidentDto): Observable<void>{
+    const apiPath = `/incidents`;
+    return this.httpRequestsService.patch(apiPath, dto).pipe(map(() => {}));
   }
 }

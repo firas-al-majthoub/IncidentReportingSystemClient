@@ -29,6 +29,7 @@ import { ToastsService } from '../../shared/services/toasts.service';
 import { CloseIncidentDto } from '../../shared/data/dto/close-incident.dto';
 import { ReturnIncidentDto } from '../../shared/data/dto/return-incident.dto';
 import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-edit-incident',
@@ -57,6 +58,7 @@ export class EditIncidentComponent {
 
   protected isCloseModalOpen = false;
   protected isReturnModalOpen = false;
+  protected isUpdateModalOpen = false;
 
   protected departments: Option[] = [];
   protected lossTypes: Option[] = [];
@@ -122,6 +124,7 @@ export class EditIncidentComponent {
     private incidentsService: IncidentsService,
     private toastsService: ToastsService,
     private router: Router,
+    private authService: AuthService,
   ) {
     this.ddlDataService.getDepartments().subscribe({
       next: (deps: DdlItem[]) => {
@@ -285,6 +288,39 @@ export class EditIncidentComponent {
     }
   }
 
+  protected isUserIncidentReporter() {
+    return (
+      this.incident != null &&
+      this.authService.currentUser() != null &&
+      this.authService.currentUser()!.id == this.incident?.reportedBy.id
+    );
+  }
+
+  protected isReturnedIncident(): boolean {
+    return (
+      this.incident != null &&
+      this.incident.status.id == IncidentStatusEnum.Returned
+    );
+  }
+
+  protected isUnderReviewIncident(): boolean {
+    return (
+      this.incident != null &&
+      this.incident.status.id == IncidentStatusEnum.UnderReview
+    );
+  }
+
+  protected isClosedIncident(): boolean {
+    return (
+      this.incident != null &&
+      this.incident.status.id == IncidentStatusEnum.Closed
+    );
+  }
+
+  protected isManagerUser(): boolean {
+    return this.authService.isManagerUser();
+  }
+
   protected openIncidentCloseModal() {
     this.isCloseModalOpen = true;
   }
@@ -299,6 +335,14 @@ export class EditIncidentComponent {
 
   protected closeIncidentReturnModal() {
     this.isReturnModalOpen = false;
+  }
+
+  protected openIncidentUpdateModal() {
+    this.isUpdateModalOpen = true;
+  }
+
+  protected closeIncidentUpdateModal() {
+    this.isUpdateModalOpen = false;
   }
 
   protected closeIncident() {
@@ -382,6 +426,49 @@ export class EditIncidentComponent {
       next: () => {
         this.toastsService.showSuccess('Incident returned successfully');
         this.router.navigate(['/incidents']);
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
+    });
+  }
+
+  protected updateIncident() {
+    if (!this.incidentForm.valid) {
+      this.incidentForm.markAllAsTouched();
+      this.toastsService.showError('Please fill all required fields');
+      return;
+    }
+
+    const dto: ReturnIncidentDto = {
+      id: this.incident!.id,
+      description: this.description,
+      departmentId: Number.parseInt(this.selectedDepartment),
+      lossTypeId: Number.parseInt(this.selectedLossType),
+      causeId: Number.parseInt(this.selectedCause),
+      severityId: Number.parseInt(this.selectedSeverity),
+      discoverDate: this.discoverDate.dateStr,
+      incidentDate: this.incidentDate.dateStr,
+      expectedResolvingDate: this.expectedResolvingDate.dateStr,
+      hasFinancialImpact: this.hasFinancialImpact,
+      financialImpactAmount: this.hasFinancialImpact
+        ? Number.parseFloat(this.financialImpactAmount)
+        : null,
+      involvedEmployees: this.involvedEmployees,
+      relatedProcedure: this.relatedProcedure,
+      latestUpdates: this.latestUpdates,
+      correctiveAction: this.correctiveAction,
+      recovery: this.recovery,
+      recoveryDate: this.recoveryDate ? this.recoveryDate.dateStr : null,
+      phone: this.phone,
+      email: this.email,
+    };
+
+    this.closeIncidentUpdateModal();
+    this.incidentsService.updateIncident(dto).subscribe({
+      next: () => {
+        this.toastsService.showSuccess('Incident updated successfully');
+        this.router.navigate(['']);
       },
       error: () => {
         this.toastsService.showError('Error occurred');

@@ -355,14 +355,14 @@
             </th>
             <th>
               <div
-                class="ml-4 py-3 text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
+                class="ml-4 py-3 text-nowrap text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
               >
                 Has Financial Impact?
               </div>
             </th>
             <th>
               <div
-                class="ml-4 py-3 text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
+                class="ml-4 py-3 text-nowrap text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
               >
                 Financial Impact Amount
               </div>
@@ -388,22 +388,22 @@
           @for (incident of incidents; track $index) {
             <tr>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{ incident.reportingDate }}
               </td>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{ incident.description }}
               </td>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{ incident.department.nameEn }}
               </td>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{ incident.lossType.nameEn }}
               </td>
@@ -413,32 +413,32 @@
                 {{ incident.cause.nameEn }}
               </td>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{ incident.severity.nameEn }}
               </td>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{ incident.discoverDate }}
               </td>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{ incident.incidentDate }}
               </td>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{ incident.hasFinancialImpact ? 'Yes' : 'No' }}
               </td>
               <td
-                class="px-4 py-3 text-error-500 text-start text-theme-sm dark:text-error-400"
+                class="px-4 py-3 text-nowrap text-error-500 text-start text-theme-sm dark:text-error-400"
               >
                 {{ incident.financialImpactAmount }}
               </td>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 <div class="items-center justify-center">
                   <app-badge size="sm" [color]="getBadgeColor(incident.status)">
@@ -447,13 +447,13 @@
                 </div>
               </td>
               <td
-                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{
                   `${incident.reportedBy.firstNameEn} ${incident.reportedBy.lastNameEn}`
                 }}
               </td>
-              <td class="pr-2 py-3 space-x-2">
+              <td class="pr-2 py-3 space-x-2 flex">
                 <button
                   class="text-theme-xs text-gray-700 dark:text-gray-400"
                   [routerLink]="[`/incidents/${incident.id}`]"

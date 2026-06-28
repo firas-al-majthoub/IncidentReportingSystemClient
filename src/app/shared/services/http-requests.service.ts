@@ -6,7 +6,7 @@ import {
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
-import config  from '../../config.json';
+import config from '../../config.json';
 
 @Injectable({
   providedIn: 'root',
@@ -35,17 +35,22 @@ export class HttpRequestsService {
     });
   }
 
+  get<T>(path: string): Observable<T> {
+    return this.sendRequest<T>('GET', path);
+  }
+
   post<T>(path: string, body: any): Observable<T> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.sendRequest<T>('POST', path, headers, body);
   }
 
-  get<T>(path: string): Observable<T> {
-    return this.sendRequest<T>('GET', path);
+  patch<T>(path: string, body: any): Observable<T> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.sendRequest<T>('PATCH', path, headers, body);
   }
 
   private sendRequest<T>(
-    method: 'GET' | 'POST',
+    method: 'GET' | 'POST' | 'PATCH',
     path: string,
     headers?: HttpHeaders,
     body?: any,
@@ -61,6 +66,12 @@ export class HttpRequestsService {
 
     if (method == 'POST')
       return this.http.post<T>(url, body, { headers }).pipe(
+        tap(() => this.reqSuccess()),
+        catchError((err: HttpErrorResponse) => this.reqFailure(err)),
+      );
+
+    if (method == 'PATCH')
+      return this.http.patch<T>(url, body, { headers }).pipe(
         tap(() => this.reqSuccess()),
         catchError((err: HttpErrorResponse) => this.reqFailure(err)),
       );

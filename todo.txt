@@ -1,14 +1,14 @@
-add a page for returned incidents
+create a page that displays a list of logged-in-user's returned insidents and add a header link for it
 
 add search fields inside incidents list page
 
 add the ability for managers and viewers to print a report of the incidents list page
 
+add logic inside http-service to check for auth-token expiration
+
 add the ability for users to add attachments when reporting an incident
 
 move REQUIRED_FILED_TXT and INVALID_EMAIL_TXT inside report-incident component to a global class/service
-
-move apiBaseUrl inside http and auth services to a json file
 
 handle errors by status code inside incidents service
 

@@ -8,7 +8,6 @@ import { IncidentDetailsComponent } from './pages/incident-details/incident-deta
 import { EditIncidentComponent } from './pages/edit-incident/edit-incident.component';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { ViewerOrManagerGuard } from './shared/guards/viewer-or-manager.guard';
-import { ManagerGuard } from './shared/guards/manager.guard';
 import { HasRoleGuard } from './shared/guards/has-role.guard';
 
 export const routes: Routes = [
@@ -42,7 +41,7 @@ export const routes: Routes = [
       {
         path: 'incidents/:id/edit',
         component: EditIncidentComponent,
-        canActivate: [ManagerGuard],
+        canActivate: [HasRoleGuard],
         pathMatch: 'full',
         title: 'Edit Incident - IRMS',
       },
