@@ -4,31 +4,48 @@
   <div
     class="flex flex-col items-center justify-between grow xl:flex-row xl:px-6"
   >
-    <div>
-      <a
-        routerLink="/"
-        class="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 xl:justify-normal xl:border-b-0 xl:px-0 lg:py-4"
-      >
-        <img
-          width="40"
-          height="40"
-          class="dark:hidden"
-          src="/images/logo/al-rajhi-bank-logo.svg"
-          alt="Logo"
-        />
-        <img
-          width="40"
-          height="40"
-          class="hidden dark:block"
-          src="/images/logo/al-rajhi-bank-logo-dark.svg"
-          alt="Logo"
-        />
-        <h1
-          class="font-semibold text-gray-800 text-title-md dark:text-white/90"
-        >
-          IRMS
-        </h1>
+    <div class="flex w-full items-center space-x-6">
+      <a routerLink="/">
+        <div class="flex gap-2">
+          <img
+            width="40"
+            height="40"
+            class="dark:hidden"
+            src="/images/logo/al-rajhi-bank-logo.svg"
+            alt="Logo"
+          />
+          <img
+            width="40"
+            height="40"
+            class="hidden dark:block"
+            src="/images/logo/al-rajhi-bank-logo-dark.svg"
+            alt="Logo"
+          />
+          <h1
+            class="font-semibold text-gray-800 text-title-md dark:text-white/90"
+          >
+            IRMS
+          </h1>
+        </div>
       </a>
+      <div class="space-x-4">
+        @if (userHasRole()) {
+          <a
+            routerLink="/incidents/report"
+            class="text-sm font-normal text-gray-500 underline dark:text-gray-400"
+          >
+            Report an Incident
+          </a>
+          @if (isViewerOrManagerUser()) {
+            <a
+              routerLink="/incidents"
+              class="text-sm font-normal text-gray-500 underline dark:text-gray-400"
+            >
+              View all Incidents
+            </a>
+          }
+        }
+      </div>
     </div>
     <div
       class="items-center justify-between w-full gap-4 px-5 py-4 xl:flex shadow-theme-md xl:justify-end xl:px-0 xl:shadow-none"

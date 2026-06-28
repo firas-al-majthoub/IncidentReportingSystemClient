@@ -1,16 +1,16 @@
-add the ability for users to add attachments when reporting an incident
-
-add navigation buttons on the header with conditional view/hide logic
+add a page for returned incidents
 
 add search fields inside incidents list page
 
 add the ability for managers and viewers to print a report of the incidents list page
 
+add the ability for users to add attachments when reporting an incident
+
 move REQUIRED_FILED_TXT and INVALID_EMAIL_TXT inside report-incident component to a global class/service
 
-handle errors by status code inside incidents service
-
 move apiBaseUrl inside http and auth services to a json file
+
+handle errors by status code inside incidents service
 
 research how to conditionally add directives (or just the opening html tag) to refactor form fields with validations (form group
 and form controls passed to their components)

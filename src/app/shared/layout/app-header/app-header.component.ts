@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeToggleButtonComponent } from '../../components/common/theme-toggle/theme-toggle-button.component';
 import { UserDropdownComponent } from '../../components/header/user-dropdown/user-dropdown.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -21,7 +22,10 @@ export class AppHeaderComponent {
 
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
-  constructor(public sidebarService: SidebarService) {
+  constructor(
+    public sidebarService: SidebarService,
+    private authService: AuthService,
+  ) {
     this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
   }
 
@@ -51,4 +55,12 @@ export class AppHeaderComponent {
       this.searchInput?.nativeElement.focus();
     }
   };
+
+  protected userHasRole() {
+    return this.authService.userHasRole();
+  }
+
+  protected isViewerOrManagerUser() {
+    return this.authService.isViewerOrManagerUser();
+  }
 }

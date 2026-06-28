@@ -58,6 +58,10 @@ export class AuthService {
     }
   }
 
+  userHasRole() {
+    return this.isAuthenticated() && this.currentUserSignal()!.roleId != null;
+  }
+
   isManagerUser(): boolean {
     return (
       this.isAuthenticated() &&
