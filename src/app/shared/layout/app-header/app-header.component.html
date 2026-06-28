@@ -36,6 +36,12 @@
           >
             Report an Incident
           </a>
+          <a
+            routerLink="/incidents/my-returned-incidents"
+            class="text-sm font-normal text-gray-500 underline dark:text-gray-400"
+          >
+            My Returned Incidents
+          </a>
           @if (isViewerOrManagerUser()) {
             <a
               routerLink="/incidents"

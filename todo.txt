@@ -1,5 +1,3 @@
-create a page that displays a list of logged-in-user's returned insidents and add a header link for it
-
 add search fields inside incidents list page
 
 add the ability for managers and viewers to print a report of the incidents list page

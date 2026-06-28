@@ -52,8 +52,13 @@ export class IncidentsService {
     return this.httpRequestsService.post(apiPath, dto).pipe(map(() => {}));
   }
 
-  updateIncident(dto: UpdateIncidentDto): Observable<void>{
+  updateIncident(dto: UpdateIncidentDto): Observable<void> {
     const apiPath = `/incidents`;
     return this.httpRequestsService.patch(apiPath, dto).pipe(map(() => {}));
+  }
+
+  getMyReturnedIncidents() {
+    const apiPath = `/incidents/my-returned-incidents`;
+    return this.httpRequestsService.get<Incident[]>(apiPath);
   }
 }
