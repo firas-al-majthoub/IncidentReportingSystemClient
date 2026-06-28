@@ -4,6 +4,7 @@ import { User } from '../data/model/user';
 import { UserRolesEnum } from '../data/enum/user-roles.enum';
 import { LoginResponseDto } from '../data/dto/login-response.dto';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import config  from '../../config.json';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class AuthService {
   private readonly AUTH_USER_KEY = 'AUTH_USER';
   private readonly AUTH_TOKEN_KEY = 'AUTH_TOKEN';
 
-  private readonly apiBaseUrl = 'https://localhost:7090';
+  private readonly apiBaseUrl = config.ApiBaseUrl;
   private currentUserSignal = signal<User | null>(this.getUserFromStorage());
 
   readonly currentUser = this.currentUserSignal.asReadonly();

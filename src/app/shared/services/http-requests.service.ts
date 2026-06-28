@@ -6,12 +6,13 @@ import {
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
+import config  from '../../config.json';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HttpRequestsService {
-  private apiBaseUrl = 'https://localhost:7090';
+  private apiBaseUrl = config.ApiBaseUrl;
   private openReqsCount = 0;
 
   private isProcessingSubject = new BehaviorSubject<boolean>(false);
