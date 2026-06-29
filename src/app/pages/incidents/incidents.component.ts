@@ -22,6 +22,7 @@ import {
 import { ToastsService } from '../../shared/services/toasts.service';
 import { DatePickerComponent } from '../../shared/components/form/date-picker/date-picker.component';
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
+import { GeneratePdfFileDto } from '../../shared/data/dto/generatePdfFile.dto';
 
 @Component({
   selector: 'app-incidents',
@@ -247,6 +248,45 @@ export class IncidentsComponent {
 
   isIncidentClosed(incident: Incident): boolean {
     return incident.status.id == IncidentStatusEnum.Closed;
+  }
+
+  protected downloadPdf(): void {
+    const dto: GeneratePdfFileDto = {
+      orderBy: this.orderBy,
+      orderAscending: this.orderingAsc,
+      filters: {
+        statusId: this.getSelectedStatus(),
+        reportingDateFrom: this.getReportingDateFrom(),
+        reportingDateTo: this.getReportingDateTo(),
+        lossTypeId: this.getSelectedLossType(),
+        severityId: this.getSelectedSeverity(),
+        departmentId: this.getSelectedDepartment(),
+      },
+    };
+
+    this.incidentsService.generatePdfFile(dto).subscribe({
+      next: (blob: Blob) => {
+        // 1. Create a transient URL referencing the binary Blob data
+        const binaryUrl = window.URL.createObjectURL(blob);
+
+        // 2. Spawn a hidden DOM anchor markup element
+        const downloadLink = document.createElement('a');
+        downloadLink.href = binaryUrl;
+
+        // 3. Define your explicit default file name extension
+        downloadLink.download = 'incidents.pdf';
+
+        // 4. Force browser event triggers to download files instantly
+        downloadLink.click();
+
+        // 5. Clean up browser RAM allocations once done
+        window.URL.revokeObjectURL(binaryUrl);
+        downloadLink.remove();
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
+    });
   }
 
   getBadgeColor(status: IncidentStatus): 'success' | 'warning' | 'error' {

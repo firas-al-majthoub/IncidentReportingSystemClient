@@ -13,10 +13,7 @@ import { User } from '../../../data/model/user';
 export class UserDropdownComponent {
   isOpen = false;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   get currentUser(): User {
     return this.authService.currentUser()!;
@@ -32,6 +29,5 @@ export class UserDropdownComponent {
 
   signOut() {
     this.authService.signOut();
-    this.router.navigate(['/signin']);
   }
 }

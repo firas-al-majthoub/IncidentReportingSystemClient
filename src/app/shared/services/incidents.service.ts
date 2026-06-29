@@ -8,6 +8,7 @@ import { CloseIncidentDto } from '../data/dto/close-incident.dto';
 import { ReturnIncidentDto } from '../data/dto/return-incident.dto';
 import { UpdateIncidentDto } from '../data/dto/update-incident.dto';
 import { SearcIincidentsDto } from '../data/dto/search-incidents.dto';
+import { GeneratePdfFileDto } from '../data/dto/generatePdfFile.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -45,8 +46,13 @@ export class IncidentsService {
     return this.httpRequestsService.patch(apiPath, dto).pipe(map(() => {}));
   }
 
-  getMyReturnedIncidents() {
+  getMyReturnedIncidents(): Observable<Incident[]> {
     const apiPath = `/incidents/my-returned-incidents`;
     return this.httpRequestsService.get<Incident[]>(apiPath);
+  }
+
+  generatePdfFile(dto: GeneratePdfFileDto): Observable<Blob> {
+    const apiPath = `/incidents/generate-pdf`;
+    return this.httpRequestsService.blobPost(apiPath, dto);
   }
 }

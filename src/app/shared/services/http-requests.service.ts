@@ -49,6 +49,22 @@ export class HttpRequestsService {
     return this.sendRequest<T>('PATCH', path, headers, body);
   }
 
+  blobPost(path: string, body: any): Observable<Blob> {
+    this.incrementOpenReqs();
+
+    const url = `${this.apiBaseUrl + path}`;
+    const token = this.authService.authToken;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.post(url, body, { headers, responseType: 'blob' }).pipe(
+      tap(() => this.reqSuccess()),
+      catchError((err: HttpErrorResponse) => this.reqFailure(err)),
+    );
+  }
+
   private sendRequest<T>(
     method: 'GET' | 'POST' | 'PATCH',
     path: string,

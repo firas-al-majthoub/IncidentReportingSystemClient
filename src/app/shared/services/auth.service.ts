@@ -4,7 +4,8 @@ import { User } from '../data/model/user';
 import { UserRolesEnum } from '../data/enum/user-roles.enum';
 import { LoginResponseDto } from '../data/dto/login-response.dto';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import config  from '../../config.json';
+import { Router } from '@angular/router';
+import config from '../../config.json';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,10 @@ export class AuthService {
 
   readonly currentUser = this.currentUserSignal.asReadonly();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
 
   signIn(email: string, password: string): Observable<void> {
     const url = `${this.apiBaseUrl}/users/login`;
@@ -86,6 +90,7 @@ export class AuthService {
   signOut() {
     this.authUser = null;
     this.authToken = null;
+    this.router.navigate(['/signin']);
   }
 
   private getUserFromStorage(): User | null {
