@@ -1,5 +1,3 @@
-add logic inside http-service to check for auth-token expiration
-
 add the ability for users to add attachments when reporting an incident
 
 move REQUIRED_FILED_TXT and INVALID_EMAIL_TXT inside report-incident component to a global class/service

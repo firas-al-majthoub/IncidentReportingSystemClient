@@ -4,8 +4,16 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  EMPTY,
+  Observable,
+  tap,
+  throwError,
+} from 'rxjs';
 import { AuthService } from './auth.service';
+import { ToastsService } from './toasts.service';
 import config from '../../config.json';
 
 @Injectable({
@@ -27,6 +35,7 @@ export class HttpRequestsService {
   constructor(
     private http: HttpClient,
     private authService: AuthService,
+    private toastsService: ToastsService,
   ) {
     this.openReqsCount$.subscribe({
       next: (count: number) => {
@@ -102,8 +111,15 @@ export class HttpRequestsService {
     this.decrementOpenReqs();
   }
 
-  private reqFailure(err: HttpErrorResponse) {
+  private reqFailure(err: HttpErrorResponse): Observable<never> {
     this.decrementOpenReqs();
+
+    if (err.status == 401) {
+      this.toastsService.showError('Session ended, please sign in...');
+      this.authService.signOut();
+      return EMPTY;
+    }
+
     return throwError(() => err);
   }
 
