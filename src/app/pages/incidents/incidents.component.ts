@@ -9,16 +9,48 @@ import { AllIncidentsDto } from '../../shared/data/dto/all-incidents.dto';
 import { SearchIncidentsOrderByEnum } from '../../shared/data/enum/search-incidents-order-by.enum';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
+import { SearcIincidentsDto } from '../../shared/data/dto/search-incidents.dto';
+import { LabelComponent } from '../../shared/components/form/label/label.component';
+import {
+  SelectComponent,
+  Option,
+} from '../../shared/components/form/select/select.component';
+import {
+  DdlDataService,
+  DdlItem,
+} from '../../shared/services/ddl-data.service';
+import { ToastsService } from '../../shared/services/toasts.service';
+import { DatePickerComponent } from '../../shared/components/form/date-picker/date-picker.component';
+import { ButtonComponent } from '../../shared/components/ui/button/button.component';
 
 @Component({
   selector: 'app-incidents',
-  imports: [ComponentCardComponent, BadgeComponent, RouterLink],
+  imports: [
+    ComponentCardComponent,
+    BadgeComponent,
+    RouterLink,
+    LabelComponent,
+    SelectComponent,
+    DatePickerComponent,
+    ButtonComponent,
+  ],
   templateUrl: './incidents.component.html',
 })
 export class IncidentsComponent {
-  protected readonly IncidentStatusEnum = IncidentStatusEnum;
   protected readonly SearchIncidentsOrderByEnum = SearchIncidentsOrderByEnum;
   protected readonly Number = Number;
+
+  statuses: Option[] = [];
+  lossTypes: Option[] = [];
+  severities: Option[] = [];
+  departments: Option[] = [];
+
+  selectedStatus = '';
+  reportingDateFrom: any;
+  reportingDateTo: any;
+  selectedLossType = '';
+  selectedSeverity = '';
+  selectedDepartment = '';
 
   incidents: Incident[] = [];
   itemsPerPage = '10';
@@ -32,26 +64,132 @@ export class IncidentsComponent {
   constructor(
     private incidentsService: IncidentsService,
     private authService: AuthService,
+    public ddlDataService: DdlDataService,
+    private toastsService: ToastsService,
   ) {
+    this.getIncidents();
+    this.getStatuses();
+    this.getLossTypes();
+    this.getSeverities();
+    this.getDepartments();
+  }
+
+  filterIncidents(): void {
+    this.currentPage = 1;
+    this.orderBy = SearchIncidentsOrderByEnum.ReportingDate;
+    this.orderingAsc = true;
+
     this.getIncidents();
   }
 
-  getIncidents() {
-    this.incidentsService
-      .getIncidents(
-        Number.parseInt(this.itemsPerPage),
-        this.currentPage,
-        this.orderBy,
-        this.orderingAsc,
-      )
-      .subscribe({
-        next: (dto: AllIncidentsDto) => {
-          this.incidents = dto.incidents;
-          this.totalItemsCount = dto.totalItemsCount;
-          this.totalPages = dto.totalPages;
-          this.updateNavigationPages();
-        },
-      });
+  private getIncidents() {
+    const dto: SearcIincidentsDto = {
+      itemsPerPage: Number.parseInt(this.itemsPerPage),
+      currentPage: this.currentPage,
+      orderBy: this.orderBy,
+      orderAscending: this.orderingAsc,
+      filters: {
+        statusId: this.getSelectedStatus(),
+        reportingDateFrom: this.getReportingDateFrom(),
+        reportingDateTo: this.getReportingDateTo(),
+        lossTypeId: this.getSelectedLossType(),
+        severityId: this.getSelectedSeverity(),
+        departmentId: this.getSelectedDepartment(),
+      },
+    };
+
+    this.incidentsService.searchIncidents(dto).subscribe({
+      next: (dto: AllIncidentsDto) => {
+        this.incidents = dto.incidents;
+        this.totalItemsCount = dto.totalItemsCount;
+        this.totalPages = dto.totalPages;
+        this.updateNavigationPages();
+      },
+    });
+  }
+
+  private getStatuses(): void {
+    this.ddlDataService.getIncidentStatuses().subscribe({
+      next: (deps: DdlItem[]) => {
+        this.statuses = deps.map((d) => {
+          return { value: `${d.id}`, label: d.nameEn };
+        });
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
+    });
+  }
+
+  private getLossTypes(): void {
+    this.ddlDataService.getIncidentLossTypes().subscribe({
+      next: (deps: DdlItem[]) => {
+        this.lossTypes = deps.map((d) => {
+          return { value: `${d.id}`, label: d.nameEn };
+        });
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
+    });
+  }
+
+  private getSeverities(): void {
+    this.ddlDataService.getIncidentSeverities().subscribe({
+      next: (deps: DdlItem[]) => {
+        this.severities = deps.map((d) => {
+          return { value: `${d.id}`, label: d.nameEn };
+        });
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
+    });
+  }
+
+  private getDepartments(): void {
+    this.ddlDataService.getDepartments().subscribe({
+      next: (deps: DdlItem[]) => {
+        this.departments = deps.map((d) => {
+          return { value: `${d.id}`, label: d.nameEn };
+        });
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
+    });
+  }
+
+  getSelectedStatus(): number | null {
+    return this.getSelectedDdlVal(this.selectedStatus);
+  }
+
+  getReportingDateFrom(): string | null {
+    return this.getSelectedDateVal(this.reportingDateFrom);
+  }
+
+  getReportingDateTo(): string | null {
+    return this.getSelectedDateVal(this.reportingDateTo);
+  }
+
+  getSelectedLossType(): number | null {
+    return this.getSelectedDdlVal(this.selectedLossType);
+  }
+
+  getSelectedSeverity(): number | null {
+    return this.getSelectedDdlVal(this.selectedSeverity);
+  }
+
+  getSelectedDepartment(): number | null {
+    return this.getSelectedDdlVal(this.selectedDepartment);
+  }
+
+  getSelectedDdlVal(val: string): number | null {
+    return val != null && val != '' ? Number.parseInt(val) : null;
+  }
+
+  getSelectedDateVal(date: any): string | null {
+    return date != null ? date.dateStr : null;
   }
 
   updateNavigationPages() {
@@ -105,6 +243,10 @@ export class IncidentsComponent {
 
   isManagerUser() {
     return this.authService.isManagerUser();
+  }
+
+  isIncidentClosed(incident: Incident): boolean {
+    return incident.status.id == IncidentStatusEnum.Closed;
   }
 
   getBadgeColor(status: IncidentStatus): 'success' | 'warning' | 'error' {

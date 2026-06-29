@@ -13,18 +13,23 @@ export class DdlDataService {
     return this.httpRequestsService.get<DdlItem[]>(apiPath);
   }
 
-  getIncidentLossTypes() {
+  getIncidentLossTypes(): Observable<DdlItem[]> {
     const apiPath = '/incidents/loss-types';
     return this.httpRequestsService.get<DdlItem[]>(apiPath);
   }
 
-  getIncidentCauses() {
+  getIncidentCauses(): Observable<DdlItem[]> {
     const apiPath = '/incidents/causes';
     return this.httpRequestsService.get<DdlItem[]>(apiPath);
   }
 
-  getIncidentSeverities() {
+  getIncidentSeverities(): Observable<DdlItem[]> {
     const apiPath = '/incidents/severities';
+    return this.httpRequestsService.get<DdlItem[]>(apiPath);
+  }
+
+  getIncidentStatuses(): Observable<DdlItem[]> {
+    const apiPath = '/incidents/statuses';
     return this.httpRequestsService.get<DdlItem[]>(apiPath);
   }
 }

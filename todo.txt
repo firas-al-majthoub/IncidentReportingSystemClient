@@ -1,6 +1,4 @@
-add search fields inside incidents list page
-
-add the ability for managers and viewers to print a report of the incidents list page
+add the ability for managers to print a report of the incidents list page
 
 add logic inside http-service to check for auth-token expiration
 

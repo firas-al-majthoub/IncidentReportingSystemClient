@@ -3,11 +3,11 @@ import { ReportIncidentDto } from '../data/dto/report-incident.dto';
 import { map, Observable } from 'rxjs';
 import { HttpRequestsService } from './http-requests.service';
 import { AllIncidentsDto } from '../data/dto/all-incidents.dto';
-import { SearchIncidentsOrderByEnum } from '../data/enum/search-incidents-order-by.enum';
 import { Incident } from '../data/model/incident';
 import { CloseIncidentDto } from '../data/dto/close-incident.dto';
 import { ReturnIncidentDto } from '../data/dto/return-incident.dto';
 import { UpdateIncidentDto } from '../data/dto/update-incident.dto';
+import { SearcIincidentsDto } from '../data/dto/search-incidents.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -20,20 +20,8 @@ export class IncidentsService {
     return this.httpRequestsService.post(apiPath, dto).pipe(map(() => {}));
   }
 
-  getIncidents(
-    itemsPerPage: number,
-    currentPage: number,
-    orderBy: SearchIncidentsOrderByEnum,
-    orderAscending: boolean,
-  ): Observable<AllIncidentsDto> {
+  searchIncidents(dto: SearcIincidentsDto): Observable<AllIncidentsDto> {
     const apiPath = `/incidents/search`;
-    const dto = {
-      itemsPerPage,
-      currentPage,
-      orderBy,
-      orderAscending,
-    };
-
     return this.httpRequestsService.post<AllIncidentsDto>(apiPath, dto);
   }
 

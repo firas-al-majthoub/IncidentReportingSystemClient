@@ -1,4 +1,71 @@
 <app-component-card title="Incidents">
+  <div class="space-y-6">
+    <div class="flex space-x-4">
+      <div class="w-full">
+        <app-label>Status</app-label>
+        <app-select
+          [options]="statuses"
+          placeholder="Status"
+          [value]="selectedStatus"
+          (valueChange)="selectedStatus = $event"
+          className="dark:bg-dark-900"
+        ></app-select>
+      </div>
+      <div class="w-full">
+        <app-date-picker
+          id="reportingDateFrom"
+          label="Reporting Date From"
+          placeholder="Select a date"
+          (dateChange)="reportingDateFrom = $event"
+        />
+      </div>
+      <div class="w-full">
+        <app-date-picker
+          id="reportingDateTo"
+          label="Reporting Date To"
+          placeholder="Select a date"
+          (dateChange)="reportingDateTo = $event"
+        />
+      </div>
+    </div>
+    <div class="flex space-x-4">
+      <div class="w-full">
+        <app-label>Loss Type</app-label>
+        <app-select
+          [options]="lossTypes"
+          placeholder="Loss Type"
+          [value]="selectedLossType"
+          (valueChange)="selectedLossType = $event"
+          className="dark:bg-dark-900"
+        ></app-select>
+      </div>
+      <div class="w-full">
+        <app-label>Severity</app-label>
+        <app-select
+          [options]="severities"
+          placeholder="Severity"
+          [value]="selectedSeverity"
+          (valueChange)="selectedSeverity = $event"
+          className="dark:bg-dark-900"
+        ></app-select>
+      </div>
+      <div class="w-full">
+        <app-label>Department</app-label>
+        <app-select
+          [options]="departments"
+          placeholder="Department"
+          [value]="selectedDepartment"
+          (valueChange)="selectedDepartment = $event"
+          className="dark:bg-dark-900"
+        ></app-select>
+      </div>
+    </div>
+    <div class="flex justify-end">
+      <app-button size="md" variant="primary" (btnClick)="filterIncidents()">
+        Filter Incidents
+      </app-button>
+    </div>
+  </div>
   <div
     class="overflow-hidden rounded-xl border border-gray-200 bg-white pt-4 dark:border-gray-800 dark:bg-white/[0.03]"
   >
@@ -403,7 +470,7 @@
                 {{ incident.department.nameEn }}
               </td>
               <td
-                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400"
               >
                 {{ incident.lossType.nameEn }}
               </td>
@@ -478,10 +545,7 @@
                     />
                   </svg>
                 </button>
-                @if (
-                  incident.status.id != IncidentStatusEnum.Closed &&
-                  isManagerUser()
-                ) {
+                @if (!isIncidentClosed(incident) && isManagerUser()) {
                   <button
                     class="text-theme-xs text-gray-700 dark:text-gray-400"
                     [routerLink]="[`/incidents/${incident.id}/edit`]"
