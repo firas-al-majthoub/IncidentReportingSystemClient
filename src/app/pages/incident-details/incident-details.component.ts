@@ -7,10 +7,16 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { DividerComponent } from '../../shared/components/divider/divider.component';
 import { ToastsService } from '../../shared/services/toasts.service';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-incident-details',
-  imports: [ComponentCardComponent, LabelComponent, DividerComponent],
+  imports: [
+    ComponentCardComponent,
+    LabelComponent,
+    DividerComponent,
+    DecimalPipe,
+  ],
   templateUrl: './incident-details.component.html',
 })
 export class IncidentDetailsComponent {
@@ -31,12 +37,18 @@ export class IncidentDetailsComponent {
         this.incident = incident;
       },
       error: (err: HttpErrorResponse) => {
-        if (err.status == 404){
+        if (err.status == 404) {
           this.router.navigate(['not-found']);
-        }else {
+        } else {
           this.toastsService.showError('Error occurred');
         }
       },
     });
+  }
+
+  get involvedEmployees(): string | undefined {
+    return this.incident?.involvedEmployees
+      .map<string>((ie) => ie.employeeNumber)
+      .join(', ');
   }
 }

@@ -1,37 +1,9 @@
 <app-component-card title="Incident Details">
   <div class="space-y-8">
     <div>
-      <app-label>Description</app-label>
+      <app-label>Reporting Date</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.description }}
-      </div>
-      <app-divider />
-    </div>
-    <div>
-      <app-label>Department</app-label>
-      <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.department!.nameEn }}
-      </div>
-      <app-divider />
-    </div>
-    <div>
-      <app-label>Loss Type</app-label>
-      <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.lossType!.nameEn }}
-      </div>
-      <app-divider />
-    </div>
-    <div>
-      <app-label>Cause</app-label>
-      <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.cause!.nameEn }}
-      </div>
-      <app-divider />
-    </div>
-    <div>
-      <app-label>Severity</app-label>
-      <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.severity!.nameEn }}
+        {{ incident?.reportingDate }}
       </div>
       <app-divider />
     </div>
@@ -50,9 +22,9 @@
       <app-divider />
     </div>
     <div>
-      <app-label>Expected Resolving Date</app-label>
+      <app-label>Description</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.expectedResolvingDate }}
+        <pre>{{ incident?.description }}</pre>
       </div>
       <app-divider />
     </div>
@@ -63,17 +35,44 @@
       </div>
       <app-divider />
     </div>
-    <div>
-      <app-label>Financial Impact Amount</app-label>
-      <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.financialImpactAmount }}
+    @if (incident != null && incident.hasFinancialImpact) {
+      <div>
+        <app-label>Financial Impact Amount</app-label>
+        <div class="text-theme-m text-black dark:text-gray-300">
+          {{ incident.financialImpactAmount | number: '1.3-3' }}
+        </div>
+        <app-divider />
       </div>
-      <app-divider />
-    </div>
+    }
+    @if (incident != null && incident.hasFinancialImpact) {
+      <div>
+        <app-label>Financial Loss Recovered?</app-label>
+        <div class="text-theme-m text-black dark:text-gray-300">
+          {{ incident ? (incident.recoveredFinancialLoss ? 'Yes' : 'No') : '' }}
+        </div>
+        <app-divider />
+      </div>
+      @if (incident != null && incident.recoveredFinancialLoss) {
+        <div>
+          <app-label>Recovery Amount</app-label>
+          <div class="text-theme-m text-black dark:text-gray-300">
+            {{ incident.recoveryAmount | number: '1.3-3' }}
+          </div>
+          <app-divider />
+        </div>
+        <div>
+          <app-label>Recovery Date</app-label>
+          <div class="text-theme-m text-black dark:text-gray-300">
+            {{ incident.recoveryDate }}
+          </div>
+          <app-divider />
+        </div>
+      }
+    }
     <div>
       <app-label>Involved Employees</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.involvedEmployees }}
+        {{ involvedEmployees }}
       </div>
       <app-divider />
     </div>
@@ -85,30 +84,9 @@
       <app-divider />
     </div>
     <div>
-      <app-label>Latest Updates</app-label>
-      <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.latestUpdates }}
-      </div>
-      <app-divider />
-    </div>
-    <div>
       <app-label>Corrective Action</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.correctiveAction }}
-      </div>
-      <app-divider />
-    </div>
-    <div>
-      <app-label>Recovery</app-label>
-      <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.recovery }}
-      </div>
-      <app-divider />
-    </div>
-    <div>
-      <app-label>Recovery Date</app-label>
-      <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.recoveryDate }}
       </div>
       <app-divider />
     </div>
@@ -123,6 +101,48 @@
       <app-label>Email</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.email }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Status</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.status!.nameEn }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Reported By</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident ? (`${incident.reportedBy!.firstNameEn} ${incident.reportedBy!.lastNameEn}`) : '' }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Loss Type</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.lossType?.nameEn }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Cause</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.cause?.nameEn }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Reporter Department</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.reporterDepartment?.nameEn }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Responsible Department</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.responsibleDepartment?.nameEn }}
       </div>
       <app-divider />
     </div>

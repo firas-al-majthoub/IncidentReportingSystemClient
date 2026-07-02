@@ -3,6 +3,6 @@ export interface IncidentSearchFilters {
   reportingDateFrom: string | null;
   reportingDateTo: string | null;
   lossTypeId: number | null;
-  severityId: number | null;
-  departmentId: number | null;
+  reporterDepartmentId: number | null;
+  responsibleDepartmentId: number | null;
 }

@@ -1,4 +1,24 @@
+involved employees logical deletion
+show incident number in table and edit screens
+
+responsible employees (should be positive number) (optional)
+ملخص خطأ الموظف
+leading 0 on employee number
+validation on incident and discover date
+
+return notes
+original data above employees can't be edited by Risk + add a new Risk Description field below them
+
+BASEL
+excel report?
+
+
+
+add Arabic translation next to fields' label
+
 add the ability for users to add attachments when reporting an incident
+
+add dashboard widgets and show/hide them depending on the role
 
 move REQUIRED_FILED_TXT and INVALID_EMAIL_TXT inside report-incident component to a global class/service
 

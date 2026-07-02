@@ -26,6 +26,7 @@ export class DatePickerComponent {
   @Output() dateChange = new EventEmitter<any>();
   @Input() reactiveFormGroup?: FormGroup;
   @Input() reactiveFormControl?: FormControl;
+  @Input() disabled = false;
 
   @ViewChild('dateInput', { static: false })
   dateInput!: ElementRef<HTMLInputElement>;
@@ -43,6 +44,17 @@ export class DatePickerComponent {
         this.dateChange.emit({ selectedDates, dateStr, instance });
       },
     });
+  }
+
+  protected get classes(): string {
+    let classes =
+      'h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:focus:border-brand-800';
+
+    if (this.disabled)
+      classes +=
+        ' text-gray-500 border-gray-300 opacity-40 bg-gray-100 cursor-not-allowed dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 opacity-40';
+
+    return classes;
   }
 
   ngOnDestroy() {

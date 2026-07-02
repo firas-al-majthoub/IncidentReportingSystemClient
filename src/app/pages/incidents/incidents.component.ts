@@ -5,7 +5,7 @@ import { Incident } from '../../shared/data/model/incident';
 import { IncidentsService } from '../../shared/services/incidents.service';
 import { IncidentStatus } from '../../shared/data/model/incident-status';
 import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum';
-import { AllIncidentsDto } from '../../shared/data/dto/all-incidents.dto';
+import { SearchIncidentsResDto } from '../../shared/data/dto/all-incidents.dto';
 import { SearchIncidentsOrderByEnum } from '../../shared/data/enum/search-incidents-order-by.enum';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
@@ -23,6 +23,7 @@ import { ToastsService } from '../../shared/services/toasts.service';
 import { DatePickerComponent } from '../../shared/components/form/date-picker/date-picker.component';
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
 import { GeneratePdfFileDto } from '../../shared/data/dto/generatePdfFile.dto';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-incidents',
@@ -34,6 +35,7 @@ import { GeneratePdfFileDto } from '../../shared/data/dto/generatePdfFile.dto';
     SelectComponent,
     DatePickerComponent,
     ButtonComponent,
+    DecimalPipe,
   ],
   templateUrl: './incidents.component.html',
 })
@@ -43,15 +45,14 @@ export class IncidentsComponent {
 
   statuses: Option[] = [];
   lossTypes: Option[] = [];
-  severities: Option[] = [];
   departments: Option[] = [];
 
   selectedStatus = '';
   reportingDateFrom: any;
   reportingDateTo: any;
   selectedLossType = '';
-  selectedSeverity = '';
-  selectedDepartment = '';
+  selectedReporterDepartment = '';
+  selectedResponsibleDepartment = '';
 
   incidents: Incident[] = [];
   itemsPerPage = '10';
@@ -59,7 +60,7 @@ export class IncidentsComponent {
   totalItemsCount = 0;
   totalPages = 1;
   orderBy = SearchIncidentsOrderByEnum.ReportingDate;
-  orderingAsc = true;
+  orderingAsc = false;
   navigationPages: number[] = [];
 
   constructor(
@@ -71,14 +72,13 @@ export class IncidentsComponent {
     this.getIncidents();
     this.getStatuses();
     this.getLossTypes();
-    this.getSeverities();
     this.getDepartments();
   }
 
   filterIncidents(): void {
     this.currentPage = 1;
     this.orderBy = SearchIncidentsOrderByEnum.ReportingDate;
-    this.orderingAsc = true;
+    this.orderingAsc = false;
 
     this.getIncidents();
   }
@@ -94,13 +94,13 @@ export class IncidentsComponent {
         reportingDateFrom: this.getReportingDateFrom(),
         reportingDateTo: this.getReportingDateTo(),
         lossTypeId: this.getSelectedLossType(),
-        severityId: this.getSelectedSeverity(),
-        departmentId: this.getSelectedDepartment(),
+        reporterDepartmentId: this.getReporterDepartment(),
+        responsibleDepartmentId: this.getResponsibleDepartment(),
       },
     };
 
     this.incidentsService.searchIncidents(dto).subscribe({
-      next: (dto: AllIncidentsDto) => {
+      next: (dto: SearchIncidentsResDto) => {
         this.incidents = dto.incidents;
         this.totalItemsCount = dto.totalItemsCount;
         this.totalPages = dto.totalPages;
@@ -126,19 +126,6 @@ export class IncidentsComponent {
     this.ddlDataService.getIncidentLossTypes().subscribe({
       next: (deps: DdlItem[]) => {
         this.lossTypes = deps.map((d) => {
-          return { value: `${d.id}`, label: d.nameEn };
-        });
-      },
-      error: () => {
-        this.toastsService.showError('Error occurred');
-      },
-    });
-  }
-
-  private getSeverities(): void {
-    this.ddlDataService.getIncidentSeverities().subscribe({
-      next: (deps: DdlItem[]) => {
-        this.severities = deps.map((d) => {
           return { value: `${d.id}`, label: d.nameEn };
         });
       },
@@ -177,12 +164,12 @@ export class IncidentsComponent {
     return this.getSelectedDdlVal(this.selectedLossType);
   }
 
-  getSelectedSeverity(): number | null {
-    return this.getSelectedDdlVal(this.selectedSeverity);
+  getReporterDepartment(): number | null {
+    return this.getSelectedDdlVal(this.selectedReporterDepartment);
   }
 
-  getSelectedDepartment(): number | null {
-    return this.getSelectedDdlVal(this.selectedDepartment);
+  getResponsibleDepartment(): number | null {
+    return this.getSelectedDdlVal(this.selectedResponsibleDepartment);
   }
 
   getSelectedDdlVal(val: string): number | null {
@@ -232,7 +219,7 @@ export class IncidentsComponent {
 
   updateOrderBy(orderBy: SearchIncidentsOrderByEnum) {
     this.orderBy = orderBy;
-    this.orderingAsc = true;
+    this.orderingAsc = false;
     this.getIncidents();
   }
 
@@ -259,8 +246,8 @@ export class IncidentsComponent {
         reportingDateFrom: this.getReportingDateFrom(),
         reportingDateTo: this.getReportingDateTo(),
         lossTypeId: this.getSelectedLossType(),
-        severityId: this.getSelectedSeverity(),
-        departmentId: this.getSelectedDepartment(),
+        reporterDepartmentId: this.getReporterDepartment(),
+        responsibleDepartmentId: this.getResponsibleDepartment(),
       },
     };
 

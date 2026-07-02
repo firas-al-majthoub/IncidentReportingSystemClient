@@ -1,21 +1,16 @@
 export interface UpdateIncidentDto {
   id: number;
-  description: string;
-  departmentId: number;
-  lossTypeId: number;
-  causeId: number;
-  severityId: number;
   discoverDate: string;
   incidentDate: string;
-  expectedResolvingDate: string;
+  description: string;
   hasFinancialImpact: boolean;
   financialImpactAmount: number | null;
-  involvedEmployees: string;
-  relatedProcedure: string;
-  latestUpdates: string;
-  correctiveAction: string;
-  recovery: string | null;
+  recoveredFinancialLoss: boolean;
+  recoveryAmount: number | null;
   recoveryDate: string | null;
+  involvedEmployees: string[];
+  relatedProcedure: string;
+  correctiveAction: string;
   phone: string | null;
   email: string | null;
 }

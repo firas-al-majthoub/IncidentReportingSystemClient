@@ -1,6 +1,6 @@
 import { Incident } from '../model/incident';
 
-export interface AllIncidentsDto {
+export interface SearchIncidentsResDto {
   incidents: Incident[];
   totalItemsCount: number;
   totalPages: number;

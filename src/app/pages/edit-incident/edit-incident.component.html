@@ -1,359 +1,477 @@
 <app-component-card title="Edit Incident">
-  <form [formGroup]="incidentForm">
-    <div class="space-y-6">
-      <div>
-        <app-label>Description</app-label>
-        <app-text-area
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.description"
-          placeholder=""
-          [value]="description"
-          (valueChange)="description = $event"
-          [rows]="6"
-          [error]="
-            incidentForm.controls.description.touched &&
-            incidentForm.controls.description.hasError('required')
-          "
-          [hint]="
-            incidentForm.controls.description.touched &&
-            incidentForm.controls.description.hasError('required')
-              ? REQUIRED_FILED_TXT
-              : ''
-          "
-        ></app-text-area>
-      </div>
-      <div>
-        <app-label>Department</app-label>
-        <app-select
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.department"
-          [options]="departments"
-          placeholder="Department"
-          [value]="selectedDepartment"
-          (valueChange)="departmentChanged($event)"
-          className="dark:bg-dark-900"
-        ></app-select>
-        @if (
-          incidentForm.controls.department.touched &&
-          incidentForm.controls.department.hasError('required')
-        ) {
-          <p class="mt-2 text-sm text-error-500">
-            {{ REQUIRED_FILED_TXT }}
-          </p>
-        }
-      </div>
-      <div>
-        <app-label>Loss Type</app-label>
-        <app-select
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.lossType"
-          [options]="lossTypes"
-          placeholder="Loss Type"
-          [value]="selectedLossType"
-          (valueChange)="lossTypeChanged($event)"
-          className="dark:bg-dark-900"
-        ></app-select>
-        @if (
-          incidentForm.controls.lossType.touched &&
-          incidentForm.controls.lossType.hasError('required')
-        ) {
-          <p class="mt-2 text-sm text-error-500">
-            {{ REQUIRED_FILED_TXT }}
-          </p>
-        }
-      </div>
-      <div>
-        <app-label>Cause</app-label>
-        <app-select
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.cause"
-          [options]="causes"
-          placeholder="Cause"
-          [value]="selectedCause"
-          (valueChange)="causeChanged($event)"
-          className="dark:bg-dark-900"
-        ></app-select>
-        @if (
-          incidentForm.controls.cause.touched &&
-          incidentForm.controls.cause.hasError('required')
-        ) {
-          <p class="mt-2 text-sm text-error-500">
-            {{ REQUIRED_FILED_TXT }}
-          </p>
-        }
-      </div>
-      <div>
-        <app-label>Severity</app-label>
-        <app-select
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.severity"
-          [options]="severities"
-          placeholder="Severity"
-          [value]="selectedSeverity"
-          (valueChange)="severityChanged($event)"
-          className="dark:bg-dark-900"
-        ></app-select>
-        @if (
-          incidentForm.controls.severity.touched &&
-          incidentForm.controls.severity.hasError('required')
-        ) {
-          <p class="mt-2 text-sm text-error-500">
-            {{ REQUIRED_FILED_TXT }}
-          </p>
-        }
-      </div>
-      <div>
-        <app-date-picker
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.discoverDate"
-          [defaultDate]="incident?.discoverDate"
-          id="discoverDate"
-          label="Discover Date"
-          placeholder="Select a date"
-          (dateChange)="discoverDateChanged($event)"
-        />
-        @if (
-          incidentForm.controls.discoverDate.touched &&
-          incidentForm.controls.discoverDate.hasError('required')
-        ) {
-          <p class="mt-2 text-sm text-error-500">
-            {{ REQUIRED_FILED_TXT }}
-          </p>
-        }
-      </div>
-      <div>
-        <app-date-picker
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.incidentDate"
-          [defaultDate]="incident?.incidentDate"
-          id="incidentDate"
-          label="Incident Date"
-          placeholder="Select a date"
-          (dateChange)="incidentDateChanged($event)"
-        />
-        @if (
-          incidentForm.controls.incidentDate.touched &&
-          incidentForm.controls.incidentDate.hasError('required')
-        ) {
-          <p class="mt-2 text-sm text-error-500">
-            {{ REQUIRED_FILED_TXT }}
-          </p>
-        }
-      </div>
-      <div>
-        <app-date-picker
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.expectedResolvingDate"
-          [defaultDate]="incident?.expectedResolvingDate"
-          id="expectedResolvingDate"
-          label="Expected Resolving Date"
-          placeholder="Select a date"
-          (dateChange)="expectedResolvingDateChanged($event)"
-        />
-        @if (
-          incidentForm.controls.expectedResolvingDate.touched &&
-          incidentForm.controls.expectedResolvingDate.hasError('required')
-        ) {
-          <p class="mt-2 text-sm text-error-500">
-            {{ REQUIRED_FILED_TXT }}
-          </p>
-        }
-      </div>
-      <div>
-        <app-label>Is there a Financial Impact?</app-label>
-        <div class="flex flex-wrap items-center gap-8">
-          <app-radio
-            [id]="'optionYes'"
-            [name]="'hasFinancialImpact'"
-            [value]="'true'"
-            [checked]="hasFinancialImpact"
-            [label]="'Yes'"
-            (valueChange)="hasFinancialImpactChanged($event)"
-          />
-          <app-radio
-            [id]="'optionNo'"
-            [name]="'hasFinancialImpact'"
-            [value]="'false'"
-            [checked]="!hasFinancialImpact"
-            [label]="'No'"
-            (valueChange)="hasFinancialImpactChanged($event)"
+  @if (incident) {
+    <form [formGroup]="incidentForm">
+      <div class="space-y-6">
+        <div class="flex space-x-4">
+          <div class="w-full">
+            <app-date-picker
+              [defaultDate]="incident.reportingDate"
+              id="reportingDate"
+              label="Reporting Date"
+              placeholder="Select a date"
+              [disabled]="true"
+            />
+          </div>
+          <div class="w-full">
+            <app-date-picker
+              [reactiveFormGroup]="incidentForm"
+              [reactiveFormControl]="incidentForm.controls.discoverDate"
+              [defaultDate]="incident.discoverDate"
+              id="discoverDate"
+              label="Discover Date"
+              placeholder="Select a date"
+              (dateChange)="discoverDateChanged($event)"
+            />
+            @if (
+              incidentForm.controls.discoverDate.touched &&
+              incidentForm.controls.discoverDate.hasError('required')
+            ) {
+              <p class="mt-2 text-sm text-error-500">
+                {{ REQUIRED_FILED_TXT }}
+              </p>
+            }
+          </div>
+          <div class="w-full">
+            <app-date-picker
+              [reactiveFormGroup]="incidentForm"
+              [reactiveFormControl]="incidentForm.controls.incidentDate"
+              [defaultDate]="incident.incidentDate"
+              id="incidentDate"
+              label="Incident Date"
+              placeholder="Select a date"
+              (dateChange)="incidentDateChanged($event)"
+            />
+            @if (
+              incidentForm.controls.incidentDate.touched &&
+              incidentForm.controls.incidentDate.hasError('required')
+            ) {
+              <p class="mt-2 text-sm text-error-500">
+                {{ REQUIRED_FILED_TXT }}
+              </p>
+            }
+          </div>
+        </div>
+        <div>
+          <app-label>Description</app-label>
+          <app-text-area
+            [reactiveFormGroup]="incidentForm"
+            [reactiveFormControl]="incidentForm.controls.description"
+            placeholder=""
+            [value]="description"
+            (valueChange)="description = $event"
+            [rows]="6"
+            [error]="
+              incidentForm.controls.description.touched &&
+              incidentForm.controls.description.hasError('required')
+            "
+            [hint]="
+              incidentForm.controls.description.touched &&
+              incidentForm.controls.description.hasError('required')
+                ? REQUIRED_FILED_TXT
+                : ''
+            "
+          ></app-text-area>
+        </div>
+        <div class="flex space-x-14">
+          <div class="w-max space-y-4">
+            <div>
+              <app-label className="text-nowrap">
+                Is there a Financial Impact?
+              </app-label>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-8">
+              <app-radio
+                [id]="'optionYes'"
+                [name]="'hasFinancialImpact'"
+                [value]="'true'"
+                [checked]="hasFinancialImpact"
+                [label]="'Yes'"
+                (valueChange)="hasFinancialImpactChanged($event)"
+              />
+              <app-radio
+                [id]="'optionNo'"
+                [name]="'hasFinancialImpact'"
+                [value]="'false'"
+                [checked]="!hasFinancialImpact"
+                [label]="'No'"
+                (valueChange)="hasFinancialImpactChanged($event)"
+              />
+            </div>
+          </div>
+          <div class="w-full">
+            <app-label>Financial Impact Amount</app-label>
+            <app-input-field
+              [reactiveFormGroup]="incidentForm"
+              [reactiveFormControl]="
+                incidentForm.controls.financialImpactAmount
+              "
+              [value]="financialImpactAmount"
+              type="number"
+              (valueChange)="financialImpactAmount = `${$event}`"
+              [disabled]="!hasFinancialImpact"
+              [error]="
+                incidentForm.controls.financialImpactAmount.touched &&
+                incidentForm.controls.financialImpactAmount.hasError('required')
+              "
+              [hint]="
+                incidentForm.controls.financialImpactAmount.touched &&
+                incidentForm.controls.financialImpactAmount.hasError('required')
+                  ? REQUIRED_FILED_TXT
+                  : ''
+              "
+            />
+          </div>
+        </div>
+        <div class="flex space-x-14">
+          <div class="w-max space-y-4 pr-2">
+            <div>
+              <app-label className="text-nowrap">
+                Financial Loss Recovered?
+              </app-label>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-8">
+              <app-radio
+                [id]="'recoveredOptionYes'"
+                [name]="'recoveredFinancialLoss'"
+                value="true"
+                [checked]="recoveredFinancialLoss"
+                label="Yes"
+                (valueChange)="recoveredFinancialLossChanged($event)"
+                [disabled]="!hasFinancialImpact"
+              />
+              <app-radio
+                [id]="'recoveredOptionNo'"
+                [name]="'recoveredFinancialLoss'"
+                value="false"
+                [checked]="!recoveredFinancialLoss"
+                label="No"
+                (valueChange)="recoveredFinancialLossChanged($event)"
+              />
+            </div>
+          </div>
+          <div class="flex w-full space-x-6">
+            <div class="w-full">
+              <app-label>Recovery Amount</app-label>
+              <app-input-field
+                [reactiveFormGroup]="incidentForm"
+                [reactiveFormControl]="incidentForm.controls.recoveryAmount"
+                [value]="recoveryAmount"
+                type="number"
+                (valueChange)="recoveryAmount = `${$event}`"
+                [disabled]="!recoveredFinancialLoss"
+                [error]="
+                  incidentForm.controls.recoveryAmount.touched &&
+                  incidentForm.controls.recoveryAmount.hasError('required')
+                "
+                [hint]="
+                  incidentForm.controls.recoveryAmount.touched &&
+                  incidentForm.controls.recoveryAmount.hasError('required')
+                    ? REQUIRED_FILED_TXT
+                    : ''
+                "
+              />
+            </div>
+            <div class="w-full">
+              <app-date-picker
+                [reactiveFormGroup]="incidentForm"
+                [reactiveFormControl]="incidentForm.controls.recoveryDate"
+                [defaultDate]="incident.recoveryDate ?? undefined"
+                id="recoveryDate"
+                label="Recovery Date"
+                placeholder="Select a date"
+                (dateChange)="recoveryDateChanged($event)"
+                [disabled]="!recoveredFinancialLoss"
+              />
+              @if (
+                incidentForm.controls.recoveryDate.touched &&
+                incidentForm.controls.recoveryDate.hasError('required')
+              ) {
+                <p class="mt-2 text-sm text-error-500">
+                  {{ REQUIRED_FILED_TXT }}
+                </p>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2 mt-10">
+          <div class="flex items-center space-x-4">
+            <app-label>Involved Employees:</app-label>
+            <div class="flex">
+              <app-input-field
+                type="number"
+                (valueChange)="tmpEmployeeNumber = `${$event}`"
+                [value]="tmpEmployeeNumber"
+                placeholder="1234567"
+              />
+              <app-button
+                size="sm"
+                variant="outline"
+                (btnClick)="addEmployee()"
+                inputmode="numeric"
+              >
+                +
+              </app-button>
+            </div>
+            <div>
+              @if (showEmployeeNumberErr) {
+                <p class="mt-2 text-sm text-error-500">
+                  {{ INVALID_EMPLOYEE_NUMBER_TXT }}
+                </p>
+              }
+            </div>
+          </div>
+          <div
+            class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]"
+          >
+            @if (involvedEmployees.length > 0) {
+              <div class="max-w-full overflow-x-auto">
+                <table class="min-w-full">
+                  <!-- Table Header -->
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="divide-y divide-gray-100 dark:divide-white/[0.05]"
+                  >
+                    @for (employee of involvedEmployees; track $index) {
+                      <tr>
+                        <td
+                          class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 w-full"
+                        >
+                          {{ employee }}
+                        </td>
+                        <td class="px-4">
+                          <div class="flex items-center">
+                            <button
+                              class="text-theme-xs text-gray-700 dark:text-gray-400"
+                              (click)="removeEmployee(employee)"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="size-6"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <p
+                class="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400 w-full"
+              >
+                *no employees were added*
+              </p>
+            }
+          </div>
+          @if (
+            showRequiredInvolvedEmployeesErr && involvedEmployees.length < 1
+          ) {
+            <p class="mt-2 text-sm text-error-500">
+              {{ REQUIRED_INVOLVED_EMPLOYEES }}
+            </p>
+          }
+        </div>
+        <div>
+          <app-label>Related Procedure</app-label>
+          <app-input-field
+            [reactiveFormGroup]="incidentForm"
+            [reactiveFormControl]="incidentForm.controls.relatedProcedure"
+            [value]="relatedProcedure"
+            type="text"
+            (valueChange)="relatedProcedure = `${$event}`"
+            [error]="
+              incidentForm.controls.relatedProcedure.touched &&
+              incidentForm.controls.relatedProcedure.hasError('required')
+            "
+            [hint]="
+              incidentForm.controls.relatedProcedure.touched &&
+              incidentForm.controls.relatedProcedure.hasError('required')
+                ? REQUIRED_FILED_TXT
+                : ''
+            "
           />
         </div>
-      </div>
-      <div>
-        <app-label>Financial Impact Amount</app-label>
-        <app-input-field
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.financialImpactAmount"
-          [value]="financialImpactAmount"
-          type="number"
-          (valueChange)="financialImpactAmount = `${$event}`"
-          [disabled]="!hasFinancialImpact"
-          [error]="
-            incidentForm.controls.financialImpactAmount.touched &&
-            incidentForm.controls.financialImpactAmount.hasError('required')
-          "
-          [hint]="
-            incidentForm.controls.financialImpactAmount.touched &&
-            incidentForm.controls.financialImpactAmount.hasError('required')
-              ? REQUIRED_FILED_TXT
-              : ''
-          "
-        />
-      </div>
-      <div>
-        <app-label>Involved Employees</app-label>
-        <app-input-field
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.involvedEmployees"
-          [value]="involvedEmployees"
-          type="text"
-          (valueChange)="involvedEmployees = `${$event}`"
-          [error]="
-            incidentForm.controls.involvedEmployees.touched &&
-            incidentForm.controls.involvedEmployees.hasError('required')
-          "
-          [hint]="
-            incidentForm.controls.involvedEmployees.touched &&
-            incidentForm.controls.involvedEmployees.hasError('required')
-              ? REQUIRED_FILED_TXT
-              : ''
-          "
-        />
-      </div>
-      <div>
-        <app-label>Related Procedure</app-label>
-        <app-input-field
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.relatedProcedure"
-          [value]="relatedProcedure"
-          type="text"
-          (valueChange)="relatedProcedure = `${$event}`"
-          [error]="
-            incidentForm.controls.relatedProcedure.touched &&
-            incidentForm.controls.relatedProcedure.hasError('required')
-          "
-          [hint]="
-            incidentForm.controls.relatedProcedure.touched &&
-            incidentForm.controls.relatedProcedure.hasError('required')
-              ? REQUIRED_FILED_TXT
-              : ''
-          "
-        />
-      </div>
-      <div>
-        <app-label>Latest Updates</app-label>
-        <app-input-field
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.latestUpdates"
-          [value]="latestUpdates"
-          type="text"
-          (valueChange)="latestUpdates = `${$event}`"
-          [error]="
-            incidentForm.controls.latestUpdates.touched &&
-            incidentForm.controls.latestUpdates.hasError('required')
-          "
-          [hint]="
-            incidentForm.controls.latestUpdates.touched &&
-            incidentForm.controls.latestUpdates.hasError('required')
-              ? REQUIRED_FILED_TXT
-              : ''
-          "
-        />
-      </div>
-      <div>
-        <app-label>Corrective Action</app-label>
-        <app-input-field
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.correctiveAction"
-          [value]="correctiveAction"
-          type="text"
-          (valueChange)="correctiveAction = `${$event}`"
-          [error]="
-            incidentForm.controls.correctiveAction.touched &&
-            incidentForm.controls.correctiveAction.hasError('required')
-          "
-          [hint]="
-            incidentForm.controls.correctiveAction.touched &&
-            incidentForm.controls.correctiveAction.hasError('required')
-              ? REQUIRED_FILED_TXT
-              : ''
-          "
-        />
-      </div>
-      <div>
-        <app-label>Recovery</app-label>
-        <app-input-field type="text" (valueChange)="recovery = `${$event}`" />
-      </div>
-      <div>
-        <app-date-picker
-          [defaultDate]="incident?.recoveryDate ?? undefined"
-          id="recoveryDate"
-          label="Recovery Date"
-          placeholder="Select a date"
-          (dateChange)="recoveryDateChanged($event)"
-        />
-      </div>
-      <div>
-        <app-label>Phone</app-label>
-        <app-input-field
-          [value]="phone"
-          type="tel"
-          (valueChange)="phone = `${$event}`"
-        />
-      </div>
-      <div>
-        <app-label>Email</app-label>
-        <app-input-field
-          [reactiveFormGroup]="incidentForm"
-          [reactiveFormControl]="incidentForm.controls.email"
-          [value]="email"
-          type="email"
-          (valueChange)="email = `${$event}`"
-          [error]="
-            incidentForm.controls.email.touched &&
-            incidentForm.controls.email.hasError('email')
-          "
-          [hint]="
-            incidentForm.controls.email.touched &&
-            incidentForm.controls.email.hasError('email')
-              ? INVALID_EMAIL_TXT
-              : ''
-          "
-        />
-      </div>
-      <div class="mt-10 space-x-4 flex justify-end">
-        @if (incident) {
-          @if (isReturnedIncident()) {
-            <app-button
-              size="md"
-              variant="primary"
-              (btnClick)="openIncidentUpdateModal()"
-              >Update Info</app-button
-            >
-          }
-          @if (isManagerUser() && !isClosedIncident()) {
-            <app-button
-              size="md"
-              variant="primary"
-              (btnClick)="openIncidentCloseModal()"
-            >
-              Close Incident
-            </app-button>
-            @if (!isReturnedIncident()) {
+        <div>
+          <app-label>Corrective Action</app-label>
+          <app-input-field
+            [reactiveFormGroup]="incidentForm"
+            [reactiveFormControl]="incidentForm.controls.correctiveAction"
+            [value]="correctiveAction"
+            type="text"
+            (valueChange)="correctiveAction = `${$event}`"
+            [error]="
+              incidentForm.controls.correctiveAction.touched &&
+              incidentForm.controls.correctiveAction.hasError('required')
+            "
+            [hint]="
+              incidentForm.controls.correctiveAction.touched &&
+              incidentForm.controls.correctiveAction.hasError('required')
+                ? REQUIRED_FILED_TXT
+                : ''
+            "
+          />
+        </div>
+        <div>
+          <app-label>Phone</app-label>
+          <app-input-field
+            [value]="phone"
+            type="tel"
+            (valueChange)="phone = `${$event}`"
+          />
+        </div>
+        <div>
+          <app-label>Email</app-label>
+          <app-input-field
+            [reactiveFormGroup]="incidentForm"
+            [reactiveFormControl]="incidentForm.controls.email"
+            [value]="email"
+            type="email"
+            (valueChange)="email = `${$event}`"
+            [error]="
+              incidentForm.controls.email.touched &&
+              incidentForm.controls.email.hasError('email')
+            "
+            [hint]="
+              incidentForm.controls.email.touched &&
+              incidentForm.controls.email.hasError('email')
+                ? INVALID_EMAIL_TXT
+                : ''
+            "
+          />
+        </div>
+        @if (isManagerUser()) {
+          <div>
+            <app-label>Loss Type</app-label>
+            <app-select
+              [reactiveFormGroup]="incidentForm"
+              [reactiveFormControl]="incidentForm.controls.lossType"
+              [options]="lossTypes"
+              placeholder="Loss Type"
+              [value]="selectedLossType"
+              (valueChange)="lossTypeChanged($event)"
+              className="dark:bg-dark-900"
+            ></app-select>
+            @if (
+              incidentForm.controls.lossType.touched &&
+              incidentForm.controls.lossType.hasError('required')
+            ) {
+              <p class="mt-2 text-sm text-error-500">
+                {{ REQUIRED_FILED_TXT }}
+              </p>
+            }
+          </div>
+          <div>
+            <app-label>Cause</app-label>
+            <app-select
+              [reactiveFormGroup]="incidentForm"
+              [reactiveFormControl]="incidentForm.controls.cause"
+              [options]="causes"
+              placeholder="Cause"
+              [value]="selectedCause"
+              (valueChange)="causeChanged($event)"
+              className="dark:bg-dark-900"
+            ></app-select>
+            @if (
+              incidentForm.controls.cause.touched &&
+              incidentForm.controls.cause.hasError('required')
+            ) {
+              <p class="mt-2 text-sm text-error-500">
+                {{ REQUIRED_FILED_TXT }}
+              </p>
+            }
+          </div>
+          <div>
+            <app-label>Reporter Department</app-label>
+            <app-select
+              [reactiveFormGroup]="incidentForm"
+              [reactiveFormControl]="incidentForm.controls.reporterDepartment"
+              [options]="departments"
+              placeholder="Department"
+              [value]="selectedReporterDepartment"
+              (valueChange)="reporterDepartmentChanged($event)"
+              className="dark:bg-dark-900"
+            ></app-select>
+            @if (
+              incidentForm.controls.reporterDepartment.touched &&
+              incidentForm.controls.reporterDepartment.hasError('required')
+            ) {
+              <p class="mt-2 text-sm text-error-500">
+                {{ REQUIRED_FILED_TXT }}
+              </p>
+            }
+          </div>
+          <div>
+            <app-label>Responsible Department</app-label>
+            <app-select
+              [reactiveFormGroup]="incidentForm"
+              [reactiveFormControl]="
+                incidentForm.controls.responsibleDepartment
+              "
+              [options]="departments"
+              placeholder="Department"
+              [value]="selectedResponsibleDepartment"
+              (valueChange)="responsibleDepartmentChanged($event)"
+              className="dark:bg-dark-900"
+            ></app-select>
+            @if (
+              incidentForm.controls.responsibleDepartment.touched &&
+              incidentForm.controls.responsibleDepartment.hasError('required')
+            ) {
+              <p class="mt-2 text-sm text-error-500">
+                {{ REQUIRED_FILED_TXT }}
+              </p>
+            }
+          </div>
+        }
+        <div class="mt-10 space-x-4 flex justify-end">
+          @if (incident) {
+            @if (isReturnedIncident()) {
               <app-button
                 size="md"
-                variant="outline"
-                (btnClick)="openIncidentReturnModal()"
+                variant="primary"
+                (btnClick)="openIncidentUpdateModal()"
+                >Update Info</app-button
               >
-                Return Incident
+            }
+            @if (isManagerUser() && !isClosedIncident()) {
+              <app-button
+                size="md"
+                variant="primary"
+                (btnClick)="openIncidentCloseModal()"
+              >
+                Close Incident
               </app-button>
+              @if (!isReturnedIncident()) {
+                <app-button
+                  size="md"
+                  variant="outline"
+                  (btnClick)="openIncidentReturnModal()"
+                >
+                  Return Incident
+                </app-button>
+              }
             }
           }
-        }
+        </div>
       </div>
-    </div>
-  </form>
+    </form>
+  }
 </app-component-card>
 
 <app-modal

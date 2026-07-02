@@ -107,7 +107,7 @@ export class HttpRequestsService {
     );
   }
 
-  private reqSuccess() {
+  private reqSuccess(): void {
     this.decrementOpenReqs();
   }
 

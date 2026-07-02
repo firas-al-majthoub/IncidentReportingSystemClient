@@ -30,6 +30,7 @@ import { CloseIncidentDto } from '../../shared/data/dto/close-incident.dto';
 import { ReturnIncidentDto } from '../../shared/data/dto/return-incident.dto';
 import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum';
 import { AuthService } from '../../shared/services/auth.service';
+import { UpdateIncidentDto } from '../../shared/data/dto/update-incident.dto';
 
 @Component({
   selector: 'app-edit-incident',
@@ -52,6 +53,10 @@ export class EditIncidentComponent {
 
   protected readonly REQUIRED_FILED_TXT = 'This field is required';
   protected readonly INVALID_EMAIL_TXT = 'Please enter a valid email address';
+  protected readonly INVALID_EMPLOYEE_NUMBER_TXT =
+    'Number must be exaclty 7 digits long';
+  protected readonly REQUIRED_INVOLVED_EMPLOYEES =
+    'Please enter at least one involved employee number';
 
   protected id = input.required<number>();
   protected incident?: Incident;
@@ -63,60 +68,52 @@ export class EditIncidentComponent {
   protected departments: Option[] = [];
   protected lossTypes: Option[] = [];
   protected causes: Option[] = [];
-  protected severities: Option[] = [];
 
+  protected reportingDate?: { dateStr: string } = undefined;
+  protected discoverDate?: { dateStr: string } = undefined;
+  protected incidentDate?: { dateStr: string } = undefined;
   protected description = '';
-  protected selectedDepartment = '';
-  protected selectedLossType = '';
-  protected selectedCause = '';
-  protected selectedSeverity = '';
-  protected discoverDate: any;
-  protected incidentDate: any;
-  protected expectedResolvingDate: any;
   protected hasFinancialImpact = true;
   protected financialImpactAmount = '';
   protected originalFinancialImpactAmount = '';
-  protected involvedEmployees = '';
+  protected recoveredFinancialLoss = false;
+  protected recoveryAmount = '';
+  protected originalRecoveryAmount = '';
+  protected recoveryDate?: { dateStr: string } = undefined;
+  protected originalRecoveryDate?: { dateStr: string } = undefined;
+  protected involvedEmployees: string[] = [];
   protected relatedProcedure = '';
-  protected latestUpdates = '';
   protected correctiveAction = '';
-  protected recovery = '';
-  protected recoveryDate: any;
   protected phone = '';
   protected email = '';
+  protected selectedLossType = '';
+  protected selectedCause = '';
+  protected selectedReporterDepartment = '';
+  protected selectedResponsibleDepartment = '';
   protected resolutionNotes = '';
 
+  protected tmpEmployeeNumber = '';
+  protected showEmployeeNumberErr = false;
+  protected showRequiredInvolvedEmployeesErr = false;
+
   protected incidentForm = new FormGroup({
-    description: new FormControl(this.description, Validators.required),
-    department: new FormControl(this.selectedDepartment, Validators.required),
-    lossType: new FormControl(this.selectedLossType, Validators.required),
-    cause: new FormControl(this.selectedCause, Validators.required),
-    severity: new FormControl(this.selectedSeverity, Validators.required),
     discoverDate: new FormControl('', Validators.required),
     incidentDate: new FormControl('', Validators.required),
-    expectedResolvingDate: new FormControl('', Validators.required),
-    financialImpactAmount: new FormControl(
-      this.financialImpactAmount,
-      Validators.required,
-    ),
-    involvedEmployees: new FormControl(
-      this.involvedEmployees,
-      Validators.required,
-    ),
-    relatedProcedure: new FormControl(
-      this.relatedProcedure,
-      Validators.required,
-    ),
-    latestUpdates: new FormControl(this.latestUpdates, Validators.required),
-    correctiveAction: new FormControl(
-      this.correctiveAction,
-      Validators.required,
-    ),
-    email: new FormControl(this.email, [Validators.email]),
+    description: new FormControl('', Validators.required),
+    financialImpactAmount: new FormControl('', Validators.required),
+    recoveryAmount: new FormControl(''),
+    recoveryDate: new FormControl(''),
+    relatedProcedure: new FormControl('', Validators.required),
+    correctiveAction: new FormControl('', Validators.required),
+    email: new FormControl('', Validators.email),
+    lossType: new FormControl('', Validators.required),
+    cause: new FormControl('', Validators.required),
+    reporterDepartment: new FormControl('', Validators.required),
+    responsibleDepartment: new FormControl('', Validators.required),
   });
 
   protected incidentClosureForm = new FormGroup({
-    resolutionNotes: new FormControl(this.resolutionNotes, Validators.required),
+    resolutionNotes: new FormControl('', Validators.required),
   });
 
   constructor(
@@ -126,6 +123,12 @@ export class EditIncidentComponent {
     private router: Router,
     private authService: AuthService,
   ) {
+    this.getDepartments();
+    this.getLossTypes();
+    this.getCauses();
+  }
+
+  private getDepartments(): void {
     this.ddlDataService.getDepartments().subscribe({
       next: (deps: DdlItem[]) => {
         this.departments = deps.map((d) => {
@@ -133,7 +136,9 @@ export class EditIncidentComponent {
         });
       },
     });
+  }
 
+  private getLossTypes(): void {
     this.ddlDataService.getIncidentLossTypes().subscribe({
       next: (deps: DdlItem[]) => {
         this.lossTypes = deps.map((d) => {
@@ -141,18 +146,12 @@ export class EditIncidentComponent {
         });
       },
     });
+  }
 
+  private getCauses(): void {
     this.ddlDataService.getIncidentCauses().subscribe({
       next: (deps: DdlItem[]) => {
         this.causes = deps.map((d) => {
-          return { value: `${d.id}`, label: d.nameEn };
-        });
-      },
-    });
-
-    this.ddlDataService.getIncidentSeverities().subscribe({
-      next: (deps: DdlItem[]) => {
-        this.severities = deps.map((d) => {
           return { value: `${d.id}`, label: d.nameEn };
         });
       },
@@ -161,78 +160,96 @@ export class EditIncidentComponent {
 
   ngOnInit() {
     const incidentId = this.id();
+    this.getIncidentDetails(incidentId);
+  }
 
+  private getIncidentDetails(incidentId: number): void {
     this.incidentsService.getIncidentDetails(incidentId).subscribe({
       next: (incident: Incident) => {
-        this.incident = incident;
-
-        this.description = incident.description;
-        this.selectedDepartment = `${incident.department.id}`;
-        this.selectedLossType = `${incident.lossType.id}`;
-        this.selectedCause = `${incident.cause.id}`;
-        this.selectedSeverity = `${incident.severity.id}`;
-        this.discoverDate = { dateStr: incident.discoverDate };
-        this.incidentDate = { dateStr: incident.incidentDate };
-        this.expectedResolvingDate = {
-          dateStr: incident.expectedResolvingDate,
-        };
-        this.hasFinancialImpact = incident.hasFinancialImpact;
-        this.financialImpactAmount =
-          incident.financialImpactAmount == null
-            ? ''
-            : `${incident.financialImpactAmount}`;
-        this.originalFinancialImpactAmount =
-          incident.financialImpactAmount == null
-            ? ''
-            : `${incident.financialImpactAmount}`;
-        this.involvedEmployees = incident.involvedEmployees;
-        this.relatedProcedure = incident.relatedProcedure;
-        this.latestUpdates = incident.latestUpdates;
-        this.correctiveAction = incident.correctiveAction;
-        this.recovery = incident.recovery ?? '';
-        this.recoveryDate = { dateStr: incident.recoveryDate };
-        this.phone = incident.phone ?? '';
-        this.email = incident.email ?? '';
-
-        this.incidentForm.controls.description.setValue(this.description);
-        this.incidentForm.controls.department.setValue(this.selectedDepartment);
-        this.incidentForm.controls.lossType.setValue(this.selectedLossType);
-        this.incidentForm.controls.cause.setValue(this.selectedCause);
-        this.incidentForm.controls.severity.setValue(this.selectedSeverity);
-        this.incidentForm.controls.discoverDate.setValue(incident.discoverDate);
-        this.incidentForm.controls.incidentDate.setValue(incident.incidentDate);
-        this.incidentForm.controls.expectedResolvingDate.setValue(
-          incident.expectedResolvingDate,
-        );
-        this.incidentForm.controls.financialImpactAmount.setValue(
-          this.financialImpactAmount,
-        );
-        this.incidentForm.controls.involvedEmployees.setValue(
-          this.involvedEmployees,
-        );
-        this.incidentForm.controls.relatedProcedure.setValue(
-          this.relatedProcedure,
-        );
-        this.incidentForm.controls.latestUpdates.setValue(this.latestUpdates);
-        this.incidentForm.controls.correctiveAction.setValue(
-          this.correctiveAction,
-        );
-        this.incidentForm.controls.email.setValue(this.email);
-
-        this.incidentForm.updateValueAndValidity();
+        this.populateInitialData(incident);
       },
       error: (err: HttpErrorResponse) => {
-        if (err.status == 404) {
-          this.router.navigate(['not-found']);
-        } else {
-          this.toastsService.showError('Error occurred');
-        }
+        if (err.status == 404) this.router.navigate(['not-found']);
+        else this.toastsService.showError('Error occurred');
       },
     });
   }
 
-  departmentChanged(val: string) {
-    this.selectedDepartment = val;
+  private populateInitialData(incident: Incident): void {
+    this.reportingDate = { dateStr: incident.reportingDate };
+    this.discoverDate = { dateStr: incident.discoverDate };
+    this.incidentDate = { dateStr: incident.incidentDate };
+    this.description = incident.description;
+
+    this.hasFinancialImpact = incident.hasFinancialImpact;
+    this.hasFinancialImpactChanged(`${incident.hasFinancialImpact}`);
+    this.financialImpactAmount =
+      incident.financialImpactAmount == null
+        ? ''
+        : `${incident.financialImpactAmount}`;
+    this.originalFinancialImpactAmount = this.financialImpactAmount;
+
+    this.recoveredFinancialLoss = incident.recoveredFinancialLoss;
+    this.recoveredFinancialLossChanged(`${incident.recoveredFinancialLoss}`);
+    this.recoveryAmount =
+      incident.recoveryAmount == null ? '' : `${incident.recoveryAmount}`;
+    this.originalRecoveryAmount =
+      incident.recoveryAmount == null ? '' : `${incident.recoveryAmount}`;
+    this.recoveryDate =
+      incident.recoveryDate == null
+        ? undefined
+        : { dateStr: incident.recoveryDate };
+    this.originalRecoveryDate = this.recoveryDate;
+
+    this.involvedEmployees = incident.involvedEmployees.map(
+      (ie) => ie.employeeNumber,
+    );
+    this.relatedProcedure = incident.relatedProcedure;
+    this.correctiveAction = incident.correctiveAction;
+    this.phone = incident.phone ?? '';
+    this.email = incident.email ?? '';
+    this.selectedLossType =
+      incident.lossType == null ? '' : `${incident.lossType.id}`;
+    this.selectedCause = incident.cause == null ? '' : `${incident.cause.id}`;
+    this.selectedReporterDepartment =
+      incident.reporterDepartment == null
+        ? ''
+        : `${incident.reporterDepartment.id}`;
+    this.selectedResponsibleDepartment =
+      incident.responsibleDepartment == null
+        ? ''
+        : `${incident.responsibleDepartment.id}`;
+
+    this.incidentForm.controls.discoverDate.setValue(incident.discoverDate);
+    this.incidentForm.controls.incidentDate.setValue(incident.discoverDate);
+    this.incidentForm.controls.description.setValue(this.description);
+    this.incidentForm.controls.financialImpactAmount.setValue(
+      this.financialImpactAmount,
+    );
+    this.incidentForm.controls.recoveryAmount.setValue(this.recoveryAmount);
+    this.incidentForm.controls.recoveryDate.setValue(incident.recoveryDate);
+    this.incidentForm.controls.relatedProcedure.setValue(this.relatedProcedure);
+    this.incidentForm.controls.correctiveAction.setValue(this.correctiveAction);
+    this.incidentForm.controls.email.setValue(this.email);
+    this.incidentForm.controls.lossType.setValue(this.selectedLossType);
+    this.incidentForm.controls.cause.setValue(this.selectedCause);
+    this.incidentForm.controls.reporterDepartment.setValue(
+      this.selectedReporterDepartment,
+    );
+    this.incidentForm.controls.responsibleDepartment.setValue(
+      this.selectedResponsibleDepartment,
+    );
+
+    this.incidentForm.updateValueAndValidity();
+    this.incident = incident;
+  }
+
+  reporterDepartmentChanged(val: string) {
+    this.selectedReporterDepartment = val;
+  }
+
+  responsibleDepartmentChanged(val: string) {
+    this.selectedResponsibleDepartment = val;
   }
 
   lossTypeChanged(val: string) {
@@ -241,10 +258,6 @@ export class EditIncidentComponent {
 
   causeChanged(val: string) {
     this.selectedCause = val;
-  }
-
-  severityChanged(val: string) {
-    this.selectedSeverity = val;
   }
 
   discoverDateChanged(val: any) {
@@ -259,16 +272,16 @@ export class EditIncidentComponent {
     this.recoveryDate = val;
   }
 
-  expectedResolvingDateChanged(val: any) {
-    this.expectedResolvingDate = val;
-  }
-
   hasFinancialImpactChanged(val: string) {
     this.hasFinancialImpact = val === 'true';
-    this.updateAmountDisableState();
+    this.updateLossAmountDisableState();
+
+    if (!this.hasFinancialImpact) {
+      this.recoveredFinancialLossChanged('false');
+    }
   }
 
-  updateAmountDisableState() {
+  updateLossAmountDisableState() {
     if (this.hasFinancialImpact) {
       this.incidentForm.controls.financialImpactAmount.enable();
       this.incidentForm.controls.financialImpactAmount.setValue(
@@ -277,15 +290,61 @@ export class EditIncidentComponent {
       this.incidentForm.controls.financialImpactAmount.setValidators(
         Validators.required,
       );
-      this.incidentForm.controls.financialImpactAmount.updateValueAndValidity();
+      this.financialImpactAmount = this.originalFinancialImpactAmount;
     } else {
       this.incidentForm.controls.financialImpactAmount.disable();
       this.incidentForm.controls.financialImpactAmount.setValue('');
       this.incidentForm.controls.financialImpactAmount.removeValidators(
         Validators.required,
       );
-      this.incidentForm.controls.financialImpactAmount.updateValueAndValidity();
+      this.financialImpactAmount = '';
     }
+
+    this.incidentForm.controls.financialImpactAmount.updateValueAndValidity();
+  }
+
+  protected recoveredFinancialLossChanged(val: string) {
+    this.recoveredFinancialLoss = val === 'true';
+    this.updateRecoveredAmountDisableState();
+  }
+
+  updateRecoveredAmountDisableState() {
+    if (this.recoveredFinancialLoss) {
+      this.incidentForm.controls.recoveryAmount.enable();
+      this.incidentForm.controls.recoveryAmount.setValue(
+        this.originalRecoveryAmount,
+      );
+      this.incidentForm.controls.recoveryAmount.setValidators(
+        Validators.required,
+      );
+      this.recoveryAmount = this.originalRecoveryAmount;
+
+      this.incidentForm.controls.recoveryDate.enable();
+      this.incidentForm.controls.recoveryDate.setValue(
+        this.originalRecoveryDate ? this.originalRecoveryDate.dateStr : '',
+      );
+      this.incidentForm.controls.recoveryDate.setValidators(
+        Validators.required,
+      );
+      this.recoveryDate = this.originalRecoveryDate;
+    } else {
+      this.incidentForm.controls.recoveryAmount.disable();
+      this.incidentForm.controls.recoveryAmount.setValue('');
+      this.incidentForm.controls.recoveryAmount.removeValidators(
+        Validators.required,
+      );
+      this.recoveryAmount = '';
+
+      this.incidentForm.controls.recoveryDate.disable();
+      this.incidentForm.controls.recoveryDate.setValue('');
+      this.incidentForm.controls.recoveryDate.removeValidators(
+        Validators.required,
+      );
+      this.recoveryDate = undefined;
+    }
+
+    this.incidentForm.controls.recoveryAmount.updateValueAndValidity();
+    this.incidentForm.controls.recoveryDate.updateValueAndValidity();
   }
 
   protected isUserIncidentReporter() {
@@ -322,6 +381,12 @@ export class EditIncidentComponent {
   }
 
   protected openIncidentCloseModal() {
+    if (!this.incidentForm.valid) {
+      this.incidentForm.markAllAsTouched();
+      this.toastsService.showError('Please fill all required fields');
+      return;
+    }
+
     this.isCloseModalOpen = true;
   }
 
@@ -330,6 +395,12 @@ export class EditIncidentComponent {
   }
 
   protected openIncidentReturnModal() {
+    if (!this.incidentForm.valid) {
+      this.incidentForm.markAllAsTouched();
+      this.toastsService.showError('Please fill all required fields');
+      return;
+    }
+
     this.isReturnModalOpen = true;
   }
 
@@ -338,11 +409,33 @@ export class EditIncidentComponent {
   }
 
   protected openIncidentUpdateModal() {
+    if (!this.incidentForm.valid) {
+      this.incidentForm.markAllAsTouched();
+      this.toastsService.showError('Please fill all required fields');
+      return;
+    }
+
     this.isUpdateModalOpen = true;
   }
 
   protected closeIncidentUpdateModal() {
     this.isUpdateModalOpen = false;
+  }
+
+  protected addEmployee() {
+    if (this.tmpEmployeeNumber.length == 7) {
+      this.involvedEmployees.push(this.tmpEmployeeNumber);
+      this.tmpEmployeeNumber = '';
+      this.showEmployeeNumberErr = false;
+    } else {
+      this.showEmployeeNumberErr = true;
+    }
+  }
+
+  protected removeEmployee(employee: string) {
+    this.involvedEmployees = this.involvedEmployees.filter(
+      (ie) => ie != employee,
+    );
   }
 
   protected closeIncident() {
@@ -355,26 +448,31 @@ export class EditIncidentComponent {
 
     const dto: CloseIncidentDto = {
       id: this.incident!.id,
+      discoverDate: this.discoverDate!.dateStr,
+      incidentDate: this.incidentDate!.dateStr,
       description: this.description,
-      departmentId: Number.parseInt(this.selectedDepartment),
-      lossTypeId: Number.parseInt(this.selectedLossType),
-      causeId: Number.parseInt(this.selectedCause),
-      severityId: Number.parseInt(this.selectedSeverity),
-      discoverDate: this.discoverDate.dateStr,
-      incidentDate: this.incidentDate.dateStr,
-      expectedResolvingDate: this.expectedResolvingDate.dateStr,
       hasFinancialImpact: this.hasFinancialImpact,
       financialImpactAmount: this.hasFinancialImpact
         ? Number.parseFloat(this.financialImpactAmount)
         : null,
+      recoveredFinancialLoss: this.recoveredFinancialLoss,
+      recoveryAmount: this.recoveredFinancialLoss
+        ? Number.parseFloat(this.recoveryAmount)
+        : null,
+      recoveryDate: this.recoveredFinancialLoss
+        ? this.recoveryDate!.dateStr
+        : null,
       involvedEmployees: this.involvedEmployees,
       relatedProcedure: this.relatedProcedure,
-      latestUpdates: this.latestUpdates,
       correctiveAction: this.correctiveAction,
-      recovery: this.recovery,
-      recoveryDate: this.recoveryDate ? this.recoveryDate.dateStr : null,
       phone: this.phone,
       email: this.email,
+      lossTypeId: Number.parseInt(this.selectedLossType),
+      causeId: Number.parseInt(this.selectedCause),
+      reporterDepartmentId: Number.parseInt(this.selectedReporterDepartment),
+      responsibleDepartmentId: Number.parseInt(
+        this.selectedResponsibleDepartment,
+      ),
       resolutionNotes: this.resolutionNotes,
     };
 
@@ -399,26 +497,31 @@ export class EditIncidentComponent {
 
     const dto: ReturnIncidentDto = {
       id: this.incident!.id,
+      discoverDate: this.discoverDate!.dateStr,
+      incidentDate: this.incidentDate!.dateStr,
       description: this.description,
-      departmentId: Number.parseInt(this.selectedDepartment),
-      lossTypeId: Number.parseInt(this.selectedLossType),
-      causeId: Number.parseInt(this.selectedCause),
-      severityId: Number.parseInt(this.selectedSeverity),
-      discoverDate: this.discoverDate.dateStr,
-      incidentDate: this.incidentDate.dateStr,
-      expectedResolvingDate: this.expectedResolvingDate.dateStr,
       hasFinancialImpact: this.hasFinancialImpact,
       financialImpactAmount: this.hasFinancialImpact
         ? Number.parseFloat(this.financialImpactAmount)
         : null,
+      recoveredFinancialLoss: this.recoveredFinancialLoss,
+      recoveryAmount: this.recoveredFinancialLoss
+        ? Number.parseFloat(this.recoveryAmount)
+        : null,
+      recoveryDate: this.recoveredFinancialLoss
+        ? this.recoveryDate!.dateStr
+        : null,
       involvedEmployees: this.involvedEmployees,
       relatedProcedure: this.relatedProcedure,
-      latestUpdates: this.latestUpdates,
       correctiveAction: this.correctiveAction,
-      recovery: this.recovery,
-      recoveryDate: this.recoveryDate ? this.recoveryDate.dateStr : null,
       phone: this.phone,
       email: this.email,
+      lossTypeId: Number.parseInt(this.selectedLossType),
+      causeId: Number.parseInt(this.selectedCause),
+      reporterDepartmentId: Number.parseInt(this.selectedReporterDepartment),
+      responsibleDepartmentId: Number.parseInt(
+        this.selectedResponsibleDepartment,
+      ),
     };
 
     this.closeIncidentReturnModal();
@@ -440,32 +543,31 @@ export class EditIncidentComponent {
       return;
     }
 
-    const dto: ReturnIncidentDto = {
+    const dto: UpdateIncidentDto = {
       id: this.incident!.id,
+      discoverDate: this.discoverDate!.dateStr,
+      incidentDate: this.incidentDate!.dateStr,
       description: this.description,
-      departmentId: Number.parseInt(this.selectedDepartment),
-      lossTypeId: Number.parseInt(this.selectedLossType),
-      causeId: Number.parseInt(this.selectedCause),
-      severityId: Number.parseInt(this.selectedSeverity),
-      discoverDate: this.discoverDate.dateStr,
-      incidentDate: this.incidentDate.dateStr,
-      expectedResolvingDate: this.expectedResolvingDate.dateStr,
       hasFinancialImpact: this.hasFinancialImpact,
       financialImpactAmount: this.hasFinancialImpact
         ? Number.parseFloat(this.financialImpactAmount)
         : null,
+      recoveredFinancialLoss: this.recoveredFinancialLoss,
+      recoveryAmount: this.recoveredFinancialLoss
+        ? Number.parseFloat(this.recoveryAmount)
+        : null,
+      recoveryDate: this.recoveredFinancialLoss
+        ? this.recoveryDate!.dateStr
+        : null,
       involvedEmployees: this.involvedEmployees,
       relatedProcedure: this.relatedProcedure,
-      latestUpdates: this.latestUpdates,
       correctiveAction: this.correctiveAction,
-      recovery: this.recovery,
-      recoveryDate: this.recoveryDate ? this.recoveryDate.dateStr : null,
       phone: this.phone,
       email: this.email,
     };
 
     this.closeIncidentUpdateModal();
-    this.incidentsService.updateIncident(dto).subscribe({
+    this.incidentsService.updateReturnedIncident(dto).subscribe({
       next: () => {
         this.toastsService.showSuccess('Incident updated successfully');
         this.router.navigate(['']);
