@@ -10,6 +10,13 @@
             <div
               class="ml-4 py-3 text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
             >
+              #
+            </div>
+          </th>
+          <th>
+            <div
+              class="ml-4 py-3 text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
+            >
               Reporting Date
             </div>
           </th>
@@ -47,6 +54,11 @@
       <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
         @for (incident of incidents; track $index) {
           <tr>
+            <td
+              class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
+            >
+              {{ incident.id }}
+            </td>
             <td
               class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
             >

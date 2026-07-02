@@ -1,6 +1,3 @@
-involved employees logical deletion
-show incident number in table and edit screens
-
 responsible employees (should be positive number) (optional)
 ملخص خطأ الموظف
 leading 0 on employee number

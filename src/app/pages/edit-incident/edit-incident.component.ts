@@ -570,7 +570,7 @@ export class EditIncidentComponent {
     this.incidentsService.updateReturnedIncident(dto).subscribe({
       next: () => {
         this.toastsService.showSuccess('Incident updated successfully');
-        this.router.navigate(['']);
+        this.router.navigate(['/incidents/my-returned-incidents']);
       },
       error: () => {
         this.toastsService.showError('Error occurred');

@@ -1,5 +1,5 @@
-<app-component-card title="Edit Incident">
-  @if (incident) {
+@if (incident) {
+  <app-component-card title="Edit Incident #{{ incident.id }}">
     <form [formGroup]="incidentForm">
       <div class="space-y-6">
         <div class="flex space-x-4">
@@ -471,8 +471,8 @@
         </div>
       </div>
     </form>
-  }
-</app-component-card>
+  </app-component-card>
+}
 
 <app-modal
   [isOpen]="isUpdateModalOpen"

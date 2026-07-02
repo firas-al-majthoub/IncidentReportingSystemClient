@@ -1,6 +1,13 @@
 <app-component-card title="Incident Details">
   <div class="space-y-8">
     <div>
+      <app-label>Incident No.</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.id }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
       <app-label>Reporting Date</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.reportingDate }}
