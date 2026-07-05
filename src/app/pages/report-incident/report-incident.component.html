@@ -217,10 +217,13 @@
                 >
                   <tr>
                     <td class="px-2 pb-2 align-top">
-                      <app-input-field
-                        type="number"
-                        (valueChange)="tmpEmployeeNumber = `${$event}`"
+                      <input
+                        type="text"
+                        maxlength="7"
+                        (keydown)="allowOnlyNumbers($event)"
                         [value]="tmpEmployeeNumber"
+                        (input)="tmpEmployeeNumber = `${$event.target.value}`"
+                        class="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
                       />
                       @if (showEmployeeNumberErr) {
                         <p class="mt-2 text-sm text-error-500">
@@ -236,7 +239,7 @@
                       />
                       @if (showEmployeeErrorErr) {
                         <p class="mt-2 text-sm text-error-500">
-                          {{ REQUIRED_EMPLOYEE_ERROR_TXT }}
+                          {{ REQUIRED_FILED_TXT }}
                         </p>
                       }
                     </td>

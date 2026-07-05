@@ -56,7 +56,6 @@ export class EditIncidentComponent {
   protected readonly INVALID_EMAIL_TXT = 'Please enter a valid email address';
   protected readonly INVALID_EMPLOYEE_NUMBER_TXT =
     'Number must be exaclty 7 digits long';
-  protected readonly REQUIRED_EMPLOYEE_ERROR_TXT = `Please enter employee's error`;
 
   protected id = input.required<number>();
   protected incident?: Incident;
@@ -485,6 +484,31 @@ export class EditIncidentComponent {
     this.involvedEmployees = this.involvedEmployees.filter(
       (ie) => ie != employee,
     );
+  }
+
+  allowOnlyNumbers(event: KeyboardEvent): void {
+    // Allow functional navigation/editing keys
+    const allowedKeys = [
+      'Backspace',
+      'Delete',
+      'Tab',
+      'Escape',
+      'ArrowLeft',
+      'ArrowRight',
+      'Home',
+      'End',
+    ];
+
+    if (allowedKeys.includes(event.key)) {
+      return;
+    }
+
+    // Block the keypress if it is not a digit (0-9)
+    const isNumber = /^[0-9]$/.test(event.key);
+
+    if (!isNumber) {
+      event.preventDefault();
+    }
   }
 
   protected closeIncident() {
