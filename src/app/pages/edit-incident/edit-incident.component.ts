@@ -55,8 +55,6 @@ export class EditIncidentComponent {
   protected readonly INVALID_EMAIL_TXT = 'Please enter a valid email address';
   protected readonly INVALID_EMPLOYEE_NUMBER_TXT =
     'Number must be exaclty 7 digits long';
-  protected readonly REQUIRED_INVOLVED_EMPLOYEES =
-    'Please enter at least one involved employee number';
 
   protected id = input.required<number>();
   protected incident?: Incident;
@@ -94,7 +92,6 @@ export class EditIncidentComponent {
 
   protected tmpEmployeeNumber = '';
   protected showEmployeeNumberErr = false;
-  protected showRequiredInvolvedEmployeesErr = false;
 
   protected incidentForm = new FormGroup({
     discoverDate: new FormControl('', Validators.required),

@@ -36,8 +36,6 @@ export class ReportIncidentComponent {
   protected readonly INVALID_EMAIL_TXT = 'Please enter a valid email address';
   protected readonly INVALID_EMPLOYEE_NUMBER_TXT =
     'Number must be exaclty 7 digits long';
-  protected readonly REQUIRED_INVOLVED_EMPLOYEES =
-    'Please enter at least one involved employee number';
 
   discoverDate?: any = undefined;
   incidentDate?: any = undefined;
@@ -54,7 +52,6 @@ export class ReportIncidentComponent {
   email = '';
   tmpEmployeeNumber = '';
   showEmployeeNumberErr = false;
-  showRequiredInvolvedEmployeesErr = false;
 
   incidentForm = new FormGroup({
     discoverDate: new FormControl('', Validators.required),
@@ -166,10 +163,9 @@ export class ReportIncidentComponent {
   }
 
   submitIncident() {
-    if (!this.incidentForm.valid || this.involvedEmployees.length < 1) {
+    if (!this.incidentForm.valid) {
       this.incidentForm.markAllAsTouched();
       this.toastsService.showError('Please fill all required fields');
-      this.showRequiredInvolvedEmployeesErr = true;
       return;
     }
 

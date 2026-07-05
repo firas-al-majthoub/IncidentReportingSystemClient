@@ -195,7 +195,7 @@
         </div>
         <div class="space-y-2 mt-10">
           <div class="flex items-center space-x-4">
-            <app-label>Involved Employees:</app-label>
+            <app-label>Responsible Employees:</app-label>
             <div class="flex">
               <app-input-field
                 type="number"
@@ -279,13 +279,6 @@
               </p>
             }
           </div>
-          @if (
-            showRequiredInvolvedEmployeesErr && involvedEmployees.length < 1
-          ) {
-            <p class="mt-2 text-sm text-error-500">
-              {{ REQUIRED_INVOLVED_EMPLOYEES }}
-            </p>
-          }
         </div>
         <div>
           <app-label>Related Procedure</app-label>

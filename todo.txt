@@ -1,6 +1,7 @@
-responsible employees (should be positive number) (optional)
+Involved Employees deleted by field
+
 ملخص خطأ الموظف
-leading 0 on employee number
+leading 0 on employee number (should be a positive number)
 validation on incident and discover date
 
 return notes
@@ -11,11 +12,13 @@ excel report?
 
 
 
+Financial Impact and Recovery amounts should not be negative numbers
+
 add Arabic translation next to fields' label
 
-add the ability for users to add attachments when reporting an incident
-
 add dashboard widgets and show/hide them depending on the role
+
+remove console.log from all classes
 
 move REQUIRED_FILED_TXT and INVALID_EMAIL_TXT inside report-incident component to a global class/service
 
@@ -23,8 +26,6 @@ handle errors by status code inside incidents service
 
 research how to conditionally add directives (or just the opening html tag) to refactor form fields with validations (form group
 and form controls passed to their components)
-
-remove console.log from all classes
 
 add animation for dismissing toasts
 
