@@ -1,3 +1,5 @@
+import { InvolvedEmployeeDto } from './involved-employee.dto';
+
 export interface ReportIncidentDto {
   discoverDate: string;
   incidentDate: string;
@@ -7,7 +9,7 @@ export interface ReportIncidentDto {
   recoveredFinancialLoss: boolean;
   recoveryAmount: number | null;
   recoveryDate: string | null;
-  involvedEmployees: string[];
+  involvedEmployees: InvolvedEmployeeDto[];
   relatedProcedure: string;
   correctiveAction: string;
   phone: string | null;

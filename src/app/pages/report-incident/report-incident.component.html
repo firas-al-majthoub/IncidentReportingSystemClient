@@ -190,55 +190,95 @@
         <div class="space-y-2 mt-10">
           <div class="flex items-center space-x-4">
             <app-label>Responsible Employees:</app-label>
-            <div class="flex">
-              <app-input-field
-                type="number"
-                (valueChange)="tmpEmployeeNumber = `${$event}`"
-                [value]="tmpEmployeeNumber"
-                placeholder="1234567"
-              />
-              <app-button
-                size="sm"
-                variant="outline"
-                (btnClick)="addEmployee()"
-                inputmode="numeric"
-              >
-                +
-              </app-button>
-            </div>
-            <div>
-              @if (showEmployeeNumberErr) {
-                <p class="mt-2 text-sm text-error-500">
-                  {{ INVALID_EMPLOYEE_NUMBER_TXT }}
-                </p>
-              }
-            </div>
           </div>
           <div
             class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]"
           >
-            @if (involvedEmployees.length > 0) {
-              <div class="max-w-full overflow-x-auto">
-                <table class="min-w-full">
-                  <!-- Table Header -->
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody
-                    class="divide-y divide-gray-100 dark:divide-white/[0.05]"
-                  >
+            <div class="max-w-full overflow-x-auto">
+              <table class="min-w-full">
+                <!-- Table Header -->
+                <thead>
+                  <tr>
+                    <th
+                      class="px-3 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      Employee Number
+                    </th>
+                    <th
+                      class="px-2 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      Summary of Employee Error
+                    </th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody
+                  class="divide-y divide-gray-100 dark:divide-white/[0.05]"
+                >
+                  <tr>
+                    <td class="px-2 pb-2 align-top">
+                      <app-input-field
+                        type="number"
+                        (valueChange)="tmpEmployeeNumber = `${$event}`"
+                        [value]="tmpEmployeeNumber"
+                      />
+                      @if (showEmployeeNumberErr) {
+                        <p class="mt-2 text-sm text-error-500">
+                          {{ INVALID_EMPLOYEE_NUMBER_TXT }}
+                        </p>
+                      }
+                    </td>
+                    <td class="px-2 pb-2 align-top">
+                      <app-input-field
+                        type="text"
+                        (valueChange)="tmpEmployeeError = `${$event}`"
+                        [value]="tmpEmployeeError"
+                      />
+                      @if (showEmployeeErrorErr) {
+                        <p class="mt-2 text-sm text-error-500">
+                          {{ REQUIRED_EMPLOYEE_ERROR_TXT }}
+                        </p>
+                      }
+                    </td>
+                    <td>
+                      <div class="flex items-center justify-center">
+                        <button
+                          class="text-theme-xs text-gray-700 dark:text-gray-400"
+                          (click)="addEmployee()"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="size-6"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  @if (involvedEmployees.length > 0) {
                     @for (employee of involvedEmployees; track $index) {
                       <tr>
                         <td
-                          class="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 w-full"
+                          class="px-4 py-4 text-gray-500 text-start text-theme-sm dark:text-gray-400"
                         >
-                          {{ employee }}
+                          {{ employee.employeeNumber }}
                         </td>
-                        <td class="px-4">
-                          <div class="flex items-center">
+                        <td
+                          class="px-4 py-4 text-gray-500 text-start text-theme-sm dark:text-gray-400"
+                        >
+                          {{ employee.employeeError }}
+                        </td>
+                        <td>
+                          <div class="flex items-center justify-center">
                             <button
                               class="text-theme-xs text-gray-700 dark:text-gray-400"
                               (click)="removeEmployee(employee)"
@@ -262,16 +302,20 @@
                         </td>
                       </tr>
                     }
-                  </tbody>
-                </table>
-              </div>
-            } @else {
-              <p
-                class="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400 w-full"
-              >
-                *no employees were added*
-              </p>
-            }
+                  } @else {
+                    <tr>
+                      <td colspan="3">
+                        <p
+                          class="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400 w-full"
+                        >
+                          *no employees were added*
+                        </p>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
         <div>

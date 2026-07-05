@@ -31,6 +31,7 @@ import { ReturnIncidentDto } from '../../shared/data/dto/return-incident.dto';
 import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum';
 import { AuthService } from '../../shared/services/auth.service';
 import { UpdateIncidentDto } from '../../shared/data/dto/update-incident.dto';
+import { InvolvedEmployeeDto } from '../../shared/data/dto/involved-employee.dto';
 
 @Component({
   selector: 'app-edit-incident',
@@ -55,6 +56,7 @@ export class EditIncidentComponent {
   protected readonly INVALID_EMAIL_TXT = 'Please enter a valid email address';
   protected readonly INVALID_EMPLOYEE_NUMBER_TXT =
     'Number must be exaclty 7 digits long';
+  protected readonly REQUIRED_EMPLOYEE_ERROR_TXT = `Please enter employee's error`;
 
   protected id = input.required<number>();
   protected incident?: Incident;
@@ -79,7 +81,7 @@ export class EditIncidentComponent {
   protected originalRecoveryAmount = '';
   protected recoveryDate?: { dateStr: string } = undefined;
   protected originalRecoveryDate?: { dateStr: string } = undefined;
-  protected involvedEmployees: string[] = [];
+  protected involvedEmployees: InvolvedEmployeeDto[] = [];
   protected relatedProcedure = '';
   protected correctiveAction = '';
   protected phone = '';
@@ -91,7 +93,9 @@ export class EditIncidentComponent {
   protected resolutionNotes = '';
 
   protected tmpEmployeeNumber = '';
+  protected tmpEmployeeError = '';
   protected showEmployeeNumberErr = false;
+  protected showEmployeeErrorErr = false;
 
   protected incidentForm = new FormGroup({
     discoverDate: new FormControl('', Validators.required),
@@ -198,9 +202,14 @@ export class EditIncidentComponent {
         : { dateStr: incident.recoveryDate };
     this.originalRecoveryDate = this.recoveryDate;
 
-    this.involvedEmployees = incident.involvedEmployees.map(
-      (ie) => ie.employeeNumber,
-    );
+    this.involvedEmployees = incident.involvedEmployees.map((ie) => {
+      const employee: InvolvedEmployeeDto = {
+        employeeNumber: ie.employeeNumber,
+        employeeError: ie.employeeError,
+      };
+
+      return employee;
+    });
     this.relatedProcedure = incident.relatedProcedure;
     this.correctiveAction = incident.correctiveAction;
     this.phone = incident.phone ?? '';
@@ -419,17 +428,60 @@ export class EditIncidentComponent {
     this.isUpdateModalOpen = false;
   }
 
-  protected addEmployee() {
-    if (this.tmpEmployeeNumber.length == 7) {
-      this.involvedEmployees.push(this.tmpEmployeeNumber);
-      this.tmpEmployeeNumber = '';
-      this.showEmployeeNumberErr = false;
-    } else {
-      this.showEmployeeNumberErr = true;
-    }
+  protected addEmployee(): void {
+    if (!this.validateInvolvedEmployeesInsertion()) return;
+
+    const employee: InvolvedEmployeeDto = {
+      employeeNumber: this.tmpEmployeeNumber,
+      employeeError: this.tmpEmployeeError,
+    };
+
+    this.involvedEmployees.push(employee);
+    this.resetInvolvedEmployeesFields();
   }
 
-  protected removeEmployee(employee: string) {
+  private validateInvolvedEmployeesInsertion(): boolean {
+    let isValid = true;
+
+    if (this.tmpEmployeeNumber.length != 7) {
+      this.showEmployeeNumberErr = true;
+      isValid = false;
+    } else {
+      this.showEmployeeNumberErr = false;
+    }
+
+    if (this.tmpEmployeeError.length < 1) {
+      this.showEmployeeErrorErr = true;
+      isValid = false;
+    } else {
+      this.showEmployeeErrorErr = false;
+    }
+
+    if (this.involvedEmployeesContains(this.tmpEmployeeNumber)) {
+      this.toastsService.showError(
+        `Employee number you have entered is already in the list`,
+      );
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  private involvedEmployeesContains(employeeNumber: string): boolean {
+    return (
+      this.involvedEmployees.filter((ie) => ie.employeeNumber == employeeNumber)
+        .length > 0
+    );
+  }
+
+  private resetInvolvedEmployeesFields(): void {
+    this.tmpEmployeeNumber = '';
+    this.tmpEmployeeError = '';
+    this.showEmployeeNumberErr = false;
+    this.showEmployeeErrorErr = false;
+  }
+
+  protected removeEmployee(employee: InvolvedEmployeeDto): void {
     this.involvedEmployees = this.involvedEmployees.filter(
       (ie) => ie != employee,
     );

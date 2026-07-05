@@ -1,6 +1,3 @@
-Involved Employees deleted by field
-
-ملخص خطأ الموظف
 leading 0 on employee number (should be a positive number)
 validation on incident and discover date
 

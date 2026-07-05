@@ -16,6 +16,7 @@ import {
 import { ToastsService } from '../../shared/services/toasts.service';
 import { Router } from '@angular/router';
 import { ReportIncidentDto } from '../../shared/data/dto/report-incident.dto';
+import { InvolvedEmployeeDto } from '../../shared/data/dto/involved-employee.dto';
 
 @Component({
   selector: 'app-report-incident',
@@ -36,22 +37,25 @@ export class ReportIncidentComponent {
   protected readonly INVALID_EMAIL_TXT = 'Please enter a valid email address';
   protected readonly INVALID_EMPLOYEE_NUMBER_TXT =
     'Number must be exaclty 7 digits long';
+  protected readonly REQUIRED_EMPLOYEE_ERROR_TXT = `Please enter employee's error`;
 
-  discoverDate?: any = undefined;
-  incidentDate?: any = undefined;
-  description = '';
-  hasFinancialImpact = true;
-  financialImpactAmount = '';
-  recoveredFinancialLoss = false;
-  recoveryAmount = '';
-  recoveryDate?: any = undefined;
-  involvedEmployees: string[] = [];
-  relatedProcedure = '';
-  correctiveAction = '';
-  phone = '';
-  email = '';
-  tmpEmployeeNumber = '';
-  showEmployeeNumberErr = false;
+  protected discoverDate?: any = undefined;
+  protected incidentDate?: any = undefined;
+  protected description = '';
+  protected hasFinancialImpact = true;
+  protected financialImpactAmount = '';
+  protected recoveredFinancialLoss = false;
+  protected recoveryAmount = '';
+  protected recoveryDate?: any = undefined;
+  protected involvedEmployees: InvolvedEmployeeDto[] = [];
+  protected relatedProcedure = '';
+  protected correctiveAction = '';
+  protected phone = '';
+  protected email = '';
+  protected tmpEmployeeNumber = '';
+  protected tmpEmployeeError = '';
+  protected showEmployeeNumberErr = false;
+  protected showEmployeeErrorErr = false;
 
   incidentForm = new FormGroup({
     discoverDate: new FormControl('', Validators.required),
@@ -146,20 +150,63 @@ export class ReportIncidentComponent {
     return new Date().toISOString().split('T')[0];
   }
 
-  protected removeEmployee(employee: string) {
+  protected removeEmployee(employee: InvolvedEmployeeDto): void {
     this.involvedEmployees = this.involvedEmployees.filter(
       (ie) => ie != employee,
     );
   }
 
-  protected addEmployee() {
-    if (this.tmpEmployeeNumber.length == 7) {
-      this.involvedEmployees.push(this.tmpEmployeeNumber);
-      this.tmpEmployeeNumber = '';
-      this.showEmployeeNumberErr = false;
-    } else {
+  protected addEmployee(): void {
+    if (!this.validateInvolvedEmployeesInsertion()) return;
+
+    const employee: InvolvedEmployeeDto = {
+      employeeNumber: this.tmpEmployeeNumber,
+      employeeError: this.tmpEmployeeError,
+    };
+
+    this.involvedEmployees.push(employee);
+    this.resetInvolvedEmployeesFields();
+  }
+
+  private validateInvolvedEmployeesInsertion(): boolean {
+    let isValid = true;
+
+    if (this.tmpEmployeeNumber.length != 7) {
       this.showEmployeeNumberErr = true;
+      isValid = false;
+    } else {
+      this.showEmployeeNumberErr = false;
     }
+
+    if (this.tmpEmployeeError.length < 1) {
+      this.showEmployeeErrorErr = true;
+      isValid = false;
+    } else {
+      this.showEmployeeErrorErr = false;
+    }
+
+    if (this.involvedEmployeesContains(this.tmpEmployeeNumber)) {
+      this.toastsService.showError(
+        `Employee number you have entered is already in the list`,
+      );
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  private involvedEmployeesContains(employeeNumber: string): boolean {
+    return (
+      this.involvedEmployees.filter((ie) => ie.employeeNumber == employeeNumber)
+        .length > 0
+    );
+  }
+
+  private resetInvolvedEmployeesFields(): void {
+    this.tmpEmployeeNumber = '';
+    this.tmpEmployeeError = '';
+    this.showEmployeeNumberErr = false;
+    this.showEmployeeErrorErr = false;
   }
 
   submitIncident() {
