@@ -208,7 +208,7 @@ export class ReportIncidentComponent {
     this.showEmployeeErrorErr = false;
   }
 
-  allowOnlyNumbers(event: KeyboardEvent): void {
+  protected allowOnlyNumbers(event: KeyboardEvent): void {
     // Allow functional navigation/editing keys
     const allowedKeys = [
       'Backspace',
@@ -232,6 +232,10 @@ export class ReportIncidentComponent {
       event.preventDefault();
     }
   }
+
+  // protected get todayDate(): Date {
+  //   return
+  // }
 
   submitIncident() {
     if (!this.incidentForm.valid) {

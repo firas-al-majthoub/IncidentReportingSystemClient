@@ -1,5 +1,3 @@
-validation on incident and discover date
-
 return notes
 original data above employees can't be edited by Risk + add a new Risk Description field below them
 

@@ -26,6 +26,7 @@ export class DatePickerComponent {
   @Output() dateChange = new EventEmitter<any>();
   @Input() reactiveFormGroup?: FormGroup;
   @Input() reactiveFormControl?: FormControl;
+  @Input() maxDate?: string;
   @Input() disabled = false;
 
   @ViewChild('dateInput', { static: false })
@@ -40,6 +41,7 @@ export class DatePickerComponent {
       monthSelectorType: 'static',
       dateFormat: 'Y-m-d',
       defaultDate: this.defaultDate,
+      maxDate: this.maxDate,
       onChange: (selectedDates, dateStr, instance) => {
         this.dateChange.emit({ selectedDates, dateStr, instance });
       },

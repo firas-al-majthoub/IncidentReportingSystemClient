@@ -19,6 +19,7 @@
               id="discoverDate"
               label="Discover Date"
               placeholder="Select a date"
+              [maxDate]="todayDate"
               (dateChange)="discoverDateChanged($event)"
             />
             @if (
@@ -37,6 +38,7 @@
               id="incidentDate"
               label="Incident Date"
               placeholder="Select a date"
+              [maxDate]="todayDate"
               (dateChange)="incidentDateChanged($event)"
             />
             @if (
