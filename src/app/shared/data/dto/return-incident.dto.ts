@@ -1,16 +1,5 @@
-import { InvolvedEmployeeDto } from "./involved-employee.dto";
+import { UpdateIncidentDto } from './update-incident.dto';
 
-export interface ReturnIncidentDto {
-  id: number;
-  riskDescription: string;
-  involvedEmployees: InvolvedEmployeeDto[];
-  relatedProcedure: string;
-  correctiveAction: string;
-  phone: string | null;
-  email: string | null;
-  lossTypeId: number;
-  causeId: number;
-  reporterDepartmentId: number;
-  responsibleDepartmentId: number;
+export interface ReturnIncidentDto extends UpdateIncidentDto {
   returnNotes: string;
 }

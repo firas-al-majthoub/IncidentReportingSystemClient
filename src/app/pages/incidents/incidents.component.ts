@@ -5,11 +5,11 @@ import { Incident } from '../../shared/data/model/incident';
 import { IncidentsService } from '../../shared/services/incidents.service';
 import { IncidentStatus } from '../../shared/data/model/incident-status';
 import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum';
-import { SearchIncidentsResDto } from '../../shared/data/dto/all-incidents.dto';
+import { SearchIncidentsResDto } from '../../shared/data/dto/search-incidents-res.dto';
 import { SearchIncidentsOrderByEnum } from '../../shared/data/enum/search-incidents-order-by.enum';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
-import { SearcIincidentsDto } from '../../shared/data/dto/search-incidents.dto';
+import { SearchIncidentsDto } from '../../shared/data/dto/search-incidents.dto';
 import { LabelComponent } from '../../shared/components/form/label/label.component';
 import {
   SelectComponent,
@@ -22,7 +22,7 @@ import {
 import { ToastsService } from '../../shared/services/toasts.service';
 import { DatePickerComponent } from '../../shared/components/form/date-picker/date-picker.component';
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
-import { GeneratePdfFileDto } from '../../shared/data/dto/generatePdfFile.dto';
+import { GeneratePdfFileDto } from '../../shared/data/dto/generate-pdf-file.dto';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
@@ -84,7 +84,7 @@ export class IncidentsComponent {
   }
 
   private getIncidents() {
-    const dto: SearcIincidentsDto = {
+    const dto: SearchIncidentsDto = {
       itemsPerPage: Number.parseInt(this.itemsPerPage),
       currentPage: this.currentPage,
       orderBy: this.orderBy,
@@ -229,12 +229,31 @@ export class IncidentsComponent {
     this.getIncidents();
   }
 
-  isManagerUser() {
+  private isManagerUser() {
     return this.authService.isManagerUser();
   }
 
-  isIncidentClosed(incident: Incident): boolean {
+  private isIncidentClosed(incident: Incident): boolean {
     return incident.status.id == IncidentStatusEnum.Closed;
+  }
+
+  private isIncidentUnderReview(incident: Incident): boolean {
+    return incident.status.id == IncidentStatusEnum.UnderReview;
+  }
+
+  protected displayDownloadButton(): boolean {
+    return this.isManagerUser();
+  }
+
+  protected displayEditButton(incident: Incident): boolean {
+    return (
+      !this.isIncidentClosed(incident) &&
+      (this.isManagerUser() || this.viewerCanUpdateIncident(incident))
+    );
+  }
+
+  private viewerCanUpdateIncident(incident: Incident) {
+    return this.isIncidentUnderReview(incident);
   }
 
   protected downloadPdf(): void {

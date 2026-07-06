@@ -1,6 +1,4 @@
-original data above involved employees can't be edited by Risk + add a new Risk Description field below them
-
-BASEL
+BASEL -> optional but required when closing the incident
 excel report
 
 

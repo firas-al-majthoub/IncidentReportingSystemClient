@@ -1,7 +1,7 @@
 import { SearchIncidentsOrderByEnum } from '../enum/search-incidents-order-by.enum';
 import { IncidentSearchFilters } from './incident-search-filters';
 
-export interface SearcIincidentsDto {
+export interface SearchIncidentsDto {
   itemsPerPage: number;
   currentPage: number;
   orderBy: SearchIncidentsOrderByEnum;

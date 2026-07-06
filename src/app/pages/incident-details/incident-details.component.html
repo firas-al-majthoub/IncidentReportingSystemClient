@@ -126,6 +126,13 @@
       <app-divider />
     </div>
     <div>
+      <app-label>Risk Description</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.riskDescription }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
       <app-label>Loss Type</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.lossType?.nameEn }}
@@ -150,6 +157,13 @@
       <app-label>Responsible Department</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
         {{ incident?.responsibleDepartment?.nameEn }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Return Notes</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.returnNotes }}
       </div>
       <app-divider />
     </div>

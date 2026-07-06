@@ -31,6 +31,7 @@ import { ReturnIncidentDto } from '../../shared/data/dto/return-incident.dto';
 import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum';
 import { AuthService } from '../../shared/services/auth.service';
 import { InvolvedEmployeeDto } from '../../shared/data/dto/involved-employee.dto';
+import { UpdateIncidentDto } from '../../shared/data/dto/update-incident.dto';
 
 @Component({
   selector: 'app-edit-incident',
@@ -61,6 +62,7 @@ export class EditIncidentComponent {
 
   protected isCloseModalOpen = false;
   protected isReturnModalOpen = false;
+  protected isUpdateModalOpen = false;
 
   protected departments: Option[] = [];
   protected lossTypes: Option[] = [];
@@ -250,30 +252,36 @@ export class EditIncidentComponent {
     this.selectedCause = val;
   }
 
-  protected isClosedIncident(): boolean {
+  private isClosedIncident(): boolean {
     return (
       this.incident != null &&
       this.incident.status.id == IncidentStatusEnum.Closed
     );
   }
 
-  protected isReturnedIncident(): boolean {
+  private isUnderReviewIncident(): boolean {
     return (
       this.incident != null &&
-      this.incident.status.id == IncidentStatusEnum.Returned
+      this.incident.status.id == IncidentStatusEnum.UnderReview
     );
   }
 
-  protected isManagerUser(): boolean {
-    return this.authService.isManagerUser();
+  protected displayActionButtons(): boolean {
+    return this.authService.isViewerOrManagerUser() && !this.isClosedIncident();
   }
 
-  protected displayActionButtons(): boolean {
-    return this.isManagerUser() && !this.isClosedIncident();
+  protected displayUpdateButton(): boolean {
+    return (
+      this.authService.isViewerOrManagerUser() && this.isUnderReviewIncident()
+    );
+  }
+
+  protected displayCloseButton(): boolean {
+    return this.authService.isManagerUser() && !this.isClosedIncident();
   }
 
   protected displayReturnButton(): boolean {
-    return this.isManagerUser() && !this.isReturnedIncident();
+    return this.authService.isManagerUser() && this.isUnderReviewIncident();
   }
 
   protected openIncidentCloseModal() {
@@ -302,6 +310,14 @@ export class EditIncidentComponent {
 
   protected closeIncidentReturnModal() {
     this.isReturnModalOpen = false;
+  }
+
+  protected openIncidentUpdateModal() {
+    this.isUpdateModalOpen = true;
+  }
+
+  protected closeIncidentUpdateModal() {
+    this.isUpdateModalOpen = false;
   }
 
   protected addEmployee(): void {
@@ -388,15 +404,8 @@ export class EditIncidentComponent {
     }
   }
 
-  protected closeIncident() {
-    if (!this.incidentForm.valid || !this.incidentClosureForm.valid) {
-      this.incidentForm.markAllAsTouched();
-      this.incidentClosureForm.markAllAsTouched();
-      this.toastsService.showError('Please fill all required fields');
-      return;
-    }
-
-    const dto: CloseIncidentDto = {
+  private get updateIncidentDto(): UpdateIncidentDto {
+    return {
       id: this.incident!.id,
       riskDescription: this.riskDescription,
       involvedEmployees: this.involvedEmployees,
@@ -410,8 +419,29 @@ export class EditIncidentComponent {
       responsibleDepartmentId: Number.parseInt(
         this.selectedResponsibleDepartment,
       ),
+    };
+  }
+
+  private get closeIncidentDto(): CloseIncidentDto {
+    return {
+      ...this.updateIncidentDto,
       resolutionNotes: this.resolutionNotes,
     };
+  }
+
+  private get returnIncidentDto(): ReturnIncidentDto {
+    return { ...this.updateIncidentDto, returnNotes: this.returnNotes };
+  }
+
+  protected closeIncident() {
+    if (!this.incidentForm.valid || !this.incidentClosureForm.valid) {
+      this.incidentForm.markAllAsTouched();
+      this.incidentClosureForm.markAllAsTouched();
+      this.toastsService.showError('Please fill all required fields');
+      return;
+    }
+
+    const dto: CloseIncidentDto = this.closeIncidentDto;
 
     this.closeIncidentCloseModal();
     this.incidentsService.closeIncident(dto).subscribe({
@@ -433,27 +463,33 @@ export class EditIncidentComponent {
       return;
     }
 
-    const dto: ReturnIncidentDto = {
-      id: this.incident!.id,
-      riskDescription: this.riskDescription,
-      involvedEmployees: this.involvedEmployees,
-      relatedProcedure: this.relatedProcedure,
-      correctiveAction: this.correctiveAction,
-      phone: this.phone,
-      email: this.email,
-      lossTypeId: Number.parseInt(this.selectedLossType),
-      causeId: Number.parseInt(this.selectedCause),
-      reporterDepartmentId: Number.parseInt(this.selectedReporterDepartment),
-      responsibleDepartmentId: Number.parseInt(
-        this.selectedResponsibleDepartment,
-      ),
-      returnNotes: this.returnNotes,
-    };
+    const dto: ReturnIncidentDto = this.returnIncidentDto;
 
     this.closeIncidentReturnModal();
     this.incidentsService.returnIncident(dto).subscribe({
       next: () => {
         this.toastsService.showSuccess('Incident returned successfully');
+        this.router.navigate(['/incidents']);
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
+    });
+  }
+
+  protected updateIncident() {
+    if (!this.incidentForm.valid) {
+      this.incidentForm.markAllAsTouched();
+      this.toastsService.showError('Please fill all required fields');
+      return;
+    }
+
+    const dto: UpdateIncidentDto = this.updateIncidentDto;
+
+    this.closeIncidentUpdateModal();
+    this.incidentsService.updateIncident(dto).subscribe({
+      next: () => {
+        this.toastsService.showSuccess('Incident updated successfully');
         this.router.navigate(['/incidents']);
       },
       error: () => {

@@ -64,7 +64,7 @@
       <app-button size="md" variant="primary" (btnClick)="filterIncidents()">
         Filter Incidents
       </app-button>
-      @if (isManagerUser()) {
+      @if (displayDownloadButton()) {
         <button
           class="shadow-theme-xs flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-[11px] text-sm font-medium text-gray-700 sm:w-auto dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
           (click)="downloadPdf()"
@@ -505,7 +505,7 @@
                     />
                   </svg>
                 </button>
-                @if (!isIncidentClosed(incident) && isManagerUser()) {
+                @if (displayEditButton(incident)) {
                   <button
                     class="text-theme-xs text-gray-700 dark:text-gray-400"
                     [routerLink]="[`/incidents/${incident.id}/edit`]"

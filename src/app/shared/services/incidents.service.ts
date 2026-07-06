@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { ReportIncidentDto } from '../data/dto/report-incident.dto';
 import { map, Observable } from 'rxjs';
 import { HttpRequestsService } from './http-requests.service';
-import { SearchIncidentsResDto } from '../data/dto/all-incidents.dto';
+import { SearchIncidentsResDto } from '../data/dto/search-incidents-res.dto';
 import { Incident } from '../data/model/incident';
 import { CloseIncidentDto } from '../data/dto/close-incident.dto';
 import { ReturnIncidentDto } from '../data/dto/return-incident.dto';
 import { UpdateReturnedIncidentDto } from '../data/dto/update-returned-incident.dto';
-import { SearcIincidentsDto } from '../data/dto/search-incidents.dto';
-import { GeneratePdfFileDto } from '../data/dto/generatePdfFile.dto';
+import { SearchIncidentsDto } from '../data/dto/search-incidents.dto';
+import { GeneratePdfFileDto } from '../data/dto/generate-pdf-file.dto';
+import { UpdateIncidentDto } from '../data/dto/update-incident.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,7 @@ export class IncidentsService {
     return this.httpRequestsService.post(apiPath, dto).pipe(map(() => {}));
   }
 
-  searchIncidents(dto: SearcIincidentsDto): Observable<SearchIncidentsResDto> {
+  searchIncidents(dto: SearchIncidentsDto): Observable<SearchIncidentsResDto> {
     const apiPath = `/incidents/search`;
     return this.httpRequestsService.post<SearchIncidentsResDto>(apiPath, dto);
   }
@@ -43,6 +44,11 @@ export class IncidentsService {
 
   updateReturnedIncident(dto: UpdateReturnedIncidentDto): Observable<void> {
     const apiPath = `/incidents/update-returned`;
+    return this.httpRequestsService.patch(apiPath, dto).pipe(map(() => {}));
+  }
+
+  updateIncident(dto: UpdateIncidentDto): Observable<void> {
+    const apiPath = `/incidents/update`;
     return this.httpRequestsService.patch(apiPath, dto).pipe(map(() => {}));
   }
 
