@@ -19,4 +19,5 @@ export interface ReturnIncidentDto {
   causeId: number;
   reporterDepartmentId: number;
   responsibleDepartmentId: number;
+  returnNotes: string;
 }

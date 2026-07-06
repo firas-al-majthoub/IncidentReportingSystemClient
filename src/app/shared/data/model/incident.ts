@@ -33,6 +33,7 @@ export interface Incident {
   reporterDepartment: Department | null;
   responsibleDepartmentId: number | null;
   responsibleDepartment: Department | null;
+  returnNotes: string | null;
   resolutionNotes: string | null;
   closureDate: string | null;
 }

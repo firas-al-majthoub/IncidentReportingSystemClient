@@ -90,6 +90,7 @@ export class EditIncidentComponent {
   protected selectedReporterDepartment = '';
   protected selectedResponsibleDepartment = '';
   protected resolutionNotes = '';
+  protected returnNotes = '';
 
   protected tmpEmployeeNumber = '';
   protected tmpEmployeeError = '';
@@ -114,6 +115,10 @@ export class EditIncidentComponent {
 
   protected incidentClosureForm = new FormGroup({
     resolutionNotes: new FormControl('', Validators.required),
+  });
+
+  protected incidentReturnForm = new FormGroup({
+    returnNotes: new FormControl('', Validators.required),
   });
 
   constructor(
@@ -562,8 +567,9 @@ export class EditIncidentComponent {
   }
 
   protected returnIncident() {
-    if (!this.incidentForm.valid) {
+    if (!this.incidentForm.valid || !this.incidentReturnForm.valid) {
       this.incidentForm.markAllAsTouched();
+      this.incidentReturnForm.markAllAsTouched();
       this.toastsService.showError('Please fill all required fields');
       return;
     }
@@ -595,6 +601,7 @@ export class EditIncidentComponent {
       responsibleDepartmentId: Number.parseInt(
         this.selectedResponsibleDepartment,
       ),
+      returnNotes: this.returnNotes,
     };
 
     this.closeIncidentReturnModal();
