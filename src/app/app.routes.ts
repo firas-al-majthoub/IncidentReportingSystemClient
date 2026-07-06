@@ -10,6 +10,7 @@ import { AuthGuard } from './shared/guards/auth.guard';
 import { ViewerOrManagerGuard } from './shared/guards/viewer-or-manager.guard';
 import { HasRoleGuard } from './shared/guards/has-role.guard';
 import { MyReturnedIncidentsComponent } from './pages/my-returned-incidents/my-returned-incidents.component';
+import { EditReturnedIncidentComponent } from './pages/edit-returned-incident/edit-returned-incident.component';
 
 export const routes: Routes = [
   {
@@ -49,6 +50,13 @@ export const routes: Routes = [
       {
         path: 'incidents/:id/edit',
         component: EditIncidentComponent,
+        canActivate: [ViewerOrManagerGuard],
+        pathMatch: 'full',
+        title: 'Edit Incident - IRMS',
+      },
+      {
+        path: 'incidents/:id/edit-returned',
+        component: EditReturnedIncidentComponent,
         canActivate: [HasRoleGuard],
         pathMatch: 'full',
         title: 'Edit Incident - IRMS',

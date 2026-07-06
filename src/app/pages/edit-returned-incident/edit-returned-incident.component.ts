@@ -7,10 +7,6 @@ import { InputFieldComponent } from '../../shared/components/form/input/input-fi
 import { ComponentCardComponent } from '../../shared/components/common/component-card/component-card.component';
 import { LabelComponent } from '../../shared/components/form/label/label.component';
 import { TextAreaComponent } from '../../shared/components/form/input/text-area.component';
-import {
-  SelectComponent,
-  Option,
-} from '../../shared/components/form/select/select.component';
 import { DatePickerComponent } from '../../shared/components/form/date-picker/date-picker.component';
 import { RadioComponent } from '../../shared/components/form/input/radio.component';
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
@@ -20,35 +16,28 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {
-  DdlDataService,
-  DdlItem,
-} from '../../shared/services/ddl-data.service';
 import { ModalComponent } from '../../shared/components/ui/modal/modal.component';
 import { ToastsService } from '../../shared/services/toasts.service';
-import { CloseIncidentDto } from '../../shared/data/dto/close-incident.dto';
-import { ReturnIncidentDto } from '../../shared/data/dto/return-incident.dto';
 import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum';
-import { AuthService } from '../../shared/services/auth.service';
+import { UpdateReturnedIncidentDto } from '../../shared/data/dto/update-returned-incident.dto';
 import { InvolvedEmployeeDto } from '../../shared/data/dto/involved-employee.dto';
 
 @Component({
-  selector: 'app-edit-incident',
+  selector: 'app-edit-returned-incident',
   imports: [
     ComponentCardComponent,
     LabelComponent,
     TextAreaComponent,
     InputFieldComponent,
-    SelectComponent,
     DatePickerComponent,
     RadioComponent,
     ButtonComponent,
     ReactiveFormsModule,
     ModalComponent,
   ],
-  templateUrl: './edit-incident.component.html',
+  templateUrl: './edit-returned-incident.component.html',
 })
-export class EditIncidentComponent {
+export class EditReturnedIncidentComponent {
   protected readonly IncidentStatusEnum = IncidentStatusEnum;
 
   protected readonly REQUIRED_FILED_TXT = 'This field is required';
@@ -59,12 +48,7 @@ export class EditIncidentComponent {
   protected id = input.required<number>();
   protected incident?: Incident;
 
-  protected isCloseModalOpen = false;
-  protected isReturnModalOpen = false;
-
-  protected departments: Option[] = [];
-  protected lossTypes: Option[] = [];
-  protected causes: Option[] = [];
+  protected isModalOpen = false;
 
   protected reportingDate?: { dateStr: string } = undefined;
   protected discoverDate?: { dateStr: string } = undefined;
@@ -72,21 +56,17 @@ export class EditIncidentComponent {
   protected description = '';
   protected hasFinancialImpact = true;
   protected financialImpactAmount = '';
+  protected originalFinancialImpactAmount = '';
   protected recoveredFinancialLoss = false;
   protected recoveryAmount = '';
+  protected originalRecoveryAmount = '';
   protected recoveryDate?: { dateStr: string } = undefined;
-  protected riskDescription = '';
+  protected originalRecoveryDate?: { dateStr: string } = undefined;
   protected involvedEmployees: InvolvedEmployeeDto[] = [];
   protected relatedProcedure = '';
   protected correctiveAction = '';
   protected phone = '';
   protected email = '';
-  protected selectedLossType = '';
-  protected selectedCause = '';
-  protected selectedReporterDepartment = '';
-  protected selectedResponsibleDepartment = '';
-  protected resolutionNotes = '';
-  protected returnNotes = '';
 
   protected tmpEmployeeNumber = '';
   protected tmpEmployeeError = '';
@@ -94,65 +74,22 @@ export class EditIncidentComponent {
   protected showEmployeeErrorErr = false;
 
   protected incidentForm = new FormGroup({
-    riskDescription: new FormControl('', Validators.required),
+    discoverDate: new FormControl('', Validators.required),
+    incidentDate: new FormControl('', Validators.required),
+    description: new FormControl('', Validators.required),
+    financialImpactAmount: new FormControl('', Validators.required),
+    recoveryAmount: new FormControl(''),
+    recoveryDate: new FormControl(''),
     relatedProcedure: new FormControl('', Validators.required),
     correctiveAction: new FormControl('', Validators.required),
     email: new FormControl('', Validators.email),
-    lossType: new FormControl('', Validators.required),
-    cause: new FormControl('', Validators.required),
-    reporterDepartment: new FormControl('', Validators.required),
-    responsibleDepartment: new FormControl('', Validators.required),
-  });
-
-  protected incidentClosureForm = new FormGroup({
-    resolutionNotes: new FormControl('', Validators.required),
-  });
-
-  protected incidentReturnForm = new FormGroup({
-    returnNotes: new FormControl('', Validators.required),
   });
 
   constructor(
-    protected ddlDataService: DdlDataService,
     private incidentsService: IncidentsService,
     private toastsService: ToastsService,
     private router: Router,
-    private authService: AuthService,
-  ) {
-    this.getDepartments();
-    this.getLossTypes();
-    this.getCauses();
-  }
-
-  private getDepartments(): void {
-    this.ddlDataService.getDepartments().subscribe({
-      next: (deps: DdlItem[]) => {
-        this.departments = deps.map((d) => {
-          return { value: `${d.id}`, label: d.nameEn };
-        });
-      },
-    });
-  }
-
-  private getLossTypes(): void {
-    this.ddlDataService.getIncidentLossTypes().subscribe({
-      next: (deps: DdlItem[]) => {
-        this.lossTypes = deps.map((d) => {
-          return { value: `${d.id}`, label: d.nameEn };
-        });
-      },
-    });
-  }
-
-  private getCauses(): void {
-    this.ddlDataService.getIncidentCauses().subscribe({
-      next: (deps: DdlItem[]) => {
-        this.causes = deps.map((d) => {
-          return { value: `${d.id}`, label: d.nameEn };
-        });
-      },
-    });
-  }
+  ) {}
 
   ngOnInit() {
     const incidentId = this.id();
@@ -178,20 +115,23 @@ export class EditIncidentComponent {
     this.description = incident.description;
 
     this.hasFinancialImpact = incident.hasFinancialImpact;
+    this.hasFinancialImpactChanged(`${incident.hasFinancialImpact}`);
     this.financialImpactAmount =
       incident.financialImpactAmount == null
         ? ''
         : `${incident.financialImpactAmount}`;
+    this.originalFinancialImpactAmount = this.financialImpactAmount;
 
     this.recoveredFinancialLoss = incident.recoveredFinancialLoss;
+    this.recoveredFinancialLossChanged(`${incident.recoveredFinancialLoss}`);
     this.recoveryAmount =
       incident.recoveryAmount == null ? '' : `${incident.recoveryAmount}`;
+    this.originalRecoveryAmount = this.recoveryAmount;
     this.recoveryDate =
       incident.recoveryDate == null
         ? undefined
         : { dateStr: incident.recoveryDate };
-
-    this.riskDescription = incident.riskDescription ?? '';
+    this.originalRecoveryDate = this.recoveryDate;
 
     this.involvedEmployees = incident.involvedEmployees.map((ie) => {
       const employee: InvolvedEmployeeDto = {
@@ -201,107 +141,127 @@ export class EditIncidentComponent {
 
       return employee;
     });
+
     this.relatedProcedure = incident.relatedProcedure;
     this.correctiveAction = incident.correctiveAction;
     this.phone = incident.phone ?? '';
     this.email = incident.email ?? '';
-    this.selectedLossType =
-      incident.lossType == null ? '' : `${incident.lossType.id}`;
-    this.selectedCause = incident.cause == null ? '' : `${incident.cause.id}`;
-    this.selectedReporterDepartment =
-      incident.reporterDepartment == null
-        ? ''
-        : `${incident.reporterDepartment.id}`;
-    this.selectedResponsibleDepartment =
-      incident.responsibleDepartment == null
-        ? ''
-        : `${incident.responsibleDepartment.id}`;
 
-    this.incidentForm.controls.riskDescription.setValue(this.riskDescription);
+    this.incidentForm.controls.discoverDate.setValue(incident.discoverDate);
+    this.incidentForm.controls.incidentDate.setValue(incident.incidentDate);
+    this.incidentForm.controls.description.setValue(this.description);
+    this.incidentForm.controls.financialImpactAmount.setValue(
+      this.financialImpactAmount,
+    );
+    this.incidentForm.controls.recoveryAmount.setValue(this.recoveryAmount);
+    this.incidentForm.controls.recoveryDate.setValue(incident.recoveryDate);
     this.incidentForm.controls.relatedProcedure.setValue(this.relatedProcedure);
     this.incidentForm.controls.correctiveAction.setValue(this.correctiveAction);
     this.incidentForm.controls.email.setValue(this.email);
-    this.incidentForm.controls.lossType.setValue(this.selectedLossType);
-    this.incidentForm.controls.cause.setValue(this.selectedCause);
-    this.incidentForm.controls.reporterDepartment.setValue(
-      this.selectedReporterDepartment,
-    );
-    this.incidentForm.controls.responsibleDepartment.setValue(
-      this.selectedResponsibleDepartment,
-    );
 
     this.incidentForm.updateValueAndValidity();
     this.incident = incident;
   }
 
-  protected reporterDepartmentChanged(val: string) {
-    this.selectedReporterDepartment = val;
+  discoverDateChanged(val: any) {
+    this.discoverDate = val;
   }
 
-  protected responsibleDepartmentChanged(val: string) {
-    this.selectedResponsibleDepartment = val;
+  incidentDateChanged(val: any) {
+    this.incidentDate = val;
   }
 
-  protected lossTypeChanged(val: string) {
-    this.selectedLossType = val;
+  recoveryDateChanged(val: any) {
+    this.recoveryDate = val;
   }
 
-  protected causeChanged(val: string) {
-    this.selectedCause = val;
+  hasFinancialImpactChanged(val: string) {
+    this.hasFinancialImpact = val === 'true';
+    this.updateLossAmountDisableState();
+
+    if (!this.hasFinancialImpact) {
+      this.recoveredFinancialLossChanged('false');
+    }
   }
 
-  protected isClosedIncident(): boolean {
-    return (
-      this.incident != null &&
-      this.incident.status.id == IncidentStatusEnum.Closed
-    );
+  updateLossAmountDisableState() {
+    if (this.hasFinancialImpact) {
+      this.incidentForm.controls.financialImpactAmount.enable();
+      this.incidentForm.controls.financialImpactAmount.setValue(
+        this.originalFinancialImpactAmount,
+      );
+      this.incidentForm.controls.financialImpactAmount.setValidators(
+        Validators.required,
+      );
+      this.financialImpactAmount = this.originalFinancialImpactAmount;
+    } else {
+      this.incidentForm.controls.financialImpactAmount.disable();
+      this.incidentForm.controls.financialImpactAmount.setValue('');
+      this.incidentForm.controls.financialImpactAmount.removeValidators(
+        Validators.required,
+      );
+      this.financialImpactAmount = '';
+    }
+
+    this.incidentForm.controls.financialImpactAmount.updateValueAndValidity();
   }
 
-  protected isReturnedIncident(): boolean {
-    return (
-      this.incident != null &&
-      this.incident.status.id == IncidentStatusEnum.Returned
-    );
+  protected recoveredFinancialLossChanged(val: string) {
+    this.recoveredFinancialLoss = val === 'true';
+    this.updateRecoveredAmountDisableState();
   }
 
-  protected isManagerUser(): boolean {
-    return this.authService.isManagerUser();
+  updateRecoveredAmountDisableState() {
+    if (this.recoveredFinancialLoss) {
+      this.incidentForm.controls.recoveryAmount.enable();
+      this.incidentForm.controls.recoveryAmount.setValue(
+        this.originalRecoveryAmount,
+      );
+      this.incidentForm.controls.recoveryAmount.setValidators(
+        Validators.required,
+      );
+      this.recoveryAmount = this.originalRecoveryAmount;
+
+      this.incidentForm.controls.recoveryDate.enable();
+      this.incidentForm.controls.recoveryDate.setValue(
+        this.originalRecoveryDate ? this.originalRecoveryDate.dateStr : '',
+      );
+      this.incidentForm.controls.recoveryDate.setValidators(
+        Validators.required,
+      );
+      this.recoveryDate = this.originalRecoveryDate;
+    } else {
+      this.incidentForm.controls.recoveryAmount.disable();
+      this.incidentForm.controls.recoveryAmount.setValue('');
+      this.incidentForm.controls.recoveryAmount.removeValidators(
+        Validators.required,
+      );
+      this.recoveryAmount = '';
+
+      this.incidentForm.controls.recoveryDate.disable();
+      this.incidentForm.controls.recoveryDate.setValue('');
+      this.incidentForm.controls.recoveryDate.removeValidators(
+        Validators.required,
+      );
+      this.recoveryDate = undefined;
+    }
+
+    this.incidentForm.controls.recoveryAmount.updateValueAndValidity();
+    this.incidentForm.controls.recoveryDate.updateValueAndValidity();
   }
 
-  protected displayActionButtons(): boolean {
-    return this.isManagerUser() && !this.isClosedIncident();
-  }
-
-  protected displayReturnButton(): boolean {
-    return this.isManagerUser() && !this.isReturnedIncident();
-  }
-
-  protected openIncidentCloseModal() {
+  protected openModal() {
     if (!this.incidentForm.valid) {
       this.incidentForm.markAllAsTouched();
       this.toastsService.showError('Please fill all required fields');
       return;
     }
 
-    this.isCloseModalOpen = true;
+    this.isModalOpen = true;
   }
 
-  protected closeIncidentCloseModal() {
-    this.isCloseModalOpen = false;
-  }
-
-  protected openIncidentReturnModal() {
-    if (!this.incidentForm.valid) {
-      this.incidentForm.markAllAsTouched();
-      this.toastsService.showError('Please fill all required fields');
-      return;
-    }
-
-    this.isReturnModalOpen = true;
-  }
-
-  protected closeIncidentReturnModal() {
-    this.isReturnModalOpen = false;
+  protected closeModal() {
+    this.isModalOpen = false;
   }
 
   protected addEmployee(): void {
@@ -388,73 +348,41 @@ export class EditIncidentComponent {
     }
   }
 
-  protected closeIncident() {
-    if (!this.incidentForm.valid || !this.incidentClosureForm.valid) {
+  protected updateReturnedIncident() {
+    if (!this.incidentForm.valid) {
       this.incidentForm.markAllAsTouched();
-      this.incidentClosureForm.markAllAsTouched();
       this.toastsService.showError('Please fill all required fields');
       return;
     }
 
-    const dto: CloseIncidentDto = {
+    const dto: UpdateReturnedIncidentDto = {
       id: this.incident!.id,
-      riskDescription: this.riskDescription,
+      discoverDate: this.discoverDate!.dateStr,
+      incidentDate: this.incidentDate!.dateStr,
+      description: this.description,
+      hasFinancialImpact: this.hasFinancialImpact,
+      financialImpactAmount: this.hasFinancialImpact
+        ? Number.parseFloat(this.financialImpactAmount)
+        : null,
+      recoveredFinancialLoss: this.recoveredFinancialLoss,
+      recoveryAmount: this.recoveredFinancialLoss
+        ? Number.parseFloat(this.recoveryAmount)
+        : null,
+      recoveryDate: this.recoveredFinancialLoss
+        ? this.recoveryDate!.dateStr
+        : null,
       involvedEmployees: this.involvedEmployees,
       relatedProcedure: this.relatedProcedure,
       correctiveAction: this.correctiveAction,
       phone: this.phone,
       email: this.email,
-      lossTypeId: Number.parseInt(this.selectedLossType),
-      causeId: Number.parseInt(this.selectedCause),
-      reporterDepartmentId: Number.parseInt(this.selectedReporterDepartment),
-      responsibleDepartmentId: Number.parseInt(
-        this.selectedResponsibleDepartment,
-      ),
-      resolutionNotes: this.resolutionNotes,
     };
 
-    this.closeIncidentCloseModal();
-    this.incidentsService.closeIncident(dto).subscribe({
+    this.closeModal();
+    this.incidentsService.updateReturnedIncident(dto).subscribe({
       next: () => {
-        this.toastsService.showSuccess('Incident closed successfully');
-        this.router.navigate(['/incidents']);
-      },
-      error: () => {
-        this.toastsService.showError('Error occurred');
-      },
-    });
-  }
-
-  protected returnIncident() {
-    if (!this.incidentForm.valid || !this.incidentReturnForm.valid) {
-      this.incidentForm.markAllAsTouched();
-      this.incidentReturnForm.markAllAsTouched();
-      this.toastsService.showError('Please fill all required fields');
-      return;
-    }
-
-    const dto: ReturnIncidentDto = {
-      id: this.incident!.id,
-      riskDescription: this.riskDescription,
-      involvedEmployees: this.involvedEmployees,
-      relatedProcedure: this.relatedProcedure,
-      correctiveAction: this.correctiveAction,
-      phone: this.phone,
-      email: this.email,
-      lossTypeId: Number.parseInt(this.selectedLossType),
-      causeId: Number.parseInt(this.selectedCause),
-      reporterDepartmentId: Number.parseInt(this.selectedReporterDepartment),
-      responsibleDepartmentId: Number.parseInt(
-        this.selectedResponsibleDepartment,
-      ),
-      returnNotes: this.returnNotes,
-    };
-
-    this.closeIncidentReturnModal();
-    this.incidentsService.returnIncident(dto).subscribe({
-      next: () => {
-        this.toastsService.showSuccess('Incident returned successfully');
-        this.router.navigate(['/incidents']);
+        this.toastsService.showSuccess('Incident updated successfully');
+        this.router.navigate(['/incidents/my-returned-incidents']);
       },
       error: () => {
         this.toastsService.showError('Error occurred');

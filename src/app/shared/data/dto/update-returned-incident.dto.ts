@@ -1,6 +1,6 @@
 import { InvolvedEmployeeDto } from "./involved-employee.dto";
 
-export interface UpdateIncidentDto {
+export interface UpdateReturnedIncidentDto {
   id: number;
   discoverDate: string;
   incidentDate: string;

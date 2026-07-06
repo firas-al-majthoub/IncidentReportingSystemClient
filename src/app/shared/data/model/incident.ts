@@ -25,6 +25,7 @@ export interface Incident {
   status: IncidentStatus;
   reportedById: number;
   reportedBy: User;
+  riskDescription: string | null;
   lossTypeId: number | null;
   lossType: IncidentLossType | null;
   causeId: number | null;

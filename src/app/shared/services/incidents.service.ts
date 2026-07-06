@@ -6,7 +6,7 @@ import { SearchIncidentsResDto } from '../data/dto/all-incidents.dto';
 import { Incident } from '../data/model/incident';
 import { CloseIncidentDto } from '../data/dto/close-incident.dto';
 import { ReturnIncidentDto } from '../data/dto/return-incident.dto';
-import { UpdateIncidentDto } from '../data/dto/update-incident.dto';
+import { UpdateReturnedIncidentDto } from '../data/dto/update-returned-incident.dto';
 import { SearcIincidentsDto } from '../data/dto/search-incidents.dto';
 import { GeneratePdfFileDto } from '../data/dto/generatePdfFile.dto';
 
@@ -41,7 +41,7 @@ export class IncidentsService {
     return this.httpRequestsService.post(apiPath, dto).pipe(map(() => {}));
   }
 
-  updateReturnedIncident(dto: UpdateIncidentDto): Observable<void> {
+  updateReturnedIncident(dto: UpdateReturnedIncidentDto): Observable<void> {
     const apiPath = `/incidents/update-returned`;
     return this.httpRequestsService.patch(apiPath, dto).pipe(map(() => {}));
   }

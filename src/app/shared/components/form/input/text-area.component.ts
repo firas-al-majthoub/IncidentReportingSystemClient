@@ -54,7 +54,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   styles: ``,
 })
 export class TextAreaComponent {
-  @Input() placeholder = 'Enter your message';
+  @Input() placeholder = '';
   @Input() rows = 3;
   @Input() value? = '';
   @Input() className = '';
