@@ -3,6 +3,8 @@ import { IncidentCause } from './incident-cause';
 import { IncidentInvolvedEmployee } from './incident-involved-employee';
 import { IncidentLossType } from './incident-loss-type';
 import { IncidentStatus } from './incident-status';
+import { RiskCategoryFirstLevel } from './risk-category-first-level';
+import { RiskCategorySecondLevel } from './risk-category-second-level';
 import { User } from './user';
 
 export interface Incident {
@@ -35,6 +37,10 @@ export interface Incident {
   responsibleDepartmentId: number | null;
   responsibleDepartment: Department | null;
   returnNotes: string | null;
+  riskCategoryFirstLevelId: number | null;
+  riskCategoryFirstLevel: RiskCategoryFirstLevel | null;
+  riskCategorySecondLevelId: number | null;
+  riskCategorySecondLevel: RiskCategorySecondLevel | null;
   resolutionNotes: string | null;
   closureDate: string | null;
 }

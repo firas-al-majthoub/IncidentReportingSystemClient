@@ -1,4 +1,3 @@
-BASEL -> optional but required when closing the incident
 excel report
 
 

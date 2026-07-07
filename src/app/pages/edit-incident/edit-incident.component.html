@@ -419,6 +419,85 @@
             </p>
           }
         </div>
+        <div>
+          <app-label>BASEL</app-label>
+          <div
+            class="space-y-6 p-4 rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]"
+          >
+            <div class="flex space-x-4">
+              <div class="w-full">
+                <app-label>Risk Category Level 1</app-label>
+                <app-select
+                  [reactiveFormGroup]="incidentClosureForm"
+                  [reactiveFormControl]="
+                    incidentClosureForm.controls.riskCategoryFirstLevel
+                  "
+                  [options]="firstLevelRiskCategories"
+                  placeholder="Risk Category Level 1"
+                  [value]="selectedRiskCategoryFirstLevel"
+                  (valueChange)="firstLevelCategoryChanged($event)"
+                  className="dark:bg-dark-900"
+                ></app-select>
+                @if (
+                  pressedCloseButton &&
+                  incidentClosureForm.controls.riskCategoryFirstLevel.touched &&
+                  incidentClosureForm.controls.riskCategoryFirstLevel.hasError(
+                    'required'
+                  )
+                ) {
+                  <p class="mt-2 text-sm text-error-500">
+                    {{ REQUIRED_FILED_TXT }}
+                  </p>
+                }
+              </div>
+              <div class="w-full">
+                <app-label>Risk Category Level 2</app-label>
+                <app-select
+                  [reactiveFormGroup]="incidentClosureForm"
+                  [reactiveFormControl]="
+                    incidentClosureForm.controls.riskCategorySecondLevel
+                  "
+                  [options]="secondLevelRiskCategories"
+                  placeholder="Risk Category Level 2"
+                  [value]="selectedRiskCategorySecondLevel"
+                  (valueChange)="secondLevelCategoryChanged($event)"
+                  className="dark:bg-dark-900"
+                ></app-select>
+                @if (
+                  pressedCloseButton &&
+                  incidentClosureForm.controls.riskCategorySecondLevel
+                    .touched &&
+                  incidentClosureForm.controls.riskCategorySecondLevel.hasError(
+                    'required'
+                  )
+                ) {
+                  <p class="mt-2 text-sm text-error-500">
+                    {{ REQUIRED_FILED_TXT }}
+                  </p>
+                }
+              </div>
+            </div>
+            <div class="flex space-x-4">
+              <div class="w-full">
+                <app-label>Event Type Level 1</app-label>
+                <app-input-field
+                  [value]="secondLevelCategory?.eventTypeFirstLevel"
+                  className="text-error-500"
+                  type="text"
+                  [disabled]="true"
+                />
+              </div>
+              <div class="w-full">
+                <app-label>Event Type Level 2</app-label>
+                <app-input-field
+                  [value]="secondLevelCategory?.eventTypeSecondLevel"
+                  type="text"
+                  [disabled]="true"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
         @if (displayActionButtons()) {
           <div class="mt-10 space-x-3 flex justify-end">
             @if (displayUpdateButton()) {

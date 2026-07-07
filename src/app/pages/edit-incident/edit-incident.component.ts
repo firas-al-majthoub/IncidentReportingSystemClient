@@ -32,6 +32,10 @@ import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum'
 import { AuthService } from '../../shared/services/auth.service';
 import { InvolvedEmployeeDto } from '../../shared/data/dto/involved-employee.dto';
 import { UpdateIncidentDto } from '../../shared/data/dto/update-incident.dto';
+import { RiskCategoriesService } from '../../shared/services/risk-categories.service';
+import { RiskCategoryFirstLevel } from '../../shared/data/model/risk-category-first-level';
+import { RiskCategorySecondLevel } from '../../shared/data/model/risk-category-second-level';
+import { forkJoin, map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-edit-incident',
@@ -63,10 +67,14 @@ export class EditIncidentComponent {
   protected isCloseModalOpen = false;
   protected isReturnModalOpen = false;
   protected isUpdateModalOpen = false;
+  protected pressedCloseButton = false;
 
   protected departments: Option[] = [];
   protected lossTypes: Option[] = [];
   protected causes: Option[] = [];
+  protected firstLevelRiskCategories: Option[] = [];
+  protected secondLevelRiskCategories: Option[] = [];
+  protected originalSecondLevelRiskCategories: RiskCategorySecondLevel[] = [];
 
   protected reportingDate?: { dateStr: string } = undefined;
   protected discoverDate?: { dateStr: string } = undefined;
@@ -89,6 +97,8 @@ export class EditIncidentComponent {
   protected selectedResponsibleDepartment = '';
   protected resolutionNotes = '';
   protected returnNotes = '';
+  protected selectedRiskCategoryFirstLevel = '';
+  protected selectedRiskCategorySecondLevel = '';
 
   protected tmpEmployeeNumber = '';
   protected tmpEmployeeError = '';
@@ -107,6 +117,8 @@ export class EditIncidentComponent {
   });
 
   protected incidentClosureForm = new FormGroup({
+    riskCategoryFirstLevel: new FormControl('', Validators.required),
+    riskCategorySecondLevel: new FormControl('', Validators.required),
     resolutionNotes: new FormControl('', Validators.required),
   });
 
@@ -120,45 +132,76 @@ export class EditIncidentComponent {
     private toastsService: ToastsService,
     private router: Router,
     private authService: AuthService,
-  ) {
-    this.getDepartments();
-    this.getLossTypes();
-    this.getCauses();
-  }
-
-  private getDepartments(): void {
-    this.ddlDataService.getDepartments().subscribe({
-      next: (deps: DdlItem[]) => {
-        this.departments = deps.map((d) => {
-          return { value: `${d.id}`, label: d.nameEn };
-        });
-      },
-    });
-  }
-
-  private getLossTypes(): void {
-    this.ddlDataService.getIncidentLossTypes().subscribe({
-      next: (deps: DdlItem[]) => {
-        this.lossTypes = deps.map((d) => {
-          return { value: `${d.id}`, label: d.nameEn };
-        });
-      },
-    });
-  }
-
-  private getCauses(): void {
-    this.ddlDataService.getIncidentCauses().subscribe({
-      next: (deps: DdlItem[]) => {
-        this.causes = deps.map((d) => {
-          return { value: `${d.id}`, label: d.nameEn };
-        });
-      },
-    });
-  }
+    private riskCategoriesService: RiskCategoriesService,
+  ) {}
 
   ngOnInit() {
     const incidentId = this.id();
-    this.getIncidentDetails(incidentId);
+    this.getDdlData().subscribe(() => {
+      this.getIncidentDetails(incidentId);
+    });
+  }
+
+  private getDdlData(): Observable<void> {
+    return forkJoin([
+      this.getDepartments(),
+      this.getLossTypes(),
+      this.getCauses(),
+      this.getFirstLevelRiskCategories(),
+    ]).pipe(map(() => {}));
+  }
+
+  private getDepartments(): Observable<void> {
+    return this.ddlDataService.getDepartments().pipe(
+      map((deps: DdlItem[]) => {
+        this.departments = deps.map((d) => {
+          return { value: `${d.id}`, label: d.nameEn };
+        });
+      }),
+    );
+  }
+
+  private getLossTypes(): Observable<void> {
+    return this.ddlDataService.getIncidentLossTypes().pipe(
+      map((lossTypes: DdlItem[]) => {
+        this.lossTypes = lossTypes.map((lt) => {
+          return { value: `${lt.id}`, label: lt.nameEn };
+        });
+      }),
+    );
+  }
+
+  private getCauses(): Observable<void> {
+    return this.ddlDataService.getIncidentCauses().pipe(
+      map((causes: DdlItem[]) => {
+        this.causes = causes.map((c) => {
+          return { value: `${c.id}`, label: c.nameEn };
+        });
+      }),
+    );
+  }
+
+  private getFirstLevelRiskCategories(): Observable<void> {
+    return this.riskCategoriesService.getFirstLevelCategories().pipe(
+      map((categories: RiskCategoryFirstLevel[]) => {
+        this.firstLevelRiskCategories = categories.map((rc) => {
+          return { value: `${rc.id}`, label: rc.nameEn };
+        });
+      }),
+    );
+  }
+
+  private getSecondLevelRiskCategories(firstLevelId: number): void {
+    this.riskCategoriesService
+      .getSecondLevelCategories(firstLevelId)
+      .subscribe({
+        next: (categories: RiskCategorySecondLevel[]) => {
+          this.originalSecondLevelRiskCategories = categories;
+          this.secondLevelRiskCategories = categories.map((rc) => {
+            return { value: `${rc.id}`, label: rc.nameEn };
+          });
+        },
+      });
   }
 
   private getIncidentDetails(incidentId: number): void {
@@ -219,6 +262,22 @@ export class EditIncidentComponent {
         ? ''
         : `${incident.responsibleDepartment.id}`;
 
+    this.selectedRiskCategoryFirstLevel =
+      incident.riskCategoryFirstLevelId == null
+        ? ''
+        : `${incident.riskCategoryFirstLevelId}`;
+
+    if (this.selectedRiskCategoryFirstLevel)
+      this.firstLevelCategoryChanged(this.selectedRiskCategoryFirstLevel);
+
+    this.selectedRiskCategorySecondLevel =
+      incident.riskCategorySecondLevelId == null
+        ? ''
+        : `${incident.riskCategorySecondLevelId}`;
+
+    if (this.selectedRiskCategorySecondLevel)
+      this.secondLevelCategoryChanged(this.selectedRiskCategorySecondLevel);
+
     this.incidentForm.controls.riskDescription.setValue(this.riskDescription);
     this.incidentForm.controls.relatedProcedure.setValue(this.relatedProcedure);
     this.incidentForm.controls.correctiveAction.setValue(this.correctiveAction);
@@ -250,6 +309,32 @@ export class EditIncidentComponent {
 
   protected causeChanged(val: string) {
     this.selectedCause = val;
+  }
+
+  protected firstLevelCategoryChanged(val: string): void {
+    this.selectedRiskCategoryFirstLevel = val;
+    this.incidentClosureForm.controls.riskCategoryFirstLevel.setValue(val);
+    this.incidentClosureForm.controls.riskCategoryFirstLevel.updateValueAndValidity();
+    this.clearSecondLevelCategory();
+
+    if (+this.selectedRiskCategoryFirstLevel > 0)
+      this.getSecondLevelRiskCategories(+this.selectedRiskCategoryFirstLevel);
+  }
+
+  private clearSecondLevelCategory(): void {
+    this.secondLevelCategoryChanged('');
+  }
+
+  protected secondLevelCategoryChanged(val: string): void {
+    this.selectedRiskCategorySecondLevel = val;
+    this.incidentClosureForm.controls.riskCategorySecondLevel.setValue(val);
+    this.incidentClosureForm.controls.riskCategorySecondLevel.updateValueAndValidity();
+  }
+
+  protected get secondLevelCategory(): RiskCategorySecondLevel | undefined {
+    return this.originalSecondLevelRiskCategories.find(
+      (rc) => rc.id == +this.selectedRiskCategorySecondLevel,
+    );
   }
 
   private isClosedIncident(): boolean {
@@ -285,8 +370,16 @@ export class EditIncidentComponent {
   }
 
   protected openIncidentCloseModal() {
-    if (!this.incidentForm.valid) {
+    this.pressedCloseButton = true;
+
+    if (
+      !this.incidentForm.valid ||
+      !this.incidentClosureForm.controls.riskCategoryFirstLevel.valid ||
+      !this.incidentClosureForm.controls.riskCategorySecondLevel.valid
+    ) {
       this.incidentForm.markAllAsTouched();
+      this.incidentClosureForm.controls.riskCategoryFirstLevel.markAsTouched();
+      this.incidentClosureForm.controls.riskCategorySecondLevel.markAsTouched();
       this.toastsService.showError('Please fill all required fields');
       return;
     }
@@ -313,6 +406,12 @@ export class EditIncidentComponent {
   }
 
   protected openIncidentUpdateModal() {
+    if (!this.incidentForm.valid) {
+      this.incidentForm.markAllAsTouched();
+      this.toastsService.showError('Please fill all required fields');
+      return;
+    }
+
     this.isUpdateModalOpen = true;
   }
 
@@ -419,6 +518,12 @@ export class EditIncidentComponent {
       responsibleDepartmentId: Number.parseInt(
         this.selectedResponsibleDepartment,
       ),
+      riskCategoryFirstLevelId: this.selectedRiskCategoryFirstLevel
+        ? Number.parseInt(this.selectedRiskCategoryFirstLevel)
+        : null,
+      riskCategorySecondLevelId: this.selectedRiskCategorySecondLevel
+        ? Number.parseInt(this.selectedRiskCategorySecondLevel)
+        : null,
     };
   }
 

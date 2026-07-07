@@ -121,7 +121,11 @@
     <div>
       <app-label>Reported By</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident ? (`${incident.reportedBy!.firstNameEn} ${incident.reportedBy!.lastNameEn}`) : '' }}
+        {{
+          incident
+            ? `${incident.reportedBy!.firstNameEn} ${incident.reportedBy!.lastNameEn}`
+            : ''
+        }}
       </div>
       <app-divider />
     </div>
@@ -160,6 +164,36 @@
       </div>
       <app-divider />
     </div>
+    <div>
+      <app-label>Risk Category Level 1</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.riskCategoryFirstLevel?.nameEn }}
+      </div>
+      <app-divider />
+    </div>
+    <div>
+      <app-label>Risk Category Level 2</app-label>
+      <div class="text-theme-m text-black dark:text-gray-300">
+        {{ incident?.riskCategorySecondLevel?.nameEn }}
+      </div>
+      <app-divider />
+    </div>
+    @if (incident && incident.riskCategorySecondLevel) {
+      <div>
+        <app-label>Event Type Level 1</app-label>
+        <div class="text-theme-m text-black dark:text-gray-300">
+          {{ incident.riskCategorySecondLevel.eventTypeFirstLevel }}
+        </div>
+        <app-divider />
+      </div>
+      <div>
+        <app-label>Event Type Level 2</app-label>
+        <div class="text-theme-m text-black dark:text-gray-300">
+          {{ incident.riskCategorySecondLevel.eventTypeSecondLevel }}
+        </div>
+        <app-divider />
+      </div>
+    }
     <div>
       <app-label>Return Notes</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">

@@ -12,4 +12,6 @@ export interface UpdateIncidentDto {
   causeId: number;
   reporterDepartmentId: number;
   responsibleDepartmentId: number;
+  riskCategoryFirstLevelId: number | null;
+  riskCategorySecondLevelId: number | null;
 }
