@@ -132,7 +132,7 @@
     <div>
       <app-label>Risk Description</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.riskDescription }}
+        <pre>{{ incident?.riskDescription }}</pre>
       </div>
       <app-divider />
     </div>
@@ -197,14 +197,14 @@
     <div>
       <app-label>Return Notes</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.returnNotes }}
+        <pre>{{ incident?.returnNotes }}</pre>
       </div>
       <app-divider />
     </div>
     <div>
       <app-label>Resolution Notes</app-label>
       <div class="text-theme-m text-black dark:text-gray-300">
-        {{ incident?.resolutionNotes }}
+        <pre>{{ incident?.resolutionNotes }}</pre>
       </div>
       <app-divider />
     </div>

@@ -22,7 +22,7 @@ import {
 import { ToastsService } from '../../shared/services/toasts.service';
 import { DatePickerComponent } from '../../shared/components/form/date-picker/date-picker.component';
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
-import { GeneratePdfFileDto } from '../../shared/data/dto/generate-pdf-file.dto';
+import { GenerateReportFileDto } from '../../shared/data/dto/generate-pdf-file.dto';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
@@ -241,10 +241,6 @@ export class IncidentsComponent {
     return incident.status.id == IncidentStatusEnum.UnderReview;
   }
 
-  protected displayDownloadButton(): boolean {
-    return this.isManagerUser();
-  }
-
   protected displayEditButton(incident: Incident): boolean {
     return (
       !this.isIncidentClosed(incident) &&
@@ -257,7 +253,7 @@ export class IncidentsComponent {
   }
 
   protected downloadPdf(): void {
-    const dto: GeneratePdfFileDto = {
+    const dto: GenerateReportFileDto = {
       orderBy: this.orderBy,
       orderAscending: this.orderingAsc,
       filters: {
@@ -281,6 +277,45 @@ export class IncidentsComponent {
 
         // 3. Define your explicit default file name extension
         downloadLink.download = 'incidents.pdf';
+
+        // 4. Force browser event triggers to download files instantly
+        downloadLink.click();
+
+        // 5. Clean up browser RAM allocations once done
+        window.URL.revokeObjectURL(binaryUrl);
+        downloadLink.remove();
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
+    });
+  }
+
+  protected downloadExcel() {
+    const dto: GenerateReportFileDto = {
+      orderBy: this.orderBy,
+      orderAscending: this.orderingAsc,
+      filters: {
+        statusId: this.getSelectedStatus(),
+        reportingDateFrom: this.getReportingDateFrom(),
+        reportingDateTo: this.getReportingDateTo(),
+        lossTypeId: this.getSelectedLossType(),
+        reporterDepartmentId: this.getReporterDepartment(),
+        responsibleDepartmentId: this.getResponsibleDepartment(),
+      },
+    };
+
+    this.incidentsService.generateExcelFile(dto).subscribe({
+      next: (blob: Blob) => {
+        // 1. Create a transient URL referencing the binary Blob data
+        const binaryUrl = window.URL.createObjectURL(blob);
+
+        // 2. Spawn a hidden DOM anchor markup element
+        const downloadLink = document.createElement('a');
+        downloadLink.href = binaryUrl;
+
+        // 3. Define your explicit default file name extension
+        downloadLink.download = 'incidents.xlsx';
 
         // 4. Force browser event triggers to download files instantly
         downloadLink.click();

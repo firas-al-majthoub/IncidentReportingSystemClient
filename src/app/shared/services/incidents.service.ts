@@ -8,7 +8,7 @@ import { CloseIncidentDto } from '../data/dto/close-incident.dto';
 import { ReturnIncidentDto } from '../data/dto/return-incident.dto';
 import { UpdateReturnedIncidentDto } from '../data/dto/update-returned-incident.dto';
 import { SearchIncidentsDto } from '../data/dto/search-incidents.dto';
-import { GeneratePdfFileDto } from '../data/dto/generate-pdf-file.dto';
+import { GenerateReportFileDto } from '../data/dto/generate-pdf-file.dto';
 import { UpdateIncidentDto } from '../data/dto/update-incident.dto';
 
 @Injectable({
@@ -57,8 +57,13 @@ export class IncidentsService {
     return this.httpRequestsService.get<Incident[]>(apiPath);
   }
 
-  generatePdfFile(dto: GeneratePdfFileDto): Observable<Blob> {
+  generatePdfFile(dto: GenerateReportFileDto): Observable<Blob> {
     const apiPath = `/incidents/generate-pdf`;
+    return this.httpRequestsService.blobPost(apiPath, dto);
+  }
+
+  generateExcelFile(dto: GenerateReportFileDto): Observable<Blob> {
+    const apiPath = `/incidents/generate-excel`;
     return this.httpRequestsService.blobPost(apiPath, dto);
   }
 }
