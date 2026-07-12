@@ -3,6 +3,13 @@ update Departments data in DB
 activate LDAP auth
 remove OpenAPI
 
+on prod deployment:
+modify appsettings.json on BE
+change API base URL in main.js
+modify href attribute of the base tag inside index.html
+run IISCrypto
+
+
 
 Financial Impact and Recovery amounts should not be negative numbers
 
