@@ -1,3 +1,9 @@
+before prod:
+update Departments data in DB
+activate LDAP auth
+remove OpenAPI
+
+
 Financial Impact and Recovery amounts should not be negative numbers
 
 add Arabic translation next to fields' label

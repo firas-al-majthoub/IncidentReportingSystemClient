@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import flatpickr from 'flatpickr';
 import { LabelComponent } from '../label/label.component';
-import 'flatpickr/dist/flatpickr.css';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
