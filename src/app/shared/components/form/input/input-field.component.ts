@@ -21,6 +21,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
           [disabled]="disabled"
           [ngClass]="inputClasses"
           (input)="onInput($event)"
+          autocomplete="off"
         />
         @if (hint) {
           <p
@@ -49,6 +50,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
           [disabled]="disabled"
           [ngClass]="inputClasses"
           (input)="onInput($event)"
+          autocomplete="off"
         />
         @if (hint) {
           <p

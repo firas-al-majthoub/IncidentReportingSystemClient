@@ -18,6 +18,7 @@ export const routes: Routes = [
     component: AppLayoutComponent,
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],
+    title: 'Dashboard - IRMS',
     children: [
       {
         path: 'incidents',
