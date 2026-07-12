@@ -5,8 +5,8 @@ remove OpenAPI
 
 on prod deployment:
 modify appsettings.json on BE
-change API base URL in main.js
-modify href attribute of the base tag inside index.html
+change API base URL in main.js to "https://irms-api-test.alrajhibank.com.jo"
+modify href attribute of the base tag inside index.html to "https://irms-test.alrajhibank.com.jo"
 run IISCrypto
 
 
