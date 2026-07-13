@@ -1,9 +1,8 @@
 export interface User {
   id: number;
-  firstNameEn: string | null;
-  lastNameEn: string | null;
-  firstNameAr: string | null;
-  lastNameAr: string | null;
+  username: string;
   email: string;
-  roleId: number;
+  firstName: string;
+  lastName: string;
+  roleId: number | null;
 }

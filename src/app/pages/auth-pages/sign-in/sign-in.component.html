@@ -28,23 +28,26 @@
         <!-- Form -->
         <form class="space-y-6" [formGroup]="loginForm">
           <div>
-            <app-label>Email <span class="text-error-500">*</span></app-label>
-            <app-input-field
-              [reactiveFormGroup]="loginForm"
-              [reactiveFormControl]="loginForm.controls.email"
-              type="email"
-              placeholder="example@alrajhibank.com.jo"
-              [value]="email"
-              (valueChange)="email = `${$event}`"
-              name="email"
-              class="form-input"
+            <app-label>
+              Username <span class="text-error-500">*</span>
+            </app-label>
+            <input
+              [formGroup]="loginForm"
+              [formControl]="loginForm.controls.username"
+              type="text"
+              maxlength="7"
+              placeholder="Example: 0301135"
+              (keydown)="allowOnlyNumbers($event)"
+              [value]="username"
+              (input)="usernameChanged(`${$event.target.value}`)"
+              autocomplete="off"
+              class="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
             />
           </div>
-
           <div>
-            <app-label
-              >Password <span class="text-error-500">*</span></app-label
-            >
+            <app-label>
+              Password <span class="text-error-500">*</span>
+            </app-label>
             <div class="relative">
               <app-input-field
                 [reactiveFormGroup]="loginForm"

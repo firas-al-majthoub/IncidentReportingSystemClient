@@ -5,6 +5,7 @@ import { UserRolesEnum } from '../data/enum/user-roles.enum';
 import { LoginResponseDto } from '../data/dto/login-response.dto';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { LoginReqDto } from '../data/dto/login-req.dto';
 import config from '../../config.json';
 
 @Injectable({
@@ -24,9 +25,9 @@ export class AuthService {
     private router: Router,
   ) {}
 
-  signIn(email: string, password: string): Observable<void> {
+  signIn(username: string, password: string): Observable<void> {
     const url = `${this.apiBaseUrl}/users/login`;
-    const dto = { email, password };
+    const dto: LoginReqDto = { username, password };
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     return this.http.post<LoginResponseDto>(url, dto, { headers }).pipe(

@@ -1,12 +1,10 @@
 before prod:
 update Departments data in DB
-activate LDAP auth
-remove OpenAPI
 
 on prod deployment:
 modify appsettings.json on BE
-change API base URL in main.js to "https://irms-api-test.alrajhibank.com.jo"
-modify href attribute of the base tag inside index.html to "https://irms-test.alrajhibank.com.jo"
+change API base URL in main.js to "https://irms-api.alrajhibank.com.jo"
+modify href attribute of the base tag inside index.html to "https://irms.alrajhibank.com.jo"
 run IISCrypto
 
 
