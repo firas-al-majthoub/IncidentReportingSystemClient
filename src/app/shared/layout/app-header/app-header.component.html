@@ -4,7 +4,7 @@
   <div
     class="flex flex-col items-center justify-between grow xl:flex-row xl:px-6"
   >
-    <div class="flex w-full items-center space-x-6">
+    <div class="flex w-full items-center gap-6">
       <a routerLink="/">
         <div class="flex gap-2">
           <img
@@ -28,7 +28,7 @@
           </h1>
         </div>
       </a>
-      <div class="space-x-4">
+      <div class="flex gap-4">
         @if (userHasRole()) {
           <a
             routerLink="/incidents/report"
@@ -56,7 +56,7 @@
     <div
       class="items-center justify-between w-full gap-4 px-5 py-4 xl:flex shadow-theme-md xl:justify-end xl:px-0 xl:shadow-none"
     >
-      <div class="flex items-center gap-2 2xsm:gap-3">
+      <div class="flex">
         <app-theme-toggle-button />
       </div>
       <app-user-dropdown />

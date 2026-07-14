@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DropdownComponent } from '../../ui/dropdown/dropdown.component';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { User } from '../../../data/model/user';
 
