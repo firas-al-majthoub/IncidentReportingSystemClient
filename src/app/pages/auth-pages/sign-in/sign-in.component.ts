@@ -84,11 +84,13 @@ export class SignInComponent {
     }
   }
 
+  protected onPasswordKeydown(event: KeyboardEvent): void {
+    if (event.key == 'Enter') this.signIn();
+  }
+
   protected signIn() {
     if (this.username.length < 7 || this.username.length > 7) {
-      this.toastsService.showError(
-        'Username must be exaclty 7 digits long',
-      );
+      this.toastsService.showError('Username must be exaclty 7 digits long');
       return;
     }
 

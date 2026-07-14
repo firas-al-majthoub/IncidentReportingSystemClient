@@ -58,6 +58,7 @@
                 (valueChange)="password = `${$event}`"
                 name="password"
                 class="form-input"
+                (keydown)="onPasswordKeydown($event)"
               />
               <span
                 (click)="togglePasswordVisibility()"
