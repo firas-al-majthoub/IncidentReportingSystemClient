@@ -384,11 +384,17 @@
             "
           />
         </div>
-        <div class="mt-10 flex justify-end">
-          <app-button size="md" variant="primary" (btnClick)="submitIncident()">
-            Report Incident
-          </app-button>
-        </div>
+        @if (showReportBtn) {
+          <div class="mt-10 flex justify-end">
+            <app-button
+              size="md"
+              variant="primary"
+              (btnClick)="submitIncident()"
+            >
+              Report Incident
+            </app-button>
+          </div>
+        }
       </div>
     </form>
   </app-component-card>

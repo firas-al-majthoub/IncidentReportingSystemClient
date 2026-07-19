@@ -1,7 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { User } from '../data/model/user';
-import { UserRolesEnum } from '../data/enum/user-roles.enum';
 import { LoginResponseDto } from '../data/dto/login-response.dto';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -62,30 +61,6 @@ export class AuthService {
       this.currentUserSignal.set(user);
       localStorage.setItem(this.AUTH_USER_KEY, JSON.stringify(user));
     }
-  }
-
-  userHasRole() {
-    return this.isAuthenticated() && this.currentUserSignal()!.roleId != null;
-  }
-
-  isManagerUser(): boolean {
-    return (
-      this.isAuthenticated() &&
-      this.currentUserSignal()!.roleId == UserRolesEnum.Manager
-    );
-  }
-
-  isViewerUser(): boolean {
-    return (
-      this.isAuthenticated() &&
-      this.currentUserSignal()!.roleId == UserRolesEnum.Viewer
-    );
-  }
-
-  isViewerOrManagerUser(): boolean {
-    return (
-      this.isAuthenticated() && (this.isViewerUser() || this.isManagerUser())
-    );
   }
 
   signOut() {

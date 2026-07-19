@@ -17,6 +17,9 @@ import { ToastsService } from '../../shared/services/toasts.service';
 import { Router } from '@angular/router';
 import { ReportIncidentDto } from '../../shared/data/dto/report-incident.dto';
 import { InvolvedEmployeeDto } from '../../shared/data/dto/involved-employee.dto';
+import { UsersService } from '../../shared/services/users.service';
+import { SystemScreensEnum } from '../../shared/data/enum/system-screens.enum';
+import { SystemPrivilegesEnum } from '../../shared/data/enum/system-privileges.enum';
 
 @Component({
   selector: 'app-report-incident',
@@ -56,6 +59,8 @@ export class ReportIncidentComponent {
   protected showEmployeeNumberErr = false;
   protected showEmployeeErrorErr = false;
 
+  protected userHasReportPrivilege = false;
+
   incidentForm = new FormGroup({
     discoverDate: new FormControl('', Validators.required),
     incidentDate: new FormControl('', Validators.required),
@@ -72,21 +77,37 @@ export class ReportIncidentComponent {
     private incidentsService: IncidentsService,
     private toastsService: ToastsService,
     private router: Router,
-  ) {}
+    private usersService: UsersService,
+  ) {
+    this.getReportPrivilege();
+  }
 
-  discoverDateChanged(val: any) {
+  private getReportPrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.ReportIncident,
+        SystemPrivilegesEnum.Create,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasReportPrivilege = true;
+        },
+      });
+  }
+
+  protected discoverDateChanged(val: any) {
     this.discoverDate = val;
   }
 
-  incidentDateChanged(val: any) {
+  protected incidentDateChanged(val: any) {
     this.incidentDate = val;
   }
 
-  recoveryDateChanged(val: any) {
+  protected recoveryDateChanged(val: any) {
     this.recoveryDate = val;
   }
 
-  hasFinancialImpactChanged(val: string) {
+  protected hasFinancialImpactChanged(val: string) {
     this.hasFinancialImpact = val === 'true';
     this.updateLossAmountDisableState();
 
@@ -95,12 +116,12 @@ export class ReportIncidentComponent {
     }
   }
 
-  recoveredFinancialLossChanged(val: string) {
+  protected recoveredFinancialLossChanged(val: string) {
     this.recoveredFinancialLoss = val === 'true';
     this.updateRecoveredAmountDisableState();
   }
 
-  updateLossAmountDisableState() {
+  protected updateLossAmountDisableState() {
     if (this.hasFinancialImpact) {
       this.incidentForm.controls.financialImpactAmount.enable();
       this.incidentForm.controls.financialImpactAmount.setValidators(
@@ -117,7 +138,7 @@ export class ReportIncidentComponent {
     }
   }
 
-  updateRecoveredAmountDisableState() {
+  protected updateRecoveredAmountDisableState() {
     if (this.recoveredFinancialLoss) {
       this.incidentForm.controls.recoveryAmount.enable();
       this.incidentForm.controls.recoveryDate.enable();
@@ -233,11 +254,11 @@ export class ReportIncidentComponent {
     }
   }
 
-  // protected get todayDate(): Date {
-  //   return
-  // }
+  protected get showReportBtn(): boolean {
+    return this.userHasReportPrivilege;
+  }
 
-  submitIncident() {
+  protected submitIncident() {
     if (!this.incidentForm.valid) {
       this.incidentForm.markAllAsTouched();
       this.toastsService.showError('Please fill all required fields');

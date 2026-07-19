@@ -8,7 +8,6 @@ import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum'
 import { SearchIncidentsResDto } from '../../shared/data/dto/search-incidents-res.dto';
 import { SearchIncidentsOrderByEnum } from '../../shared/data/enum/search-incidents-order-by.enum';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../shared/services/auth.service';
 import { SearchIncidentsDto } from '../../shared/data/dto/search-incidents.dto';
 import { LabelComponent } from '../../shared/components/form/label/label.component';
 import {
@@ -24,6 +23,10 @@ import { DatePickerComponent } from '../../shared/components/form/date-picker/da
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
 import { GenerateReportFileDto } from '../../shared/data/dto/generate-pdf-file.dto';
 import { DecimalPipe } from '@angular/common';
+import { catchError, forkJoin, map, Observable, of } from 'rxjs';
+import { SystemScreensEnum } from '../../shared/data/enum/system-screens.enum';
+import { SystemPrivilegesEnum } from '../../shared/data/enum/system-privileges.enum';
+import { UsersService } from '../../shared/services/users.service';
 
 @Component({
   selector: 'app-incidents',
@@ -63,19 +66,114 @@ export class IncidentsComponent {
   orderingAsc = false;
   navigationPages: number[] = [];
 
+  private userHasEditIncidentPrivilege = false;
+  private userHasUpdateIncidentPrivilege = false;
+  private userHasCloseIncidentPrivilege = false;
+  private userHasReturnIncidentPrivilege = false;
+  private userHasSearchPrivilege = false;
+  private userHasIncidentDetailsPrivilege = false;
+
   constructor(
     private incidentsService: IncidentsService,
-    private authService: AuthService,
-    public ddlDataService: DdlDataService,
+    private ddlDataService: DdlDataService,
     private toastsService: ToastsService,
+    private usersService: UsersService,
   ) {
+    this.getActionsPrivileges();
     this.getIncidents();
     this.getStatuses();
     this.getLossTypes();
     this.getDepartments();
   }
 
-  filterIncidents(): void {
+  private getActionsPrivileges(): void {
+    this.getEditIncidentPrivilege();
+    this.getUpdateIncidentPrivilege();
+    this.getCloseIncidentPrivilege();
+    this.getReturnIncidentPrivilege();
+    this.getSearchPrivilege();
+    this.getIncidentDetailsPrivilege();
+  }
+
+  private getEditIncidentPrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.EditIncident,
+        SystemPrivilegesEnum.Read,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasEditIncidentPrivilege = true;
+        },
+      });
+  }
+
+  private getUpdateIncidentPrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.EditIncident,
+        SystemPrivilegesEnum.Update,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasUpdateIncidentPrivilege = true;
+        },
+      });
+  }
+
+  private getCloseIncidentPrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.EditIncident,
+        SystemPrivilegesEnum.CloseIncident,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasCloseIncidentPrivilege = true;
+        },
+      });
+  }
+
+  private getReturnIncidentPrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.EditIncident,
+        SystemPrivilegesEnum.ReturnIncident,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasReturnIncidentPrivilege = true;
+        },
+      });
+  }
+
+  private getSearchPrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.ViewAllIncidents,
+        SystemPrivilegesEnum.Search,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasSearchPrivilege = true;
+        },
+      });
+  }
+
+  private getIncidentDetailsPrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.IncidentDetails,
+        SystemPrivilegesEnum.Read,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasIncidentDetailsPrivilege = true;
+        },
+      });
+  }
+
+  protected filterIncidents(): void {
     this.currentPage = 1;
     this.orderBy = SearchIncidentsOrderByEnum.ReportingDate;
     this.orderingAsc = false;
@@ -148,39 +246,39 @@ export class IncidentsComponent {
     });
   }
 
-  getSelectedStatus(): number | null {
+  private getSelectedStatus(): number | null {
     return this.getSelectedDdlVal(this.selectedStatus);
   }
 
-  getReportingDateFrom(): string | null {
+  private getReportingDateFrom(): string | null {
     return this.getSelectedDateVal(this.reportingDateFrom);
   }
 
-  getReportingDateTo(): string | null {
+  private getReportingDateTo(): string | null {
     return this.getSelectedDateVal(this.reportingDateTo);
   }
 
-  getSelectedLossType(): number | null {
+  private getSelectedLossType(): number | null {
     return this.getSelectedDdlVal(this.selectedLossType);
   }
 
-  getReporterDepartment(): number | null {
+  private getReporterDepartment(): number | null {
     return this.getSelectedDdlVal(this.selectedReporterDepartment);
   }
 
-  getResponsibleDepartment(): number | null {
+  private getResponsibleDepartment(): number | null {
     return this.getSelectedDdlVal(this.selectedResponsibleDepartment);
   }
 
-  getSelectedDdlVal(val: string): number | null {
+  private getSelectedDdlVal(val: string): number | null {
     return val != null && val != '' ? Number.parseInt(val) : null;
   }
 
-  getSelectedDateVal(date: any): string | null {
+  private getSelectedDateVal(date: any): string | null {
     return date != null ? date.dateStr : null;
   }
 
-  updateNavigationPages() {
+  private updateNavigationPages() {
     const temp: number[] = [];
     if (this.currentPage > 2) temp.push(this.currentPage - 1);
 
@@ -192,45 +290,41 @@ export class IncidentsComponent {
     this.navigationPages = temp;
   }
 
-  prevPage() {
+  protected prevPage() {
     if (this.currentPage > 1) this.goToPage(this.currentPage - 1);
   }
 
-  nextPage() {
+  protected nextPage() {
     if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1);
   }
 
-  goToPage(page: number) {
+  protected goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
       this.getIncidents();
     }
   }
 
-  sortBy(orderBy: SearchIncidentsOrderByEnum) {
+  protected sortBy(orderBy: SearchIncidentsOrderByEnum) {
     if (this.orderBy == orderBy) this.switchOrderDirection();
     else this.updateOrderBy(orderBy);
   }
 
-  switchOrderDirection() {
+  protected switchOrderDirection() {
     this.orderingAsc = !this.orderingAsc;
     this.getIncidents();
   }
 
-  updateOrderBy(orderBy: SearchIncidentsOrderByEnum) {
+  private updateOrderBy(orderBy: SearchIncidentsOrderByEnum) {
     this.orderBy = orderBy;
     this.orderingAsc = false;
     this.getIncidents();
   }
 
-  itemsPerPageChanged(event: Event) {
+  protected itemsPerPageChanged(event: Event) {
     this.itemsPerPage = (event.target as HTMLSelectElement).value;
     this.currentPage = 1;
     this.getIncidents();
-  }
-
-  private isManagerUser() {
-    return this.authService.isManagerUser();
   }
 
   private isIncidentClosed(incident: Incident): boolean {
@@ -241,15 +335,24 @@ export class IncidentsComponent {
     return incident.status.id == IncidentStatusEnum.UnderReview;
   }
 
-  protected displayEditButton(incident: Incident): boolean {
+  protected get showIncidentDetailsBtn(): boolean {
+    return this.userHasIncidentDetailsPrivilege;
+  }
+
+  protected showEditButton(incident: Incident): boolean {
     return (
-      !this.isIncidentClosed(incident) &&
-      (this.isManagerUser() || this.viewerCanUpdateIncident(incident))
+      this.userHasEditIncidentPrivilege &&
+      ((this.userHasUpdateIncidentPrivilege &&
+        this.isIncidentUnderReview(incident)) ||
+        (this.userHasCloseIncidentPrivilege &&
+          !this.isIncidentClosed(incident)) ||
+        (this.userHasReturnIncidentPrivilege &&
+          this.isIncidentUnderReview(incident)))
     );
   }
 
-  private viewerCanUpdateIncident(incident: Incident) {
-    return this.isIncidentUnderReview(incident);
+  protected get showSearchTable(): boolean {
+    return this.userHasSearchPrivilege;
   }
 
   protected downloadPdf(): void {
@@ -330,7 +433,9 @@ export class IncidentsComponent {
     });
   }
 
-  getBadgeColor(status: IncidentStatus): 'success' | 'warning' | 'error' {
+  protected getBadgeColor(
+    status: IncidentStatus,
+  ): 'success' | 'warning' | 'error' {
     if (status.id === IncidentStatusEnum.Closed) return 'success';
     if (status.id === IncidentStatusEnum.UnderReview) return 'error';
     return 'warning';

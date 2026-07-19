@@ -9,6 +9,22 @@ run IISCrypto
 
 
 
+SystemPrivilege (New)
+SystemScreen (New)
+UserRole (Update)
+UserRoleLog (New)
+UserRolePrivilege (New)
+UserRolePrivilegeLog (New)
+
+
+Test get incident details of a different user when having only employee privileges
+
+Review Unique and Primary Keys on new tables
+
+Audit Trail
+
+Add model validation in BE services
+
 Financial Impact and Recovery amounts should not be negative numbers
 
 add Arabic translation next to fields' label

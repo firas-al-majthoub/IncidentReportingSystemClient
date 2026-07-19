@@ -499,37 +499,35 @@
             </div>
           </div>
         </div>
-        @if (displayActionButtons()) {
-          <div class="mt-10 space-x-3 flex justify-end">
-            @if (displayUpdateButton()) {
-              <app-button
-                size="md"
-                variant="primary"
-                (btnClick)="openIncidentUpdateModal()"
-              >
-                Update Info
-              </app-button>
-            }
-            @if (displayCloseButton()) {
-              <app-button
-                size="md"
-                variant="primary"
-                (btnClick)="openIncidentCloseModal()"
-              >
-                Close Incident
-              </app-button>
-            }
-            @if (displayReturnButton()) {
-              <app-button
-                size="md"
-                variant="primary"
-                (btnClick)="openIncidentReturnModal()"
-              >
-                Return Incident
-              </app-button>
-            }
-          </div>
-        }
+        <div class="mt-10 space-x-3 flex justify-end">
+          @if (showUpdateBtn) {
+            <app-button
+              size="md"
+              variant="primary"
+              (btnClick)="openIncidentUpdateModal()"
+            >
+              Update Info
+            </app-button>
+          }
+          @if (showCloseBtn) {
+            <app-button
+              size="md"
+              variant="primary"
+              (btnClick)="openIncidentCloseModal()"
+            >
+              Close Incident
+            </app-button>
+          }
+          @if (showReturnBtn) {
+            <app-button
+              size="md"
+              variant="primary"
+              (btnClick)="openIncidentReturnModal()"
+            >
+              Return Incident
+            </app-button>
+          }
+        </div>
       </div>
     </form>
   </app-component-card>

@@ -1,10 +1,12 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { SidebarService } from '../../services/sidebar.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeToggleButtonComponent } from '../../components/common/theme-toggle/theme-toggle-button.component';
 import { UserDropdownComponent } from '../../components/header/user-dropdown/user-dropdown.component';
-import { AuthService } from '../../services/auth.service';
+import { SystemPrivilegesEnum } from '../../data/enum/system-privileges.enum';
+import { SystemScreensEnum } from '../../data/enum/system-screens.enum';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-header',
@@ -19,14 +21,18 @@ import { AuthService } from '../../services/auth.service';
 export class AppHeaderComponent {
   isApplicationMenuOpen = false;
   readonly isMobileOpen$;
-
-  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  protected showReportIncidentBtn = false;
+  protected showMyReturnedIncidentsBtn = false;
+  protected showViewAllIncidentsBtn = false;
 
   constructor(
     public sidebarService: SidebarService,
-    private authService: AuthService,
+    private usersService: UsersService,
   ) {
     this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
+    this.getReportIncidentPrivilege();
+    this.getMyReturnedIncidentsPrivilege();
+    this.getViewAllIncidentsPrivilege();
   }
 
   handleToggle() {
@@ -41,26 +47,42 @@ export class AppHeaderComponent {
     this.isApplicationMenuOpen = !this.isApplicationMenuOpen;
   }
 
-  ngAfterViewInit() {
-    document.addEventListener('keydown', this.handleKeyDown);
+  protected getReportIncidentPrivilege() {
+    return this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.ReportIncident,
+        SystemPrivilegesEnum.Read,
+      )
+      .subscribe({
+        next: () => {
+          this.showReportIncidentBtn = true;
+        },
+      });
   }
 
-  ngOnDestroy() {
-    document.removeEventListener('keydown', this.handleKeyDown);
+  protected getMyReturnedIncidentsPrivilege() {
+    return this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.MyReturnedIncidents,
+        SystemPrivilegesEnum.Read,
+      )
+      .subscribe({
+        next: () => {
+          this.showMyReturnedIncidentsBtn = true;
+        },
+      });
   }
 
-  handleKeyDown = (event: KeyboardEvent) => {
-    if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-      event.preventDefault();
-      this.searchInput?.nativeElement.focus();
-    }
-  };
-
-  protected userHasRole() {
-    return this.authService.userHasRole();
-  }
-
-  protected isViewerOrManagerUser() {
-    return this.authService.isViewerOrManagerUser();
+  protected getViewAllIncidentsPrivilege() {
+    return this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.ViewAllIncidents,
+        SystemPrivilegesEnum.Read,
+      )
+      .subscribe({
+        next: () => {
+          this.showViewAllIncidentsBtn = true;
+        },
+      });
   }
 }

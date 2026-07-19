@@ -21,6 +21,9 @@ import { ToastsService } from '../../shared/services/toasts.service';
 import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum';
 import { UpdateReturnedIncidentDto } from '../../shared/data/dto/update-returned-incident.dto';
 import { InvolvedEmployeeDto } from '../../shared/data/dto/involved-employee.dto';
+import { UsersService } from '../../shared/services/users.service';
+import { SystemPrivilegesEnum } from '../../shared/data/enum/system-privileges.enum';
+import { SystemScreensEnum } from '../../shared/data/enum/system-screens.enum';
 
 @Component({
   selector: 'app-edit-returned-incident',
@@ -73,6 +76,8 @@ export class EditReturnedIncidentComponent {
   protected showEmployeeNumberErr = false;
   protected showEmployeeErrorErr = false;
 
+  protected userHasUpdatePrivilege = false;
+
   protected incidentForm = new FormGroup({
     discoverDate: new FormControl('', Validators.required),
     incidentDate: new FormControl('', Validators.required),
@@ -89,11 +94,26 @@ export class EditReturnedIncidentComponent {
     private incidentsService: IncidentsService,
     private toastsService: ToastsService,
     private router: Router,
+    private usersService: UsersService,
   ) {}
 
   ngOnInit() {
     const incidentId = this.id();
+    this.getUpdatePrivilege();
     this.getIncidentDetails(incidentId);
+  }
+
+  private getUpdatePrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.EditReturnedIncident,
+        SystemPrivilegesEnum.Update,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasUpdatePrivilege = true;
+        },
+      });
   }
 
   private getIncidentDetails(incidentId: number): void {
@@ -323,7 +343,7 @@ export class EditReturnedIncidentComponent {
     );
   }
 
-  allowOnlyNumbers(event: KeyboardEvent): void {
+  protected allowOnlyNumbers(event: KeyboardEvent): void {
     // Allow functional navigation/editing keys
     const allowedKeys = [
       'Backspace',
@@ -346,6 +366,10 @@ export class EditReturnedIncidentComponent {
     if (!isNumber) {
       event.preventDefault();
     }
+  }
+
+  protected get showUpdateBtn(): boolean {
+    return this.userHasUpdatePrivilege;
   }
 
   protected updateReturnedIncident() {

@@ -29,13 +29,15 @@ import { ToastsService } from '../../shared/services/toasts.service';
 import { CloseIncidentDto } from '../../shared/data/dto/close-incident.dto';
 import { ReturnIncidentDto } from '../../shared/data/dto/return-incident.dto';
 import { IncidentStatusEnum } from '../../shared/data/enum/incident-status.enum';
-import { AuthService } from '../../shared/services/auth.service';
 import { InvolvedEmployeeDto } from '../../shared/data/dto/involved-employee.dto';
 import { UpdateIncidentDto } from '../../shared/data/dto/update-incident.dto';
 import { RiskCategoriesService } from '../../shared/services/risk-categories.service';
 import { RiskCategoryFirstLevel } from '../../shared/data/model/risk-category-first-level';
 import { RiskCategorySecondLevel } from '../../shared/data/model/risk-category-second-level';
-import { forkJoin, map, Observable } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of } from 'rxjs';
+import { SystemScreensEnum } from '../../shared/data/enum/system-screens.enum';
+import { SystemPrivilegesEnum } from '../../shared/data/enum/system-privileges.enum';
+import { UsersService } from '../../shared/services/users.service';
 
 @Component({
   selector: 'app-edit-incident',
@@ -105,6 +107,10 @@ export class EditIncidentComponent {
   protected showEmployeeNumberErr = false;
   protected showEmployeeErrorErr = false;
 
+  private userHasUpdatePrivilege = false;
+  private userHasClosePrivilege = false;
+  private userHasReturnPrivilege = false;
+
   protected incidentForm = new FormGroup({
     riskDescription: new FormControl('', Validators.required),
     relatedProcedure: new FormControl('', Validators.required),
@@ -127,19 +133,65 @@ export class EditIncidentComponent {
   });
 
   constructor(
-    protected ddlDataService: DdlDataService,
+    private ddlDataService: DdlDataService,
     private incidentsService: IncidentsService,
     private toastsService: ToastsService,
     private router: Router,
-    private authService: AuthService,
     private riskCategoriesService: RiskCategoriesService,
+    private usersService: UsersService,
   ) {}
 
   ngOnInit() {
     const incidentId = this.id();
+    this.getActionsPrivileges();
     this.getDdlData().subscribe(() => {
       this.getIncidentDetails(incidentId);
     });
+  }
+
+  private getActionsPrivileges(): void {
+    this.getUpdatePrivilege();
+    this.getClosePrivilege();
+    this.getReturnPrivilege();
+  }
+
+  private getUpdatePrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.EditIncident,
+        SystemPrivilegesEnum.Update,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasUpdatePrivilege = true;
+        },
+      });
+  }
+
+  private getClosePrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.EditIncident,
+        SystemPrivilegesEnum.CloseIncident,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasClosePrivilege = true;
+        },
+      });
+  }
+
+  private getReturnPrivilege(): void {
+    this.usersService
+      .userHasPrivilege(
+        SystemScreensEnum.EditIncident,
+        SystemPrivilegesEnum.ReturnIncident,
+      )
+      .subscribe({
+        next: () => {
+          this.userHasReturnPrivilege = true;
+        },
+      });
   }
 
   private getDdlData(): Observable<void> {
@@ -351,22 +403,16 @@ export class EditIncidentComponent {
     );
   }
 
-  protected displayActionButtons(): boolean {
-    return this.authService.isViewerOrManagerUser() && !this.isClosedIncident();
+  protected get showUpdateBtn(): boolean {
+    return this.userHasUpdatePrivilege && this.isUnderReviewIncident();
   }
 
-  protected displayUpdateButton(): boolean {
-    return (
-      this.authService.isViewerOrManagerUser() && this.isUnderReviewIncident()
-    );
+  protected get showCloseBtn(): boolean {
+    return this.userHasClosePrivilege && !this.isClosedIncident();
   }
 
-  protected displayCloseButton(): boolean {
-    return this.authService.isManagerUser() && !this.isClosedIncident();
-  }
-
-  protected displayReturnButton(): boolean {
-    return this.authService.isManagerUser() && this.isUnderReviewIncident();
+  protected get showReturnBtn(): boolean {
+    return this.userHasReturnPrivilege && this.isUnderReviewIncident();
   }
 
   protected openIncidentCloseModal() {

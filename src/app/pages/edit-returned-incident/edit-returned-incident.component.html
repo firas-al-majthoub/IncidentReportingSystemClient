@@ -403,11 +403,13 @@
             "
           />
         </div>
-        <div class="mt-10 flex justify-end">
-          <app-button size="md" variant="primary" (btnClick)="openModal()">
-            Update Info
-          </app-button>
-        </div>
+        @if (showUpdateBtn) {
+          <div class="mt-10 flex justify-end">
+            <app-button size="md" variant="primary" (btnClick)="openModal()">
+              Update Info
+            </app-button>
+          </div>
+        }
       </div>
     </form>
   </app-component-card>

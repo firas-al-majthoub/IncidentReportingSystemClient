@@ -29,27 +29,29 @@
         </div>
       </a>
       <div class="space-x-4">
-        @if (userHasRole()) {
+        @if (showReportIncidentBtn) {
           <a
             routerLink="/incidents/report"
             class="text-sm font-normal text-gray-500 underline dark:text-gray-400"
           >
             Report an Incident
           </a>
+        }
+        @if (showMyReturnedIncidentsBtn) {
           <a
             routerLink="/incidents/my-returned-incidents"
             class="text-sm font-normal text-gray-500 underline dark:text-gray-400"
           >
             My Returned Incidents
           </a>
-          @if (isViewerOrManagerUser()) {
-            <a
-              routerLink="/incidents"
-              class="text-sm font-normal text-gray-500 underline dark:text-gray-400"
-            >
-              View all Incidents
-            </a>
-          }
+        }
+        @if (showViewAllIncidentsBtn) {
+          <a
+            routerLink="/incidents"
+            class="text-sm font-normal text-gray-500 underline dark:text-gray-400"
+          >
+            View all Incidents
+          </a>
         }
       </div>
     </div>
