@@ -24,6 +24,7 @@ export class AppHeaderComponent {
   protected showReportIncidentBtn = false;
   protected showMyReturnedIncidentsBtn = false;
   protected showViewAllIncidentsBtn = false;
+  protected isUserSystemAdmin = false;
 
   constructor(
     public sidebarService: SidebarService,
@@ -33,21 +34,10 @@ export class AppHeaderComponent {
     this.getReportIncidentPrivilege();
     this.getMyReturnedIncidentsPrivilege();
     this.getViewAllIncidentsPrivilege();
+    this.getSystemAdminPrivilege();
   }
 
-  handleToggle() {
-    if (window.innerWidth >= 1280) {
-      this.sidebarService.toggleExpanded();
-    } else {
-      this.sidebarService.toggleMobileOpen();
-    }
-  }
-
-  toggleApplicationMenu() {
-    this.isApplicationMenuOpen = !this.isApplicationMenuOpen;
-  }
-
-  protected getReportIncidentPrivilege() {
+  private getReportIncidentPrivilege() {
     return this.usersService
       .userHasPrivilege(
         SystemScreensEnum.ReportIncident,
@@ -60,7 +50,7 @@ export class AppHeaderComponent {
       });
   }
 
-  protected getMyReturnedIncidentsPrivilege() {
+  private getMyReturnedIncidentsPrivilege() {
     return this.usersService
       .userHasPrivilege(
         SystemScreensEnum.MyReturnedIncidents,
@@ -73,7 +63,7 @@ export class AppHeaderComponent {
       });
   }
 
-  protected getViewAllIncidentsPrivilege() {
+  private getViewAllIncidentsPrivilege() {
     return this.usersService
       .userHasPrivilege(
         SystemScreensEnum.ViewAllIncidents,
@@ -84,5 +74,13 @@ export class AppHeaderComponent {
           this.showViewAllIncidentsBtn = true;
         },
       });
+  }
+
+  private getSystemAdminPrivilege(): void {
+    this.usersService.isUserSystemAdmin().subscribe({
+      next: () => {
+        this.isUserSystemAdmin = true;
+      },
+    });
   }
 }

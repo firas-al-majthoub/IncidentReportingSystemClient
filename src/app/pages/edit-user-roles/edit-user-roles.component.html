@@ -1,0 +1,133 @@
+<app-component-card title="Edit Roles">
+  <div
+    class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]"
+  >
+    <table class="min-w-full">
+      <!-- Table Header -->
+      <thead class="border-b border-gray-100 dark:border-white/[0.05] p-4">
+        <tr>
+          <th>
+            <div
+              class="ms-4 py-3 text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
+            >
+              English Name
+            </div>
+          </th>
+          <th>
+            <div
+              class="ms-4 py-3 text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
+            >
+              Arabic Name
+            </div>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <!-- Table Body -->
+      <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
+        @for (role of roles; track $index) {
+          <tr>
+            <td
+              class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
+            >
+              {{ role.nameEn }}
+            </td>
+            <td
+              class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
+            >
+              {{ role.nameAr }}
+            </td>
+            <td class="pe-4 py-3 flex justify-end">
+              <button
+                class="text-theme-xs text-gray-700 dark:text-gray-400"
+                [routerLink]="[`/edit-role-privileges/${role.id}`]"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                  />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-6 flex justify-end">
+    <app-button
+      size="sm"
+      variant="outline"
+      className="pe-4"
+      (btnClick)="openAddModal()"
+    >
+      Add a New Role
+    </app-button>
+  </div>
+</app-component-card>
+
+<app-modal
+  [isOpen]="isModalOpen"
+  (close)="closeAddModal()"
+  className="max-w-[584px] p-5 lg:p-10"
+  [showCloseButton]="false"
+>
+  <h4 class="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">
+    Please Enter New Role's Info
+  </h4>
+  <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+    <app-label>English Name</app-label>
+    <div class="col-span-1 sm:col-span-2">
+      <app-input-field
+        [reactiveFormGroup]="this.newRoleForm"
+        [reactiveFormControl]="this.newRoleForm.controls.nameEn"
+        [value]="newRoleNameEn"
+        type="text"
+        (valueChange)="newRoleNameEn = `${$event}`"
+      />
+      @if (
+        newRoleForm.controls.nameEn.touched &&
+        newRoleForm.controls.nameEn.hasError('required')
+      ) {
+        <p class="mt-2 text-sm text-error-500">
+          {{ REQUIRED_FILED_TXT }}
+        </p>
+      }
+    </div>
+    <app-label>Arabic Name</app-label>
+    <div class="col-span-1 sm:col-span-2">
+      <app-input-field
+        [reactiveFormGroup]="this.newRoleForm"
+        [reactiveFormControl]="this.newRoleForm.controls.nameAr"
+        [value]="newRoleNameAr"
+        type="text"
+        (valueChange)="newRoleNameAr = `${$event}`"
+      />
+      @if (
+        newRoleForm.controls.nameAr.touched &&
+        newRoleForm.controls.nameAr.hasError('required')
+      ) {
+        <p class="mt-2 text-sm text-error-500">
+          {{ REQUIRED_FILED_TXT }}
+        </p>
+      }
+    </div>
+  </div>
+  <div class="flex items-center justify-end w-full gap-3 mt-6">
+    <app-button size="sm" variant="outline" (btnClick)="closeAddModal()">
+      Cancel
+    </app-button>
+    <app-button size="sm" (btnClick)="addRole()">
+      Add Role
+    </app-button>
+  </div>
+</app-modal>

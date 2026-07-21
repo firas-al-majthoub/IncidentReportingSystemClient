@@ -32,6 +32,16 @@ export class DdlDataService {
     const apiPath = '/incidents/statuses';
     return this.httpRequestsService.get<DdlItem[]>(apiPath);
   }
+
+  getSystemPrivileges(): Observable<DdlItem[]> {
+    const apiPath = '/system-settings/privileges';
+    return this.httpRequestsService.get<DdlItem[]>(apiPath);
+  }
+
+  getSystemScreens(): Observable<DdlItem[]> {
+    const apiPath = '/system-settings/screens';
+    return this.httpRequestsService.get<DdlItem[]>(apiPath);
+  }
 }
 
 export class DdlItem {

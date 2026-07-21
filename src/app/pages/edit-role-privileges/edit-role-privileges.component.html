@@ -1,0 +1,63 @@
+<app-component-card title="Edit Role Privileges">
+  @for (screen of systemScreens; track $index) {
+    <div
+      class="flex gap-2 items-center cursor-pointer"
+      (click)="isScreenSectionOpen[$index] = !isScreenSectionOpen[$index]"
+    >
+      <div>
+        @if (!isScreenSectionOpen[$index]) {
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-5 text-gray-700 dark:text-gray-400"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m8.25 4.5 7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        } @else {
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-5 text-gray-700 dark:text-gray-400"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m19.5 8.25-7.5 7.5-7.5-7.5"
+            />
+          </svg>
+        }
+      </div>
+      <div class="text-gray-700 dark:text-gray-400">
+        {{ screen.nameEn }}
+      </div>
+    </div>
+    @if (isScreenSectionOpen[$index]) {
+      <div class="ms-8 flex">
+        @for (privilege of systemPrivileges; track $index) {
+          <div class="flex gap-2 items-center w-full">
+            <app-checkbox
+              [label]="privilege.nameEn"
+              [checked]="isChecked(screen, privilege)"
+              (checkedChange)="checkedChange(screen, privilege, $event)"
+            />
+          </div>
+        }
+      </div>
+    }
+  }
+  <div class="mt-14 flex justify-end">
+    <app-button size="md" variant="primary" (btnClick)="updatePrivileges()">
+      Update Privileges
+    </app-button>
+  </div>
+</app-component-card>

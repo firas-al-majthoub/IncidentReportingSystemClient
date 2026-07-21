@@ -34,7 +34,7 @@ import { UpdateIncidentDto } from '../../shared/data/dto/update-incident.dto';
 import { RiskCategoriesService } from '../../shared/services/risk-categories.service';
 import { RiskCategoryFirstLevel } from '../../shared/data/model/risk-category-first-level';
 import { RiskCategorySecondLevel } from '../../shared/data/model/risk-category-second-level';
-import { catchError, forkJoin, map, Observable, of } from 'rxjs';
+import { forkJoin, map, Observable } from 'rxjs';
 import { SystemScreensEnum } from '../../shared/data/enum/system-screens.enum';
 import { SystemPrivilegesEnum } from '../../shared/data/enum/system-privileges.enum';
 import { UsersService } from '../../shared/services/users.service';

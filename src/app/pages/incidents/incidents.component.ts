@@ -23,7 +23,6 @@ import { DatePickerComponent } from '../../shared/components/form/date-picker/da
 import { ButtonComponent } from '../../shared/components/ui/button/button.component';
 import { GenerateReportFileDto } from '../../shared/data/dto/generate-pdf-file.dto';
 import { DecimalPipe } from '@angular/common';
-import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 import { SystemScreensEnum } from '../../shared/data/enum/system-screens.enum';
 import { SystemPrivilegesEnum } from '../../shared/data/enum/system-privileges.enum';
 import { UsersService } from '../../shared/services/users.service';

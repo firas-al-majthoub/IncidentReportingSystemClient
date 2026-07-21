@@ -6,6 +6,7 @@ modify appsettings.json on BE
 change API base URL in main.js to "https://irms-api.alrajhibank.com.jo"
 modify href attribute of the base tag inside index.html to "https://irms.alrajhibank.com.jo"
 run IISCrypto
+disable TLS 1.0 and 1.1 from Internet Options
 
 
 

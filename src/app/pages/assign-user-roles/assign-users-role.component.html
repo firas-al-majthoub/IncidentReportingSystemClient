@@ -1,0 +1,133 @@
+<app-component-card title="Assign Role to Users">
+  <div
+    class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]"
+  >
+    <div class="p-4">
+      <div>
+        <app-label>Username</app-label>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-full">
+          <input
+            type="text"
+            maxlength="7"
+            placeholder="Example: 0301135"
+            (keydown)="onUsernameKeydown($event)"
+            [value]="searchUsername"
+            (input)="searchUsername = `${$event.target.value}`"
+            autocomplete="off"
+            class="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"
+          />
+        </div>
+        <div class="w-full">
+          <app-button size="sm" variant="primary" (btnClick)="findUser()">
+            Find User
+          </app-button>
+        </div>
+        <div class="w-full"></div>
+      </div>
+    </div>
+    <div
+      class="max-w-full overflow-x-auto border-t border-gray-200 dark:border-gray-800"
+    >
+      <table class="min-w-full">
+        <!-- Table Header -->
+        <thead class="border-b border-gray-100 dark:border-white/[0.05]">
+          <tr>
+            <th>
+              <div
+                class="ml-4 py-3 text-nowrap text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
+              >
+                Username
+              </div>
+            </th>
+            <th>
+              <div
+                class="ml-4 py-3 text-nowrap text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
+              >
+                Full Name
+              </div>
+            </th>
+            <th>
+              <div
+                class="ml-4 py-3 text-nowrap text-start font-medium text-theme-xs text-gray-700 dark:text-gray-400"
+              >
+                Assigned Role
+              </div>
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <!-- Table Body -->
+        <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
+          @if (currentUser) {
+            <tr>
+              <td
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
+              >
+                {{ currentUser.username }}
+              </td>
+              <td
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
+              >
+                {{ `${currentUser.firstName} ${currentUser.lastName}` }}
+              </td>
+              <td
+                class="px-4 py-3 text-nowrap text-gray-500 text-start text-theme-sm dark:text-gray-400"
+              >
+                {{ currentUser.role?.nameEn }}
+              </td>
+              <td class="pe-4 py-3 flex justify-end">
+                @if (currentUser.roleId != null) {
+                  <app-button
+                    size="sm"
+                    variant="outline"
+                    (btnClick)="openAssignModal()"
+                  >
+                    Change Role
+                  </app-button>
+                } @else {
+                  <app-button
+                    size="sm"
+                    variant="outline"
+                    (btnClick)="openAssignModal()"
+                  >
+                    Assign a Role
+                  </app-button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</app-component-card>
+
+<app-modal
+  [isOpen]="isModalOpen"
+  (close)="closeAssignModal()"
+  className="max-w-[584px] p-5 lg:p-10"
+  [showCloseButton]="false"
+>
+  <h4 class="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">
+    Please select a role
+  </h4>
+  <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+    <div class="col-span-1 sm:col-span-2">
+      <app-select
+        [options]="roles"
+        placeholder="Role"
+        [value]="selectedRole"
+        (valueChange)="selectedRole = $event"
+        className="dark:bg-dark-900"
+      ></app-select>
+    </div>
+  </div>
+  <div class="flex items-center justify-end w-full gap-3 mt-6">
+    <app-button size="sm" variant="outline" (btnClick)="closeAssignModal()">
+      Cancel
+    </app-button>
+    <app-button size="sm" (btnClick)="assignRole()">Assign Role</app-button>
+  </div>
+</app-modal>

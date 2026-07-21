@@ -53,6 +53,22 @@
             View all Incidents
           </a>
         }
+        @if (isUserSystemAdmin) {
+          <a
+            routerLink="/assign-users-role"
+            class="text-sm font-normal text-gray-500 underline dark:text-gray-400"
+          >
+            Assign Role to Users
+          </a>
+        }
+        @if (isUserSystemAdmin) {
+          <a
+            routerLink="/edit-user-roles"
+            class="text-sm font-normal text-gray-500 underline dark:text-gray-400"
+          >
+            Edit User Roles
+          </a>
+        }
       </div>
     </div>
     <div

@@ -58,6 +58,11 @@ export class HttpRequestsService {
     return this.sendRequest<T>('PATCH', path, headers, body);
   }
 
+  put<T>(path: string, body: any): Observable<T> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.sendRequest<T>('PUT', path, headers, body);
+  }
+
   blobPost(path: string, body: any): Observable<Blob> {
     this.incrementOpenReqs();
 
@@ -75,7 +80,7 @@ export class HttpRequestsService {
   }
 
   private sendRequest<T>(
-    method: 'GET' | 'POST' | 'PATCH',
+    method: 'GET' | 'POST' | 'PATCH' | 'PUT',
     path: string,
     headers?: HttpHeaders,
     body?: any,
@@ -97,6 +102,12 @@ export class HttpRequestsService {
 
     if (method == 'PATCH')
       return this.http.patch<T>(url, body, { headers }).pipe(
+        tap(() => this.reqSuccess()),
+        catchError((err: HttpErrorResponse) => this.reqFailure(err)),
+      );
+
+    if (method == 'PUT')
+      return this.http.put<T>(url, body, { headers }).pipe(
         tap(() => this.reqSuccess()),
         catchError((err: HttpErrorResponse) => this.reqFailure(err)),
       );
