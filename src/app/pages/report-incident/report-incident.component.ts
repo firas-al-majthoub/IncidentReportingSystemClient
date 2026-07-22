@@ -82,6 +82,10 @@ export class ReportIncidentComponent {
     this.getReportPrivilege();
   }
 
+  ngAfterViewInit() {
+    this.updateRecoveredAmountDisableState();
+  }
+
   private getReportPrivilege(): void {
     this.usersService
       .userHasPrivilege(
