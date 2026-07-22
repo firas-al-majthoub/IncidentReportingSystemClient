@@ -12,8 +12,6 @@ disable TLS 1.0 and 1.1 from Internet Options
 
 Add model validation in BE services
 
-Financial Impact and Recovery amounts should not be negative numbers
-
 add Arabic translation next to fields' label
 
 add dashboard widgets and show/hide them depending on the role

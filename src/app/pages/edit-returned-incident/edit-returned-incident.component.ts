@@ -24,6 +24,7 @@ import { InvolvedEmployeeDto } from '../../shared/data/dto/involved-employee.dto
 import { UsersService } from '../../shared/services/users.service';
 import { SystemPrivilegesEnum } from '../../shared/data/enum/system-privileges.enum';
 import { SystemScreensEnum } from '../../shared/data/enum/system-screens.enum';
+import { PositiveAmountDirective } from '../../shared/directive/positive-amount.directive';
 
 @Component({
   selector: 'app-edit-returned-incident',
@@ -37,6 +38,7 @@ import { SystemScreensEnum } from '../../shared/data/enum/system-screens.enum';
     ButtonComponent,
     ReactiveFormsModule,
     ModalComponent,
+    PositiveAmountDirective,
   ],
   templateUrl: './edit-returned-incident.component.html',
 })
@@ -82,8 +84,11 @@ export class EditReturnedIncidentComponent {
     discoverDate: new FormControl('', Validators.required),
     incidentDate: new FormControl('', Validators.required),
     description: new FormControl('', Validators.required),
-    financialImpactAmount: new FormControl('', Validators.required),
-    recoveryAmount: new FormControl(''),
+    financialImpactAmount: new FormControl('', [
+      Validators.required,
+      Validators.min(0),
+    ]),
+    recoveryAmount: new FormControl('', Validators.min(0)),
     recoveryDate: new FormControl(''),
     relatedProcedure: new FormControl('', Validators.required),
     correctiveAction: new FormControl('', Validators.required),

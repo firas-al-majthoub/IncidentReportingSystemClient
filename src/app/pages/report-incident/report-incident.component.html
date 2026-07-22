@@ -104,6 +104,8 @@
                 incidentForm.controls.financialImpactAmount
               "
               type="number"
+              min="0"
+              appPositiveAmount
               (valueChange)="financialImpactAmount = `${$event}`"
               [disabled]="!hasFinancialImpact"
               [error]="
@@ -153,6 +155,8 @@
                 [reactiveFormGroup]="incidentForm"
                 [reactiveFormControl]="incidentForm.controls.recoveryAmount"
                 type="number"
+                min="0"
+                appPositiveAmount
                 (valueChange)="recoveryAmount = `${$event}`"
                 [disabled]="!recoveredFinancialLoss"
                 [error]="

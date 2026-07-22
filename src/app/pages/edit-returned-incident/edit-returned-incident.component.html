@@ -114,6 +114,8 @@
               "
               [value]="financialImpactAmount"
               type="number"
+              min="0"
+              appPositiveAmount
               (valueChange)="financialImpactAmount = `${$event}`"
               [disabled]="!hasFinancialImpact"
               [error]="
@@ -164,6 +166,8 @@
                 [reactiveFormControl]="incidentForm.controls.recoveryAmount"
                 [value]="recoveryAmount"
                 type="number"
+                min="0"
+                appPositiveAmount
                 (valueChange)="recoveryAmount = `${$event}`"
                 [disabled]="!recoveredFinancialLoss"
                 [error]="
