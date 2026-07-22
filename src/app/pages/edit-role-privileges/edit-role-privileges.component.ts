@@ -37,7 +37,7 @@ export class EditRolePrivilegesComponent {
   }
 
   private getSystemScreens(): void {
-    this.ddlDataService.getSystemScreens().subscribe({
+    this.ddlDataService.getAssignablePrivilegeSystemScreens().subscribe({
       next: (screens: DdlItem[]) => {
         this.systemScreens = screens;
         this.constructSectionsOpenCondition(screens);

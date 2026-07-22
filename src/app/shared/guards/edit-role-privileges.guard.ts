@@ -1,13 +1,14 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
-import { UsersService } from '../services/users.service';
+import { SystemScreensService } from '../services/system-screens.service';
 
-export const SystemAdminGuard: CanActivateFn = (route, state) => {
-  const usersService: UsersService = inject(UsersService);
+export const EditRolePrivilegesGuard: CanActivateFn = (route, state) => {
+  const systemScreensService: SystemScreensService =
+    inject(SystemScreensService);
   const router: Router = inject(Router);
 
-  return usersService.isUserSystemAdmin().pipe(
+  return systemScreensService.openEditRolePrivileges().pipe(
     map(() => {
       return true;
     }),

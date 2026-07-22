@@ -16,9 +16,11 @@ import { EditReturnedIncidentGuard } from './shared/guards/edit-returned-inciden
 import { MyReturnedIncidentsGuard } from './shared/guards/my-returnedincidents.guard';
 import { ReportIncidentGuard } from './shared/guards/report-incident.guard';
 import { EditRolePrivilegesComponent } from './pages/edit-role-privileges/edit-role-privileges.component';
-import { SystemAdminGuard } from './shared/guards/system-admin.guard';
 import { EditUserRolesComponent } from './pages/edit-user-roles/edit-user-roles.component';
 import { AssignUsersRoleComponent } from './pages/assign-user-roles/assign-users-role.component';
+import { AssignUsersRoleGuard } from './shared/guards/assign-users-role.guard';
+import { EditUserRolesGuard } from './shared/guards/edit-user-roles.guard';
+import { EditRolePrivilegesGuard } from './shared/guards/edit-role-privileges.guard';
 
 export const routes: Routes = [
   {
@@ -73,21 +75,21 @@ export const routes: Routes = [
       {
         path: 'assign-users-role',
         component: AssignUsersRoleComponent,
-        canActivate: [SystemAdminGuard],
+        canActivate: [AssignUsersRoleGuard],
         pathMatch: 'full',
         title: 'Assign Role to Users - IRMS',
       },
       {
         path: 'edit-user-roles',
         component: EditUserRolesComponent,
-        canActivate: [SystemAdminGuard],
+        canActivate: [EditUserRolesGuard],
         pathMatch: 'full',
         title: 'Edit User Roles - IRMS',
       },
       {
         path: 'edit-role-privileges/:id',
         component: EditRolePrivilegesComponent,
-        canActivate: [SystemAdminGuard],
+        canActivate: [EditRolePrivilegesGuard],
         pathMatch: 'full',
         title: 'Edit Role Privileges - IRMS',
       },

@@ -38,8 +38,8 @@ export class DdlDataService {
     return this.httpRequestsService.get<DdlItem[]>(apiPath);
   }
 
-  getSystemScreens(): Observable<DdlItem[]> {
-    const apiPath = '/system-settings/screens';
+  getAssignablePrivilegeSystemScreens(): Observable<DdlItem[]> {
+    const apiPath = '/system-settings/assignable-privilege-screens';
     return this.httpRequestsService.get<DdlItem[]>(apiPath);
   }
 }

@@ -38,6 +38,21 @@ export class SystemScreensService {
     return this.openScreen(path);
   }
 
+  openAssignUsersRole(): Observable<void> {
+    const path = '/system-screens/open-assign-users-role';
+    return this.openScreen(path);
+  }
+
+  openEditUserRoles(): Observable<void> {
+    const path = '/system-screens/open-edit-user-roles';
+    return this.openScreen(path);
+  }
+
+  openEditRolePrivileges(): Observable<void> {
+    const path = '/system-screens/open-edit-role-privileges';
+    return this.openScreen(path);
+  }
+
   private openScreen(path: string): Observable<void> {
     return this.httpRequestsService.get(path).pipe(map(() => {}));
   }
