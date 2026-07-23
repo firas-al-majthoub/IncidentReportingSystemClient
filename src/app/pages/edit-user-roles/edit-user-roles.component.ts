@@ -49,7 +49,7 @@ export class EditUserRolesComponent {
   }
 
   private getUserRoles() {
-    this.usersService.getUserRoles().subscribe({
+    this.usersService.getAssignableUserRoles().subscribe({
       next: (roles: UserRole[]) => {
         this.roles = roles;
       },

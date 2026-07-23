@@ -32,11 +32,6 @@ export class UsersService {
     return this.httpRequestsService.get(path).pipe(map(() => {}));
   }
 
-  getUserRoles(): Observable<UserRole[]> {
-    const path = '/users/roles';
-    return this.httpRequestsService.get(path);
-  }
-
   getAssignableUserRoles(): Observable<UserRole[]> {
     const path = '/users/assignable-roles';
     return this.httpRequestsService.get(path);
