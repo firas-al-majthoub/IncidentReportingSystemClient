@@ -11,6 +11,7 @@ import { User } from '../data/model/user';
 import { SearchUserDto } from '../data/dto/search-user.dto';
 import { AssignUserRoleDto } from '../data/dto/assign-user-role.dto';
 import { AddRoleDto } from '../data/dto/add-role.dto';
+import { RevokeUserRoleDto } from '../data/dto/revoke-user-role.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -51,10 +52,7 @@ export class UsersService {
     screenPrivileges: ScreenPrivilege[],
   ): Observable<void> {
     const path = '/users/update-user-role-privileges';
-    const dto: UpdateUserRolePrivilegesDto = {
-      roleId,
-      screenPrivileges,
-    };
+    const dto: UpdateUserRolePrivilegesDto = { roleId, screenPrivileges };
 
     return this.httpRequestsService.put(path, dto);
   }
@@ -67,10 +65,7 @@ export class UsersService {
 
   assignUserRole(userId: number, roleId: number): Observable<User> {
     const path = '/users/assign-user-role';
-    const dto: AssignUserRoleDto = {
-      userId,
-      roleId,
-    };
+    const dto: AssignUserRoleDto = { userId, roleId };
 
     return this.httpRequestsService.patch(path, dto);
   }
@@ -78,5 +73,12 @@ export class UsersService {
   addRole(dto: AddRoleDto): Observable<void> {
     const path = '/users/add-user-role';
     return this.httpRequestsService.post(path, dto).pipe(map(() => {}));
+  }
+
+  revokeUserRole(userId: number): Observable<User> {
+    const path = '/users/revoke-user-role';
+    const dto: RevokeUserRoleDto = { userId };
+
+    return this.httpRequestsService.patch(path, dto);
   }
 }

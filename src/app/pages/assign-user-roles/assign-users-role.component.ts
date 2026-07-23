@@ -27,8 +27,9 @@ export class AssignUsersRoleComponent {
   protected currentUser: User | null = null;
   protected roles: Option[] = [];
   protected searchUsername = '';
-  protected isModalOpen = false;
+  protected isAssignModalOpen = false;
   protected selectedRole = '';
+  protected isRevokeModalOpen = false;
 
   constructor(
     private usersService: UsersService,
@@ -99,11 +100,19 @@ export class AssignUsersRoleComponent {
   }
 
   protected openAssignModal() {
-    this.isModalOpen = true;
+    this.isAssignModalOpen = true;
   }
 
   protected closeAssignModal() {
-    this.isModalOpen = false;
+    this.isAssignModalOpen = false;
+  }
+
+  protected openRevokeModal() {
+    this.isRevokeModalOpen = true;
+  }
+
+  protected closeRevokeModal() {
+    this.isRevokeModalOpen = false;
   }
 
   protected assignRole() {
@@ -123,5 +132,19 @@ export class AssignUsersRoleComponent {
           },
         });
     }
+  }
+
+  protected revokeUserRole(): void {
+    this.closeRevokeModal();
+    
+    this.usersService.revokeUserRole(this.currentUser!.id).subscribe({
+      next: (user: User) => {
+        this.updateCurrentUser(user);
+        this.toastsService.showSuccess('Role revoked successfully');
+      },
+      error: () => {
+        this.toastsService.showError('Error occurred');
+      },
+    });
   }
 }
